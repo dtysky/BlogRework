@@ -1,0 +1,75 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/dtysky/.nvm/v0.10.37/bin/node',
+1 verbose cli   '/Users/dtysky/.nvm/v0.10.37/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   'ract-motion',
+1 verbose cli   '--save' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.37
+4 warn package.json BlogRework@1.0.0 No README data
+5 warn package.json jsxhint-loader@0.2.0 No repository field.
+6 warn package.json path@0.12.7 path is also the name of a node core module.
+7 verbose readDependencies using package.json deps
+8 verbose cache add [ 'ract-motion', null ]
+9 verbose cache add name=undefined spec="ract-motion" args=["ract-motion",null]
+10 verbose parsed url { protocol: null,
+10 verbose parsed url   slashes: null,
+10 verbose parsed url   auth: null,
+10 verbose parsed url   host: null,
+10 verbose parsed url   port: null,
+10 verbose parsed url   hostname: null,
+10 verbose parsed url   hash: null,
+10 verbose parsed url   search: null,
+10 verbose parsed url   query: null,
+10 verbose parsed url   pathname: 'ract-motion',
+10 verbose parsed url   path: 'ract-motion',
+10 verbose parsed url   href: 'ract-motion' }
+11 silly lockFile 34e042a1-ract-motion ract-motion
+12 verbose lock ract-motion /Users/dtysky/.npm/34e042a1-ract-motion.lock
+13 silly lockFile 34e042a1-ract-motion ract-motion
+14 silly lockFile 34e042a1-ract-motion ract-motion
+15 verbose addNamed [ 'ract-motion', '' ]
+16 verbose addNamed [ null, '*' ]
+17 silly lockFile d69ccc0e-ract-motion ract-motion@
+18 verbose lock ract-motion@ /Users/dtysky/.npm/d69ccc0e-ract-motion.lock
+19 silly addNameRange { name: 'ract-motion', range: '*', hasData: false }
+20 verbose request where is /ract-motion
+21 verbose request registry https://registry.npmjs.org/
+22 verbose request id 04582c9e8de3fde7
+23 verbose url raw /ract-motion
+24 verbose url resolving [ 'https://registry.npmjs.org/', './ract-motion' ]
+25 verbose url resolved https://registry.npmjs.org/ract-motion
+26 verbose request where is https://registry.npmjs.org/ract-motion
+27 info trying registry request attempt 1 at 09:43:24
+28 http GET https://registry.npmjs.org/ract-motion
+29 http 404 https://registry.npmjs.org/ract-motion
+30 silly registry.get cb [ 404,
+30 silly registry.get   { 'content-type': 'application/json',
+30 silly registry.get     'cache-control': 'max-age=0',
+30 silly registry.get     'content-length': '2',
+30 silly registry.get     'accept-ranges': 'bytes',
+30 silly registry.get     date: 'Thu, 04 Feb 2016 01:43:26 GMT',
+30 silly registry.get     via: '1.1 varnish',
+30 silly registry.get     age: '0',
+30 silly registry.get     connection: 'keep-alive',
+30 silly registry.get     'x-served-by': 'cache-lcy1132-LCY',
+30 silly registry.get     'x-cache': 'MISS',
+30 silly registry.get     'x-cache-hits': '0',
+30 silly registry.get     'x-timer': 'S1454550206.006622,VS0,VE104' } ]
+31 silly lockFile d69ccc0e-ract-motion ract-motion@
+32 silly lockFile d69ccc0e-ract-motion ract-motion@
+33 error 404 Not Found
+33 error 404
+33 error 404 'ract-motion' is not in the npm registry.
+33 error 404 You should bug the author to publish it
+33 error 404 It was specified as a dependency of 'BlogRework'
+33 error 404
+33 error 404 Note that you can also install from a
+33 error 404 tarball, folder, or http url, or git url.
+34 error System Darwin 14.5.0
+35 error command "/Users/dtysky/.nvm/v0.10.37/bin/node" "/Users/dtysky/.nvm/v0.10.37/bin/npm" "install" "ract-motion" "--save"
+36 error cwd /Users/dtysky/Complex_Mind/BlogRework/Front
+37 error node -v v0.10.37
+38 error npm -v 1.4.28
+39 error code E404
+40 verbose exit [ 1, true ]
