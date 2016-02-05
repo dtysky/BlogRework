@@ -1,10 +1,14 @@
+'use strict';
 /**
  * Created by dtysky on 16/2/3.
  */
 
-var React = require('react');
+
+var React = require('react/addons');
 var Link = require('react-router').Link;
-var Links = require('./utils').config.links;
+var links = require('./utils').config.links;
+
+require('./theme/css/sky.css');
 
 module.exports = React.createClass({
     render: function(){
@@ -13,9 +17,9 @@ module.exports = React.createClass({
                 <p>Links</p>
                 <div id="home-links-phone">
                     {
-                        Links.map(function(item){
+                        links.map(function(item){
                             return (
-                                <Link to={item.url} class="thank">{item.name}</Link>
+                                <Link to={item.url} className="thank">{item.name}</Link>
                             )
                         })
                     }

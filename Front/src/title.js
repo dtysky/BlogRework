@@ -1,10 +1,12 @@
+'use strict';
 /**
  * Created by dtysky on 16/2/3.
  */
 
-
-var React = require('react');
+var React = require('react/addons');
 var Link = require('react-router').Link;
+
+require('./theme/css/sky.css');
 
 module.exports = React.createClass({
     render: function(){
@@ -16,7 +18,7 @@ module.exports = React.createClass({
                     <li id="title-art"><Link to="/category/art">Art</Link></li>
                     <li id="title-life"><Link to="/category/life">Life</Link></li>
                 </div>
-                <div class="home-main-title-bar">
+                <div className="home-main-title-bar">
                     <span id="title-bar"/>
                 </div>
             </div>

@@ -1,9 +1,9 @@
+'use strict';
 /**
  * Created by dtysky on 16/2/3.
  */
 
 var Mongo = require('mongodb').MongoClient;
-var $ = require('jquery');
 
 var config = JSON.load("../config.json");
 
@@ -12,7 +12,7 @@ var database = {
     db: undefined
 };
 
-Mongo.connect(url, function(db){
+Mongo.connect(config.mongo_url, function(db){
     database.ready = true;
     database.db = db;
 });
@@ -30,11 +30,11 @@ var changeTheme = function(id){
 };
 
 var changeWebMode = function(width){
-
+    return;
 };
 
-var getLocalUrl = function(type, title, index){
-    return "/" + type + "/" + title + "/" + index.toString()
+var getLocalUrl = function(type, name, index){
+    return index === null ? "/" + type + "/" + name : "/" + type + "/" + name + "/" + index.toString();
 };
 
 module.exports = {

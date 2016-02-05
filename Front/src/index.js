@@ -1,9 +1,9 @@
+'use strict';
 /**
  * Created by dtysky on 16/2/3.
  */
 
-
-var React = require('react');
+var React = require('react/addons');
 var ReactDom = require('react-dom');
 var Router = require('react-router');
 var Route = Router.Route;
@@ -11,9 +11,9 @@ var IndexRoute = Router.IndexRoute;
 var Helmet = require('react-helmet');
 
 var Title = require('./title');
-var MenuTop = require('./menu-top');
-var MenuButtom = require('./menu-buttom');
-var LeftImage = require('./left-image');
+var Menu = require('./menu');
+var MenuPhone = require('./menu_phone');
+var LeftImage = require('./left_image');
 var Config = require('./utils').config;
 var ContentHome = require('./content_home');
 var ContentTag = require('./content_tag');
@@ -24,6 +24,8 @@ var ContentTags = require('./content_tags');
 var ContentAuthors = require('./content_authors');
 var ContentArticle = require('./content_article');
 var NotFind = require('./not_find');
+
+require('./theme/css/sky.css');
 
 
 var App = React.createClass({
@@ -43,7 +45,6 @@ var App = React.createClass({
         });
     },
     render: function(){
-        'use strict';
         return (
             <div>
                 <Helmet
@@ -55,28 +56,31 @@ var App = React.createClass({
                             {name: "author", "content": this.state.head.author},
                             {name: "description", "content": this.state.head.description}
                     ]}
-                    onChangeClientState={function(newState){console.log(newState)}}
                 />
                 <Title/>
                 <LeftImage/>
-                <MenuTop/>
-                <MenuButtom/>
-                <ReactRouter.RouteHandler/>
+                <Menu/>
+                <MenuPhone/>
+                <Router.RouteHandler
+                    id="home-main-content"
+                />
             </div>
         );
     }
 });
 
+
+//name = slug
 var router = (<Router history={Router.browserHistory}>
     <Route path="/" component={App}>
         <IndexRoute component={ContentHome}/>
-        <Route path="archives/:name/:index" component={ContentArchives}/>
+        <Route path="archives/:index" component={ContentArchives}/>
         <Route path="tag/:name/:index" component={ContentTag}/>
         <Route path="category/:name/:index" component={ContentCategory}/>
         <Route path="Author/:name/:index" component={ContentAuthor}/>
-        <Route path="tags/:name/:index" component={ContentTags}/>
-        <Route path="authors/:name/:index" component={ContentAuthors}/>
-        <Route path="article/:name/:index" component={ContentArticle}/>
+        <Route path="tags/:name" component={ContentTags}/>
+        <Route path="authors/:name" component={ContentAuthors}/>
+        <Route path="articles/:name" component={ContentArticle}/>
         <Route path="*" component={NotFind}/>
     </Route>
 </Router>);

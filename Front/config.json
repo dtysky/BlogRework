@@ -2,6 +2,7 @@
     "site_title": "dtysky|一个行者的轨迹",
     "site_url": "http://dtysky.moe",
     "mongo_url": "mongodb://localhost/blog_test",
+    "tag_cloud_step": 4,
     "links": [
         {"name": "Pelican", "url" : "http://getpelican.com"},
         {"name": "Lm7", "url" : "http://lm7.xxxxxxxx.jp"},

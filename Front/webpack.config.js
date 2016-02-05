@@ -33,12 +33,15 @@ module.exports = {
 
     resolve: {
         root:[path.join(__dirname)],
-        extensions: ['' , '.js'],
-        alias: {
-            'styles': __dirname + '/theme/style',
-            'lib': __dirname + '/src/lib'
-        }
+        extensions: ["", ".webpack.js", ".web.js", ".js", ".node", ".json"]
     },
+
+    node: {
+        net: "empty",
+        tls: "empty"
+    },
+
+    target: "node",
 
     module: {
         preLoaders: [{
@@ -76,6 +79,14 @@ module.exports = {
             {
                 test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
                 loader: "url?limit=10000&minetype=image/svg+xml"
+            },
+            {
+                test: /\.node$/,
+                loader: "node-loader"
+            },
+            {
+                test: /\.json$/,
+                loader: "json-loader"
             }
         ]
     },
@@ -86,10 +97,7 @@ module.exports = {
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
         new webpack.ProvidePlugin({
-            $:'jquery',
-            jQuery: 'jquery',
-            "window.jQuery": "jquery",
-            "root.jQuery": "jquery"
+            $:'jquery'
         })
     ]
 
