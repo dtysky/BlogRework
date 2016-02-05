@@ -1,0 +1,239 @@
+.home-article{
+	margin-top: 60px;
+	width: 100%;
+}
+
+.home-article-top{
+	margin-top: 40px;
+	margin-bottom: 40px;
+	width: 100%;
+	text-align: center;
+}
+
+.home-article-top p{
+	margin-top: 0px;
+	margin-bottom: 0px;
+	width: 100%;
+	color: gray;
+	text-align: center;
+}
+
+.home-article-top a{
+	color: #666666;
+	font-weight: bolder;
+}
+
+.home-article-top a:hover{
+	color: black;
+}
+
+.home-article-sphr{
+	margin-top: 20px;
+	margin-bottom: 20px;
+	width: 100%;
+	height: 2px;
+}
+
+ol{
+	font-size: 14px;
+}
+
+.home-article-middle{
+	margin-bottom: 20px;
+	font-size: 14px;
+	font-family: "Microsoft YaHei",Arial ! important;
+}
+
+.home-article-middle h1{
+	font-size: 1.5em;
+	margin-top: 0.8em;
+	margin-bottom: 0.4em;
+}
+
+.home-article-middle h2{
+	font-size: 1.4em;
+	margin-top: 0.6em;
+	margin-bottom: 0.6em;
+}
+
+.home-article-middle h3{
+	font-size: 1.1em;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.home-article-middle h4,h5,h6{
+	font-size: 0.9em;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.home-article-middle p{
+	line-height: 20px;
+	margin-bottom: 5px;
+	color: black;
+	word-break: break-all;
+	text-align: left;
+	display: block;
+}
+
+.home-article-middle a{
+	background: url(../image/jump.png) no-repeat right 0px;
+	padding-right:20px;
+	word-break: break-all;
+	color: #444444;
+}
+
+
+.home-article-bottom{
+	margin-top: 40px;
+}
+
+.home-article-bottom p{
+	width: 100%;
+	color: black;
+	font-weight: bolder;
+	text-align: center;
+}
+
+.index-preview{
+	width: 100%;
+	margin-top: 30px;
+	margin-bottom: 20px;
+}
+
+.index-preview p{
+	width: 98%;
+	margin-left: 1%;
+	color: black;
+	font-size: 14px;
+	font-weight: bolder;
+}
+
+.list-authrs{
+	margin-top: 140px;
+	margin-top: 100px;
+	width: 100%;
+	text-align: center;
+}
+
+.list-authrs a{
+	width: 100%;
+	margin-bottom: 40px;
+	font-size: 40px;
+	color: #444444;
+}
+
+blockquote{
+	padding: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+pre{
+	word-break: break-all;
+	word-wrap: break-word;
+}
+
+.plugin-share{
+	position: absolute;
+	margin-top: -40px;
+	right: 0px;
+	height: 20px;
+}
+
+#disqus_container {
+	margin-top: 30px;
+}
+
+#disqus_container a.disqus_button{
+	font-size:16px;
+	background: url(../image/discuss.png) no-repeat left 0px;
+	padding-left: 24px;
+}
+
+.highlight{
+	margin-top: 4px;
+	margin-bottom: 4px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 12px;
+	word-break: break-all;
+}
+
+.text-center{
+	text-align: center;
+}
+
+.tag_cloud{
+	margin-top: 10%;
+	line-height: 30px;
+}
+
+a.tag-4{
+	font-size: 14px;
+}
+
+a.tag-3{
+	font-size: 16px;
+}
+
+a.tag-2{
+	font-size: 18px;
+}
+
+a.tag-1{
+	font-size: 20px;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+center {
+	font-size: 14px;
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+#resume-header{
+	width: 100%;
+	height: 125px;
+}
+
+#resume-photo{
+	position: absolute;
+	right: 0px;
+	max-height: 125px;
+}
+
+.resume-title{
+	position: absolute;
+	left: 0px;
+}
+
+.MathJax {
+	font-size: 22px;
+	line-height: 60px;
+}
+
+table{
+	border-color: black;
+	padding: 0px;
+}
+
+tr{
+	text-align: center;
+}
+
+th{
+	background-color: #aaaaaa;
+	padding: 10px;
+	text-align: center;
+}
+
+td{
+	padding: 10px;
+	text-align: center;
+}
