@@ -16,23 +16,16 @@
 				],
 			author: [
 					{
-						view: "",
+						view: "",and
 						slug: ""
 					},
 					...
 				],
-			category: [
-				[
-					{
-						view: "",
-						slug: ""
-					},
-					...
-				],
-			]
-			date: "YYYY.mm.DD HH:MM:SS",
+			category: "",
+			date: "YYYY.mm.DD,HH:MM:SS",
 			summary:  "",
-			content: ""
+			content: "",
+			...
 		},
 		...
 	]
@@ -60,17 +53,10 @@
 					},
 					...
 				],
-			category: [
-				[
-					{
-						view: "",
-						slug: ""
-					},
-					...
-				],
-			]
-			date: "YYYY.mm.DD HH:MM:SS",
-			summary: ""
+			category: "",
+			date: "YYYY.mm.DD,HH:MM:SS",
+			summary: "",
+			...
 		},
 		...
 	]
@@ -99,17 +85,10 @@
 					},
 					...
 				],
-			category: [
-				[
-					{
-						view: "",
-						slug: ""
-					},
-					...
-				],
-			]
-			date: "YYYY.mm.DD HH:MM:SS",
-			summary: ""
+			category: "",
+			date: "YYYY.mm.DD,HH:MM:SS",
+			summary: "",
+			...
 		},
 		...
 	]
@@ -137,17 +116,10 @@
 					},
 					...
 				],
-			category: [
-				[
-					{
-						view: "",
-						slug: ""
-					},
-					...
-				],
-			]
-			date: "YYYY.mm.DD HH:MM:SS",
-			summary: ""
+			category: "",
+			date: "YYYY.mm.DD,HH:MM:SS",
+			summary: "",
+			...
 		},
 		...
 	]
@@ -175,17 +147,10 @@
 					},
 					...
 				],
-			category: [
-				[
-					{
-						view: "",
-						slug: ""
-					},
-					...
-				],
-			]
-			date: "YYYY.mm.DD HH:MM:SS",
-			summary: ""
+			category: "",
+			date: "YYYY.mm.DD,HH:MM:SS",
+			summary: "",
+			...
 		},
 		...
 	]
