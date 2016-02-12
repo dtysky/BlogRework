@@ -20,7 +20,7 @@
 						slug: ""
 					},
 					...
-				],
+				],I
 			category: "",
 			date: "YYYY.mm.DD,HH:MM:SS",
 			summary:  "",

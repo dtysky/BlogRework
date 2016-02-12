@@ -1,7 +1,7 @@
 # T_T coding=utf-8 T_T
 
 """
-Parent class for parsing metadata.
+Classes for parsing metadata.
 """
 
 __author__ = "Tianyu Dai (dtysky)"
@@ -78,7 +78,7 @@ class DateParser(MetaDataParser):
             date = datetime.strptime(content, "%Y.%m.%d,%H:%M:%S")
         except:
             date = datetime.strptime(content, "%Y.%m.%d,%H:%M")
-        return date.strftime("%Y.%m.%d - %H:%M")
+        return date.strftime("%Y.%m.%d %H:%M")
 
 
 class SummaryParser(MetaDataParser):

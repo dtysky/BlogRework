@@ -2,8 +2,10 @@ import os
 os.path.join(os.path.dirname(__file__), "../")
 
 from parser import Parser
+from wrapper import Wrapper
 
 if __name__ == "__main__":
     parser = Parser()
-    for k, v in parser.parse("pages/Skill/test.md").items():
+    wrapper = Wrapper()
+    for k, v in wrapper.convert(parser.parse("pages/Skill/test.md")["metadata"]).items():
         print k, ":", v

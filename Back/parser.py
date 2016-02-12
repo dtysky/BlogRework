@@ -6,7 +6,7 @@ Parsing my blog page files.
 
 __author__ = "Tianyu Dai (dtysky)"
 __email__ = "dtysky@outlook.com"
-__name__ = "MarkdownParser"
+__name__ = "Parser"
 
 
 import re
@@ -68,9 +68,10 @@ class Parser(object):
 
         metas, content = result
         metas += "\n%s:%s" % ("Category", file_path.split("/")[-2])
-        result = self._meta_parse(metas)
-        result["content"] = self._markdown_parser.parse(content)
-        return result
+        return {
+            "metadata": self._meta_parse(metas),
+            "content": self._markdown_parser.parse(content)
+        }
 
     def _error(self, message):
         print message
