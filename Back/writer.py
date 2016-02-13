@@ -13,22 +13,50 @@ from database_writers import DatabaseWriter
 from get_sub_classes import get_all_classes
 
 
-class Wrapper(object):
+class Writer(object):
     """
     Writing data to database.
     """
 
-    def __init__(self):
+    def __init__(self, database):
+        self._database = database
+        self._articles = database.get_database("articles")
         self._database_writers = {}
         for c in get_all_classes(["database_writers.py"], DatabaseWriter):
-            obj = c()
+            obj = c(database)
             self._database_writers[obj.get_flag()] = obj
 
-    def _get_old_page(self):
-        pass
+    def _get_old_page(self, file_path):
+        return self._articles.find_one(
+            {
+                "file": file_path
+            }
+        )
 
-    def _database_write(self, metadata):
-        pass
+    def _insert(self, page):
+        for writer_name, writer_obj in self._database_writers:
+            writer_obj.insert(page)
 
-    def write(self, metadata):
-        pass
+    def _update(self, file_path, page):
+        for writer_name, writer_obj in self._database_writers:
+            writer_obj.update(page, self._get_old_page(file_path))
+
+    def _delete(self, file_path):
+        for writer_name, writer_obj in self._database_writers:
+            writer_obj.delete(self._get_old_page(file_path))
+
+    def write(self, file_path, mode="delete", page=None):
+        if mode != "delete" and page == None:
+            self._error("Mode 'insert' must have argument 'page' !")
+        if mode == "insert":
+            self._insert(page)
+        elif mode == "update":
+            self._update(file_path, page)
+        elif mode == "delete":
+            self._delete(file_path)
+        else:
+            self._error("Unexpected mode '%s' !" % mode)
+
+    def _error(self, message):
+        print message
+        raise
