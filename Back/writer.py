@@ -47,7 +47,7 @@ class Writer(object):
 
     def write(self, file_path, mode="delete", page=None):
         if mode != "delete" and page == None:
-            self._error("Mode 'insert' must have argument 'page' !")
+            self._error("Mode is not 'delete', argument 'page' is required !")
         if mode == "insert":
             self._insert(page)
         elif mode == "update":

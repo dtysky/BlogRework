@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9a1849ee-8ec1-4154-9665-e94d389ff590" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Database.md" afterPath="$PROJECT_DIR$/Database.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database_writers.py" afterPath="$PROJECT_DIR$/database_writers.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/writer.py" afterPath="$PROJECT_DIR$/writer.py" />
     </list>
     <ignored path="Back.iws" />
@@ -23,21 +25,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="database_writers.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="database_writers.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/database_writers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="33" column="27" selection-start-line="33" selection-start-column="27" selection-end-line="33" selection-end-column="27" />
+            <state vertical-scroll-proportion="0.6865672">
+              <caret line="171" column="49" selection-start-line="171" selection-start-column="49" selection-end-line="171" selection-end-column="49" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="writer.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="writer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/writer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.9104478">
-              <caret line="61" column="13" selection-start-line="61" selection-start-column="13" selection-end-line="61" selection-end-column="13" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="49" column="74" selection-start-line="49" selection-start-column="74" selection-end-line="49" selection-end-column="74" />
               <folding>
                 <element signature="e#149#192#0" expanded="true" />
               </folding>
@@ -137,8 +139,8 @@
         <option value="$PROJECT_DIR$/setting.py" />
         <option value="$PROJECT_DIR$/parser.py" />
         <option value="$PROJECT_DIR$/slug_wrappers.py" />
-        <option value="$PROJECT_DIR$/database_writers.py" />
         <option value="$PROJECT_DIR$/writer.py" />
+        <option value="$PROJECT_DIR$/database_writers.py" />
       </list>
     </option>
   </component>
@@ -201,6 +203,7 @@
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../FromGithub/pelican/pelican" />
     <property name="FullScreen" value="true" />
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///Users/dtysky/Complex_Mind/BlogRework/Back/writer.py" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -637,21 +640,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/database_writers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="33" column="27" selection-start-line="33" selection-start-column="27" selection-end-line="33" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/writer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.9104478">
-          <caret line="61" column="13" selection-start-line="61" selection-start-column="13" selection-end-line="61" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="49" column="74" selection-start-line="49" selection-start-column="74" selection-end-line="49" selection-end-column="74" />
           <folding>
             <element signature="e#149#192#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database_writers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6865672">
+          <caret line="171" column="49" selection-start-line="171" selection-start-column="49" selection-end-line="171" selection-end-column="49" />
+          <folding />
         </state>
       </provider>
     </entry>

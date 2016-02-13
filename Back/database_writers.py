@@ -23,9 +23,6 @@ class DatabaseWriter(object):
             self._error("No collection named '%s' in database !" % flag)
         self._collection = database.get_collection(flag)
 
-    def _arg_is_list(self):
-        return False
-
     def get_flag(self):
         return convert_to_underline(
             self.__class__.__name__.replace('Database', '')
@@ -36,76 +33,34 @@ class DatabaseWriter(object):
 
     def _format_page(self, page):
         key = self.get_slug_key()
-        tmp = page["metadata"]
-        tmp["slug"] = tmp["title"]["slug"]
-        if not self._arg_is_list():
-            result = tmp
-            result["name"] = result[key]["slug"]
-            return result
-        result = []
-        for e in page["metadata"][key]:
-            tmp["name"] = e["slug"]
-            result.append(tmp)
+        result = page["metadata"]
+        result["slug"] = result["title"]["slug"]
+        result["name"] = result[key]["slug"]
         return result
 
     def insert(self, new_page):
-        if not self._arg_is_list():
-            self._collection.insert_one(
-                self._format_page(new_page)
-            )
-            return
-        for page in self._format_page(new_page):
-            self._collection.insert_one(page)
+        self._collection.insert_one(
+            self._format_page(new_page)
+        )
 
     def update(self, new_page, old_page):
-        if not self._arg_is_list():
-            page = self._format_page(new_page)
-            self._collection.replace_one(
-                {
-                    "name": page["name"],
-                    "slug": page["slug"]
-                },
-                page
-            )
-            return
-        new_pages, old_pages = self._format_page(new_page), self._format_page(old_page)
-        for page in new_pages:
-            if page in old_pages:
-                self._collection.replace_one(
-                    {
-                        "name": page["name"],
-                        "slug": page["slug"]
-                    },
-                    page
-                )
-            else:
-                self._collection.insert_one(page)
-        for page in old_page:
-            if page not in new_pages:
-                self._collection.delete_one(
-                    {
-                        "name": page["name"],
-                        "slug": page["slug"]
-                    }
-                )
+        page = self._format_page(new_page)
+        self._collection.replace_one(
+            {
+                "name": page["name"],
+                "slug": page["slug"]
+            },
+            page
+        )
 
     def delete(self, old_page):
-        if self._arg_is_list():
-            page = self._format_page(old_page)
-            self._collection.delete_one(
-                {
-                    "name": page["name"],
-                    "slug": page["slug"]
-                }
-            )
-            return
-        for page in self._format_page(old_page):
-            self._collection.delete_one(
-                {
-                    "name": page["name"],
-                    "slug": page["slug"]
-                }
-            )
+        page = self._format_page(old_page)
+        self._collection.delete_one(
+            {
+                "name": page["name"],
+                "slug": page["slug"]
+            }
+        )
 
     def _error(self, message):
         print message
@@ -133,7 +88,58 @@ class ArchivesWriter(DatabaseWriter):
     pass
 
 
-class TagWriter(DatabaseWriter):
+class WriterWithList(object):
+    """
+    Parent class for writing data which type is list.
+    """
+
+    def _format_page(self, page):
+        key = self.get_slug_key()
+        tmp = page["metadata"]
+        tmp["slug"] = tmp["title"]["slug"]
+        result = []
+        for e in page["metadata"][key]:
+            tmp["name"] = e["slug"]
+            result.append(tmp)
+        return result
+
+    def insert(self, new_page):
+        for page in self._format_page(new_page):
+            self._collection.insert_one(page)
+
+    def update(self, new_page, old_page):
+        new_pages, old_pages = self._format_page(new_page), self._format_page(old_page)
+        for page in new_pages:
+            if page in old_pages:
+                self._collection.replace_one(
+                    {
+                        "name": page["name"],
+                        "slug": page["slug"]
+                    },
+                    page
+                )
+            else:
+                self._collection.insert_one(page)
+        for page in old_page:
+            if page not in new_pages:
+                self._collection.delete_one(
+                    {
+                        "name": page["name"],
+                        "slug": page["slug"]
+                    }
+                )
+
+    def delete(self, old_page):
+        for page in self._format_page(old_page):
+            self._collection.delete_one(
+                {
+                    "name": page["name"],
+                    "slug": page["slug"]
+                }
+            )
+
+
+class TagWriter(WriterWithList, DatabaseWriter):
     """
     Writing "tag" collection.
     """
@@ -141,20 +147,14 @@ class TagWriter(DatabaseWriter):
     def get_slug_key(self):
         return "tags"
 
-    def _arg_is_list(self):
-        return True
 
-
-class AuthorWriter(DatabaseWriter):
+class AuthorWriter(WriterWithList, DatabaseWriter):
     """
     Writing "author" collection.
     """
 
     def get_slug_key(self):
         return "authors"
-
-    def _arg_is_list(self):
-        return True
 
 
 class CategoryWriter(DatabaseWriter):
@@ -168,6 +168,9 @@ class CategoryWriter(DatabaseWriter):
 
 
 class WriterWithCount(object):
+    """
+    A special class for writing tags and authors.
+    """
 
     def _new(self, item):
         self._collection.insert_one(
