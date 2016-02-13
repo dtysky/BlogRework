@@ -5,23 +5,31 @@
 	:::json
 	[
 		{
-			title:  "",
-			slug:  "",
+			name: ""(title slug),
+			slug: ""(title slug),
+			file: ""(file path),			
+			title:  {
+				view: "",
+				slug: ""
+			}
 			tag: [
 					{
 						view: "",
 						slug: ""
 					},
 					...
-				],
+			],
 			author: [
 					{
 						view: "",and
 						slug: ""
 					},
 					...
-				],I
-			category: "",
+			],
+			category: {
+				view: "",
+				slug: ""
+			},
 			date: "YYYY.mm.DD,HH:MM:SS",
 			summary:  "",
 			content: "",
@@ -36,26 +44,32 @@
 	:::json
 	[
 		{
-			name: "all",
-			title:  "",
-			slug: "",
+			name: ""(title slug),
+			slug: ""(title slug),
+			title:  {
+				view: "",
+				slug: ""
+			}
 			tag: [
 					{
 						view: "",
 						slug: ""
 					},
 					...
-				],
+			],
 			author: [
 					{
-						view: "",
+						view: "",and
 						slug: ""
 					},
 					...
-				],
-			category: "",
+			],
+			category: {
+				view: "",
+				slug: ""
+			},
 			date: "YYYY.mm.DD,HH:MM:SS",
-			summary: "",
+			summary:  ""
 			...
 		},
 		...
@@ -68,26 +82,31 @@
 	[
 		{ 
 			name: ""(category slug),
-			view: "",
-			title:  "",
-			slug: "",
+			slug: ""(title slug),
+			title:  {
+				view: "",
+				slug: ""
+			}
 			tag: [
 					{
 						view: "",
 						slug: ""
 					},
 					...
-				],
+			],
 			author: [
 					{
-						view: "",
+						view: "",and
 						slug: ""
 					},
 					...
-				],
-			category: "",
+			],
+			category: {
+				view: "",
+				slug: ""
+			},
 			date: "YYYY.mm.DD,HH:MM:SS",
-			summary: "",
+			summary:  ""
 			...
 		},
 		...
@@ -99,26 +118,31 @@
 	[
 		{ 
 			name: ""(tag slug),
-			view: "",
-			title:  "",
-			slug: "",
+			slug: ""(title slug),
+			title:  {
+				view: "",
+				slug: ""
+			}
 			tag: [
 					{
 						view: "",
 						slug: ""
 					},
 					...
-				],
+			],
 			author: [
 					{
-						view: "",
+						view: "",and
 						slug: ""
 					},
 					...
-				],
-			category: "",
+			],
+			category: {
+				view: "",
+				slug: ""
+			},
 			date: "YYYY.mm.DD,HH:MM:SS",
-			summary: "",
+			summary:  ""
 			...
 		},
 		...
@@ -130,26 +154,31 @@
 	[
 		{ 
 			name: ""(author slug),
-			view: "",			
-			title:  "",
-			slug: "",
+			slug: ""(title slug),
+			title:  {
+				view: "",
+				slug: ""
+			}
 			tag: [
 					{
 						view: "",
 						slug: ""
 					},
 					...
-				],
+			],
 			author: [
 					{
-						view: "",
+						view: "",and
 						slug: ""
 					},
 					...
-				],
-			category: "",
+			],
+			category: {
+				view: "",
+				slug: ""
+			},
 			date: "YYYY.mm.DD,HH:MM:SS",
-			summary: "",
+			summary:  ""
 			...
 		},
 		...

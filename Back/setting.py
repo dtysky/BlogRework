@@ -10,5 +10,6 @@ __name__ = "MarkdownParser"
 
 
 setting = {
-  "default_authors": ["dtysky"]
+    "default_authors": ["dtysky"],
+    "content_path": "pages"
 }

@@ -5,5 +5,5 @@ from parser import Parser
 
 if __name__ == "__main__":
     parser = Parser()
-    for k, v in parser.parse("pages/Skill/test.md").items():
+    for k, v in parser.parse("Skill/test.md").items():
         print k, ":", v

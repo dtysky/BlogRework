@@ -9,8 +9,8 @@ __email__ = "dtysky@outlook.com"
 __name__ = "SlugWrapper"
 
 
+import os
 from urllib import quote as url_encode
-from datetime import datetime
 from utils import convert_to_underline
 
 
@@ -37,24 +37,24 @@ class SlugWrapper(object):
 
 class TitleWrapper(SlugWrapper):
     """
-    Parsing "tag" metadata.
+    Converting "title" metadata.
     """
 
     def convert(self, metadata):
         category = metadata["category"]
-        date = datetime.strptime(metadata["date"], "%Y.%m.%d %H:%M")
+        file_name = os.path.basename(metadata["file"]).split(".")[0]
         return {
             "name": metadata["title"],
             "slug": url_encode(
                 "%s-%s" %
-                (category, date.strftime("%Y-%m-%d-%H-%M"))
+                (category, file_name)
             )
         }
 
 
 class TagsWrapper(SlugWrapper):
     """
-    Parsing "tag" metadata.
+    Converting "tags" metadata.
     """
 
     def convert(self, metadata):
@@ -69,7 +69,7 @@ class TagsWrapper(SlugWrapper):
 
 class AuthorsWrapper(SlugWrapper):
     """
-    Parsing "author" metadata.
+    Converting "authors" metadata.
     """
 
     def convert(self, metadata):
@@ -84,7 +84,7 @@ class AuthorsWrapper(SlugWrapper):
 
 class CategoryWrapper(SlugWrapper):
     """
-    Parsing "category" metadata.
+    Converting "category" metadata.
     Only one category can one article have.
     """
     pass

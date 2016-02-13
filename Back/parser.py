@@ -55,17 +55,17 @@ class Parser(object):
         for meta_name, meta_obj in self._meta_parsers.items():
             if meta_obj.is_necessary() and meta_name not in tmp:
                 self._error("Meta '%s' is necessary !" % meta_name)
+        tmp["file"] = self._file_path
         return tmp
 
     def parse(self, file_path):
         self._file_path = file_path
-        with open(file_path) as f:
+        with open("%s/%s" % (self._setting["content_path"], file_path)) as f:
             text = f.read()
 
         result = self._split_meta_and_content(text)
         if not result:
             self._error("Article does not have meta and content !")
-
         metas, content = result
         metas += "\n%s:%s" % ("Category", file_path.split("/")[-2])
         return {
