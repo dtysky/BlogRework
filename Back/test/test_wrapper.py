@@ -7,5 +7,5 @@ from wrapper import Wrapper
 if __name__ == "__main__":
     parser = Parser()
     wrapper = Wrapper()
-    for k, v in wrapper.convert(parser.parse("pages/Skill/test.md")["metadata"]).items():
+    for k, v in wrapper.convert(parser.parse("Skill/test.md")["metadata"]).items():
         print k, ":", v
