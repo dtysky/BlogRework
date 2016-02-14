@@ -12,6 +12,7 @@ __name__ = "Writer"
 from copy import deepcopy as copy
 from database_writers import DatabaseWriter
 from get_sub_classes import get_all_classes
+from utils import logger
 
 
 class Writer(object):
@@ -34,6 +35,8 @@ class Writer(object):
                 "file": file_path
             }
         )
+        if not result:
+            return None
         content = result["content"]
         del result["content"], result["_id"]
         return {
@@ -52,10 +55,14 @@ class Writer(object):
 
     def _delete(self, file_path):
         page = self._get_old_page(file_path)
+        if not page:
+            return
         for writer_name, writer_obj in self._database_writers.items():
             writer_obj.delete(copy(page))
 
     def write(self, file_path, mode="delete", page=None):
+        logger.info("Writing start: %s" % file_path)
+
         self._file_path = file_path
         if mode != "delete" and page == None:
             self._error("Mode is not 'delete', argument 'page' is required !")
@@ -74,6 +81,6 @@ class Writer(object):
             self._error("Unexpected mode '%s' !" % mode)
 
     def _error(self, message):
-        print message
-        print "File: ", self._file_path
+        line = "%s\nFile: %s" % (message, self._file_path)
+        logger.error(line)
         raise

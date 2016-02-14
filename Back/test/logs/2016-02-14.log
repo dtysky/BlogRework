@@ -1,0 +1,28 @@
+2016-02-14 19:17:48: Info: Create: ./pages/Skill/test2.md
+2016-02-14 19:17:48: Info: Parsing start: Skill/test2.md
+2016-02-14 19:17:48: Info: Wrapping start
+2016-02-14 19:17:48: Info: Writing start: Skill/test2.md
+2016-02-14 19:17:55: Info: Delete: ./pages/Skill/test2.md
+2016-02-14 19:17:55: Info: Writing start: Skill/test2.md
+2016-02-14 19:17:55: Info: Create: ./pages/Skill/test2.md
+2016-02-14 19:17:55: Info: Parsing start: Skill/test2.md
+2016-02-14 19:17:55: Error: Meta 'date' is necessary !
+File: Skill/test2.md
+2016-02-14 19:17:55: Error: Parsing error !
+File: Skill/test2.md
+2016-02-14 19:17:57: Info: Delete: ./pages/Skill/test2.md
+2016-02-14 19:17:57: Info: Writing start: Skill/test2.md
+2016-02-14 19:17:57: Info: Create: ./pages/Skill/test2.md
+2016-02-14 19:17:57: Info: Parsing start: Skill/test2.md
+2016-02-14 19:17:57: Info: Wrapping start
+2016-02-14 19:17:57: Info: Writing start: Skill/test2.md
+2016-02-14 19:18:07: Info: Delete: ./pages/Skill/test2.md
+2016-02-14 19:18:07: Info: Writing start: Skill/test2.md
+2016-02-14 19:18:07: Info: Create: ./pages/Skill/test2.md
+2016-02-14 19:18:07: Info: Parsing start: Skill/test2.md
+2016-02-14 19:18:07: Error: Meta 'date' is necessary !
+File: Skill/test2.md
+2016-02-14 19:18:07: Error: Parsing error !
+File: Skill/test2.md
+2016-02-14 19:18:13: Info: Delete: ./pages/Skill/test2.md
+2016-02-14 19:18:13: Info: Writing start: Skill/test2.md

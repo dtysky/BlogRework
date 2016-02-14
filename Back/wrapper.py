@@ -12,6 +12,7 @@ __name__ = "Wrapper"
 from copy import deepcopy as copy
 from slug_wrappers import SlugWrapper
 from get_sub_classes import get_all_classes
+from utils import logger
 
 
 class Wrapper(object):
@@ -32,4 +33,5 @@ class Wrapper(object):
         return tmp
 
     def wrap(self, metadata):
+        logger.info("Wrapping start")
         return self._slug_wrap(metadata)

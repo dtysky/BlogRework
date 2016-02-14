@@ -14,6 +14,7 @@ from utils import convert_to_underline
 from markdown_parser import MarkdownParser
 from meta_parsers import MetaDataParser
 from get_sub_classes import get_all_classes
+from utils import logger
 
 
 class Parser(object):
@@ -59,6 +60,8 @@ class Parser(object):
         return tmp
 
     def parse(self, file_path):
+        logger.info("Parsing start: %s" % file_path)
+
         self._file_path = file_path
         with open("%s/%s" % (self._setting["content_path"], file_path)) as f:
             text = f.read()
@@ -74,6 +77,6 @@ class Parser(object):
         }
 
     def _error(self, message):
-        print message
-        print "File: ", self._file_path
+        line = "%s\nFile: %s" % (message, self._file_path)
+        logger.error(line)
         raise

@@ -15,6 +15,7 @@ from wrapper import Wrapper
 from writer import Writer
 from utils import print_database
 from utils import is_markdown_file
+from utils import logger
 
 
 class FileMonitor(FileSystemEventHandler):
@@ -84,24 +85,21 @@ class FileMonitor(FileSystemEventHandler):
         path = event.src_path
         if not is_markdown_file(path):
             return
-        if self._debug:
-            print "Create: ", path
+        logger.info("Create: %s" % path)
         self._work(path, "update")
 
     def on_deleted(self, event):
         path = event.src_path
         if not is_markdown_file(path):
             return
-        if self._debug:
-            print "Delete: ", path
+        logger.info("Delete: %s" % path)
         self._work(path, "delete")
 
     def on_modified(self, event):
         path = event.src_path
         if not is_markdown_file(path):
             return
-        if self._debug:
-            print "Modify: ", path
+        logger.info("Modify: %s" % path)
         self._work(path, "update")
 
     def on_moved(self, event):
@@ -109,13 +107,12 @@ class FileMonitor(FileSystemEventHandler):
         dst_path = event.dest_path
         if not is_markdown_file(src_path) or not is_markdown_file(dst_path):
             return
-        if self._debug:
-            print "Moved: ", src_path, dst_path
+        logger.info("Move: %s, %s" % (src_path, dst_path))
         self._work(src_path, "delete")
         self._work(dst_path, "update")
 
     def _error(self, message):
-        print message
-        print "File: ", self._file_path
+        line = "%s\nFile: %s" % (message, self._file_path)
+        logger.error(line)
         if self._debug:
             raise

@@ -10,6 +10,7 @@ __name__ = "DatabaseWriters"
 
 
 from utils import convert_to_underline
+from utils import logger
 
 
 class DatabaseWriter(object):
@@ -63,7 +64,7 @@ class DatabaseWriter(object):
         )
 
     def _error(self, message):
-        print message
+        logger.error(message)
         raise
 
 
