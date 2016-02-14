@@ -9,6 +9,7 @@ __email__ = "dtysky@outlook.com"
 __name__ = "Wrapper"
 
 
+from copy import deepcopy as copy
 from slug_wrappers import SlugWrapper
 from get_sub_classes import get_all_classes
 
@@ -24,11 +25,11 @@ class Wrapper(object):
             obj = c()
             self._slug_wrappers[obj.get_flag()] = obj
 
-    def _slug_convert(self, metadata):
-        tmp = dict(metadata)
+    def _slug_wrap(self, metadata):
+        tmp = copy(metadata)
         for wrapper_name, wrapper_obj in self._slug_wrappers.items():
-            tmp[wrapper_name] = wrapper_obj.convert(metadata)
+            tmp[wrapper_name] = wrapper_obj.wrap(copy(metadata))
         return tmp
 
-    def convert(self, metadata):
-        return self._slug_convert(metadata)
+    def wrap(self, metadata):
+        return self._slug_wrap(metadata)

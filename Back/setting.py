@@ -11,5 +11,6 @@ __name__ = "MarkdownParser"
 
 setting = {
     "default_authors": ["dtysky"],
-    "content_path": "pages"
+    "content_path": "pages",
+    "debug_path": "./pages"
 }

@@ -27,7 +27,7 @@ class SlugWrapper(object):
             self.__class__.__name__.replace('Wrapper', '')
         )
 
-    def convert(self, metadata):
+    def wrap(self, metadata):
         flag = self.get_flag()
         return {
             "view": metadata[flag],
@@ -40,7 +40,7 @@ class TitleWrapper(SlugWrapper):
     Converting "title" metadata.
     """
 
-    def convert(self, metadata):
+    def wrap(self, metadata):
         category = metadata["category"]
         file_name = os.path.basename(metadata["file"]).split(".")[0]
         return {
@@ -57,7 +57,7 @@ class TagsWrapper(SlugWrapper):
     Converting "tags" metadata.
     """
 
-    def convert(self, metadata):
+    def wrap(self, metadata):
         return [
             {
                 "view": tag,
@@ -72,7 +72,7 @@ class AuthorsWrapper(SlugWrapper):
     Converting "authors" metadata.
     """
 
-    def convert(self, metadata):
+    def wrap(self, metadata):
         return [
             {
                 "view": author,

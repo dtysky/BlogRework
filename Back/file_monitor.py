@@ -10,6 +10,11 @@ __name__ = "FileMonitor"
 
 
 from watchdog.events import FileSystemEventHandler
+from parser import Parser
+from wrapper import Wrapper
+from writer import Writer
+from utils import print_database
+from utils import is_markdown_file
 
 
 class FileMonitor(FileSystemEventHandler):
@@ -17,14 +22,100 @@ class FileMonitor(FileSystemEventHandler):
     A monitor for listening the event while file changes.
     """
 
-    def on_moved(self, event):
-        pass
+    def __init__(self, database, dir_path, debug=False):
+        self._parser = Parser()
+        self._wrapper = Wrapper()
+        self._writer = Writer(database)
+        self._debug = debug
+        self._dir_path = dir_path
+        self._database = database
+        self._file_path = ""
+
+    def _parse(self, file_path):
+        page = self._parser.parse(file_path)
+        if self._debug:
+            print "Parse:"
+            print page
+            print ""
+        return page
+
+    def _wrap(self, page):
+        metadata = self._wrapper.wrap(page["metadata"])
+        if self._debug:
+            print "Wrap:"
+            print metadata
+            print ""
+        page["metadata"] = metadata
+        return page
+
+    def _write(self, file_path, mode, page=None):
+        self._writer.write(file_path, mode, page)
+        if self._debug:
+            print "Write(%s):" % mode
+            print_database(self._database)
+            print ""
+
+    def _work(self, file_path, mode):
+        path = file_path.replace(self._dir_path + "/", "")
+        self._file_path = path
+        if mode == "delete":
+            try:
+                self._write(path, mode)
+            except:
+                self._error("Writing error !")
+            return
+        page = None
+        try:
+            page = self._parse(path)
+        except:
+            self._error("Parsing error !")
+            return
+        try:
+            page = self._wrap(page)
+        except:
+            self._error("Wrapping error !")
+            return
+        try:
+            self._write(path, mode, page)
+        except:
+            self._error("Writing error !")
 
     def on_created(self, event):
-        pass
+        path = event.src_path
+        if not is_markdown_file(path):
+            return
+        if self._debug:
+            print "Create: ", path
+        self._work(path, "update")
 
     def on_deleted(self, event):
-        pass
+        path = event.src_path
+        if not is_markdown_file(path):
+            return
+        if self._debug:
+            print "Delete: ", path
+        self._work(path, "delete")
 
     def on_modified(self, event):
-        pass
+        path = event.src_path
+        if not is_markdown_file(path):
+            return
+        if self._debug:
+            print "Modify: ", path
+        self._work(path, "update")
+
+    def on_moved(self, event):
+        src_path = event.src_path
+        dst_path = event.dest_path
+        if not is_markdown_file(src_path) or not is_markdown_file(dst_path):
+            return
+        if self._debug:
+            print "Moved: ", src_path, dst_path
+        self._work(src_path, "delete")
+        self._work(dst_path, "update")
+
+    def _error(self, message):
+        print message
+        print "File: ", self._file_path
+        if self._debug:
+            raise

@@ -43,7 +43,6 @@ class Writer(object):
 
     def _insert(self, page):
         for writer_name, writer_obj in self._database_writers.items():
-            print page["metadata"]
             writer_obj.insert(copy(page))
 
     def _update(self, file_path, page):
@@ -66,10 +65,8 @@ class Writer(object):
                     "file": file_path
                 }
             ):
-                print "Update !"
                 self._update(file_path, page)
             else:
-                print "Insert !"
                 self._insert(page)
         elif mode == "delete":
             self._delete(file_path)
