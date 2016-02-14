@@ -25,7 +25,7 @@ class DatabaseWriter(object):
 
     def get_flag(self):
         return convert_to_underline(
-            self.__class__.__name__.replace('Database', '')
+            self.__class__.__name__.replace('Writer', '')
         )
 
     def get_slug_key(self):
@@ -75,7 +75,7 @@ class ArticleWriter(DatabaseWriter):
     def _format_page(self, page):
         result = page["metadata"]
         result["content"] = page["content"]
-        result["name"] = result[self.get_flag()]["slug"]
+        result["name"] = result[self.get_slug_key()]["slug"]
         result["slug"] = result["title"]["slug"]
         return result
 
@@ -98,13 +98,14 @@ class WriterWithList(object):
         tmp = page["metadata"]
         tmp["slug"] = tmp["title"]["slug"]
         result = []
-        for e in page["metadata"][key]:
+        for e in tmp[key]:
             tmp["name"] = e["slug"]
-            result.append(tmp)
+            result.append(tmp.copy())
         return result
 
     def insert(self, new_page):
         for page in self._format_page(new_page):
+            # print page
             self._collection.insert_one(page)
 
     def update(self, new_page, old_page):
@@ -120,7 +121,7 @@ class WriterWithList(object):
                 )
             else:
                 self._collection.insert_one(page)
-        for page in old_page:
+        for page in old_pages:
             if page not in new_pages:
                 self._collection.delete_one(
                     {
@@ -172,6 +173,10 @@ class WriterWithCount(object):
     A special class for writing tags and authors.
     """
 
+    def _format_page(self, page):
+        key = self.get_slug_key()
+        return page["metadata"][key]
+
     def _new(self, item):
         self._collection.insert_one(
             {
@@ -222,25 +227,23 @@ class WriterWithCount(object):
             )
 
     def insert(self, new_page):
-        key = self._get_slug_key()
-        for item in new_page[key]:
+        for item in self._format_page(new_page):
             self._inc(item)
 
     def update(self, new_page, old_page):
-        key = self._get_slug_key()
-        new_items, old_items = new_page[key], old_page[key]
+        new_items, old_items = self._format_page(new_page), self._format_page(old_page)
+        new_slugs = [item["slug"] for item in new_items]
+        old_slugs = [item["slug"] for item in old_items]
         for item in new_items:
-            if item not in old_items:
+            if item["slug"] not in old_slugs:
                 self._inc(item)
         for item in old_items:
-            if item not in new_page:
+            if item["slug"] not in new_slugs:
                 self._dec(item)
 
     def delete(self, old_page):
-        key = self._get_slug_key()
-        for item in old_page[key]:
+        for item in self._format_page(old_page):
             self._dec(item)
-
 
 
 class TagsWriter(WriterWithCount, DatabaseWriter):
