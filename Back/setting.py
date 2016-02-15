@@ -10,6 +10,8 @@ __name__ = "MarkdownParser"
 
 
 setting = {
+    "server_ip": "127.0.0.1",
+    "server_port": 4444,
     "default_authors": ["dtysky"],
     "content_path": "pages",
     "log_path": "logs"
