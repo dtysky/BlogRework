@@ -1,24 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9a1849ee-8ec1-4154-9665-e94d389ff590" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/pages/Create/test.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/pages/Life/test.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/test_web_server.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web_handlers.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web_server.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/router.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database_writers.py" afterPath="$PROJECT_DIR$/database_writers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/meta_parsers.py" afterPath="$PROJECT_DIR$/meta_parsers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/parser.py" afterPath="$PROJECT_DIR$/parser.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/slug_wrappers.py" afterPath="$PROJECT_DIR$/slug_wrappers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/utils.py" afterPath="$PROJECT_DIR$/utils.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wrapper.py" afterPath="$PROJECT_DIR$/wrapper.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/writer.py" afterPath="$PROJECT_DIR$/writer.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Front/src/index.js" afterPath="$PROJECT_DIR$/../Front/src/index.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../README.md" afterPath="$PROJECT_DIR$/../README.md" />
-    </list>
+    <list default="true" id="9a1849ee-8ec1-4154-9665-e94d389ff590" name="Default" comment="" />
     <ignored path="Back.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -65,8 +48,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file:///Library/Python/2.7/site-packages/flask/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.627451">
-              <caret line="98" column="34" selection-start-line="98" selection-start-column="34" selection-end-line="98" selection-end-column="34" />
+            <state vertical-scroll-proportion="0.6458333">
+              <caret line="99" column="40" selection-start-line="99" selection-start-column="40" selection-end-line="99" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -898,8 +881,8 @@
     </entry>
     <entry file="file:///Library/Python/2.7/site-packages/flask/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.627451">
-          <caret line="98" column="34" selection-start-line="98" selection-start-column="34" selection-end-line="98" selection-end-column="34" />
+        <state vertical-scroll-proportion="0.6458333">
+          <caret line="99" column="40" selection-start-line="99" selection-start-column="40" selection-end-line="99" selection-end-column="40" />
           <folding />
         </state>
       </provider>
