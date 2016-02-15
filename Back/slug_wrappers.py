@@ -22,13 +22,14 @@ class SlugWrapper(object):
     def __init__(self):
         pass
 
-    def get_flag(self):
+    @property
+    def flag(self):
         return convert_to_underline(
             self.__class__.__name__.replace('Wrapper', '')
         )
 
     def wrap(self, metadata):
-        flag = self.get_flag()
+        flag = self.flag
         return {
             "view": metadata[flag],
             "slug": url_encode(metadata[flag])

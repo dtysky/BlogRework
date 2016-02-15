@@ -24,7 +24,7 @@ class Wrapper(object):
         self._slug_wrappers = {}
         for c in get_all_classes(["slug_wrappers.py"], SlugWrapper):
             obj = c()
-            self._slug_wrappers[obj.get_flag()] = obj
+            self._slug_wrappers[obj.flag] = obj
 
     def _slug_wrap(self, metadata):
         tmp = copy(metadata)

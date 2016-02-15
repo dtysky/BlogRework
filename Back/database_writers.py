@@ -19,21 +19,29 @@ class DatabaseWriter(object):
     """
 
     def __init__(self, database):
-        flag = self.get_flag()
-        if flag not in database.collection_names():
-            self._error("No collection named '%s' in database !" % flag)
-        self._collection = database.get_collection(flag)
+        self._collection = self._get_collection(database)
 
-    def get_flag(self):
+    @property
+    def flag(self):
         return convert_to_underline(
             self.__class__.__name__.replace('Writer', '')
         )
 
-    def get_slug_key(self):
+    @property
+    def collection_name(self):
+        return self.flag
+
+    def _get_collection(self, database):
+        collection_name = self.collection_name
+        if collection_name not in database.collection_names():
+            self._error("No collection named '%s' in database !" % collection_name)
+        return database.get_collection(collection_name)
+
+    def _get_slug_key(self):
         return "title"
 
     def _format_page(self, page):
-        key = self.get_slug_key()
+        key = self._get_slug_key()
         result = page["metadata"]
         result["slug"] = result["title"]["slug"]
         result["name"] = result[key]["slug"]
@@ -76,7 +84,7 @@ class ArticleWriter(DatabaseWriter):
     def _format_page(self, page):
         result = page["metadata"]
         result["content"] = page["content"]
-        result["name"] = result[self.get_slug_key()]["slug"]
+        result["name"] = result[self._get_slug_key()]["slug"]
         result["slug"] = result["title"]["slug"]
         return result
 
@@ -95,7 +103,7 @@ class WriterWithList(object):
     """
 
     def _format_page(self, page):
-        key = self.get_slug_key()
+        key = self._get_slug_key()
         tmp = page["metadata"]
         tmp["slug"] = tmp["title"]["slug"]
         result = []
@@ -106,7 +114,6 @@ class WriterWithList(object):
 
     def insert(self, new_page):
         for page in self._format_page(new_page):
-            # print page
             self._collection.insert_one(page)
 
     def update(self, new_page, old_page):
@@ -146,7 +153,7 @@ class TagWriter(WriterWithList, DatabaseWriter):
     Writing "tag" collection.
     """
 
-    def get_slug_key(self):
+    def _get_slug_key(self):
         return "tags"
 
 
@@ -155,7 +162,7 @@ class AuthorWriter(WriterWithList, DatabaseWriter):
     Writing "author" collection.
     """
 
-    def get_slug_key(self):
+    def _get_slug_key(self):
         return "authors"
 
 
@@ -165,7 +172,7 @@ class CategoryWriter(DatabaseWriter):
     Only one category can one article have.
     """
 
-    def get_slug_key(self):
+    def _get_slug_key(self):
         return "category"
 
 
@@ -175,7 +182,7 @@ class WriterWithCount(object):
     """
 
     def _format_page(self, page):
-        key = self.get_slug_key()
+        key = self._get_slug_key()
         return page["metadata"][key]
 
     def _new(self, item):
@@ -252,7 +259,7 @@ class TagsWriter(WriterWithCount, DatabaseWriter):
     Writing "tags" collection.
     """
 
-    def get_slug_key(self):
+    def _get_slug_key(self):
         return "tags"
 
 
@@ -261,5 +268,5 @@ class AuthorsWriter(WriterWithCount, DatabaseWriter):
     Writing "authors" collection.
     """
 
-    def get_slug_key(self):
+    def _get_slug_key(self):
         return "authors"

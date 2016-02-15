@@ -3,6 +3,11 @@ Some useful tools.
 """
 
 
+__author__ = "Tianyu Dai (dtysky)"
+__email__ = "dtysky@outlook.com"
+__name__ = "Utils"
+
+
 from os.path import splitext
 from datetime import datetime
 from setting import setting
@@ -15,7 +20,7 @@ def convert_to_underline(name):
     s = name
     tmp = ""
     for _s_ in s:
-        tmp += _s_ if _s_.islower() else "_" + _s_.lower()
+        tmp += _s_ if _s_.islower() else "-" + _s_.lower()
     return tmp[1:]
 
 
@@ -81,13 +86,13 @@ class Logger(object):
 
     def info(self, message):
         self._log(
-            "Info: %s" % message,
-            "\033[0m"
+            "Info:\n%s" % message,
+            "\033[1;32;0m"
         )
 
     def error(self, message):
         self._log(
-            "Error: %s" % message,
+            "Error:\n%s" % message,
             "\033[1;31;0m"
         )
 

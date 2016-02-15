@@ -28,7 +28,7 @@ class Parser(object):
         self._meta_parsers = {}
         for c in get_all_classes(["meta_parsers.py"], MetaDataParser):
             obj = c()
-            self._meta_parsers[obj.get_flag()] = obj
+            self._meta_parsers[obj.flag] = obj
 
         from setting import setting
         self._setting = setting

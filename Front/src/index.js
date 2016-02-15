@@ -77,10 +77,10 @@ var router = (<Router history={Router.browserHistory}>
         <Route path="archives/:index" component={ContentArchives}/>
         <Route path="tag/:name/:index" component={ContentTag}/>
         <Route path="category/:name/:index" component={ContentCategory}/>
-        <Route path="Author/:name/:index" component={ContentAuthor}/>
+        <Route path="author/:name/:index" component={ContentAuthor}/>
         <Route path="tags/:name" component={ContentTags}/>
         <Route path="authors/:name" component={ContentAuthors}/>
-        <Route path="articles/:name" component={ContentArticle}/>
+        <Route path="article/:name" component={ContentArticle}/>
         <Route path="*" component={NotFind}/>
     </Route>
 </Router>);

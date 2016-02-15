@@ -26,7 +26,7 @@ class Writer(object):
         self._database_writers = {}
         for c in get_all_classes(["database_writers.py"], DatabaseWriter):
             obj = c(database)
-            self._database_writers[obj.get_flag()] = obj
+            self._database_writers[obj.flag] = obj
         self._file_path = ""
 
     def _get_old_page(self, file_path):

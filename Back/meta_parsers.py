@@ -20,7 +20,8 @@ class MetaDataParser(object):
     def __init__(self):
         pass
 
-    def get_flag(self):
+    @property
+    def flag(self):
         return convert_to_underline(
             self.__class__.__name__.replace('Parser', '')
         )
