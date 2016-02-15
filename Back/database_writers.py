@@ -43,6 +43,7 @@ class DatabaseWriter(object):
     def _format_page(self, page):
         key = self._get_slug_key()
         result = page["metadata"]
+        del result["file"]
         result["slug"] = result["title"]["slug"]
         result["name"] = result[key]["slug"]
         return result
@@ -105,6 +106,7 @@ class WriterWithList(object):
     def _format_page(self, page):
         key = self._get_slug_key()
         tmp = page["metadata"]
+        del tmp["file"]
         tmp["slug"] = tmp["title"]["slug"]
         result = []
         for e in tmp[key]:

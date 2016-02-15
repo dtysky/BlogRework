@@ -26,17 +26,16 @@ class WebServer(object):
             obj = c(database)
             self._web_handlers[obj.url] = obj
         self._web_server = Flask("web_server")
-        self._register()
+        self._register(database)
 
-    def _register(self):
+    def _register(self, database):
         logger.info("Handlers register start !")
         for handler_name, handler_obj in self._web_handlers.items():
             self._web_server.add_url_rule(
                 "%s/<string:parameters>" % handler_name,
-                view_func=handler_obj.as_view(handler_name),
-                methods=["GET"]
+                view_func=handler_obj.as_view(handler_name, database)
             )
-            logger.info("Handler: '%s'")
+            logger.info("Handler register: '%s'" % handler_name)
         logger.info("Handlers register done !")
 
     @property

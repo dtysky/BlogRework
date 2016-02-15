@@ -9,20 +9,19 @@ __email__ = "dtysky@outlook.com"
 __name__ = "WebHandler"
 
 
-from flask.views import MethodView
+from flask.views import View
 from json import dumps as to_json
 from utils import convert_to_underline
 from utils import logger
 
 
-class WebHandler(MethodView):
+class WebHandler(View):
     """
     Parent class for handling http requests.
     """
 
     def __init__(self, database):
-        self._database = database
-        self._collection = None
+        self._collection = self._get_collection(database)
 
     @property
     def flag(self):
@@ -38,11 +37,11 @@ class WebHandler(MethodView):
     def collection_name(self):
         return self.flag
 
-    def _get_collection(self):
+    def _get_collection(self, database):
         collection_name = self.collection_name
-        if collection_name not in self._database.collection_names():
+        if collection_name not in database.collection_names():
             self._error("No collection named '%s' in database !" % collection_name)
-        self._collection = self._database.get_collection(collection_name)
+        return database.get_collection(collection_name)
 
     def _find_data(self, parameters):
         return list(self._collection.find(
@@ -60,8 +59,6 @@ class WebHandler(MethodView):
         logger.info("Web, Request: %s\nParameters: %s" % (
             self.url, parameters
         ))
-        if not self._collection:
-            self._get_collection()
         data = self._find_data(
             self._parse_parameters(parameters)
         )
@@ -72,11 +69,11 @@ class WebHandler(MethodView):
         ))
         return self._format_data(data)
 
-    def get(self, parameters):
+    def dispatch_request(self, parameters=None):
         return self._handle(parameters)
 
     def _404(self, parameters):
-        logger.info("Web, 404: %s\nParameters: %s" % (
+        logger.warning("Web, 404: %s\nParameters: %s" % (
             self.url, parameters
         ))
         return "Error", 404
@@ -162,9 +159,13 @@ class ArticleHandler(WebHandler):
         return "name"
 
     def _find_data(self, parameter=None):
-        return self._collection.find(
+        data = self._collection.find_one(
             {
                 self._get_parameter_name(): parameter
             },
-            {"_id": 0}
+            {
+                "_id": 0,
+                "file": 0
+            }
         )
+        return data

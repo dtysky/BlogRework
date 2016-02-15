@@ -90,6 +90,12 @@ class Logger(object):
             "\033[1;32;0m"
         )
 
+    def warning(self, message):
+        self._log(
+            "Warning:\n%s" % message,
+            "\033[1;35;0m"
+        )
+
     def error(self, message):
         self._log(
             "Error:\n%s" % message,

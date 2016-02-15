@@ -10,7 +10,6 @@ __name__ = "SlugWrapper"
 
 
 import os
-from urllib import quote as url_encode
 from utils import convert_to_underline
 
 
@@ -32,7 +31,7 @@ class SlugWrapper(object):
         flag = self.flag
         return {
             "view": metadata[flag],
-            "slug": url_encode(metadata[flag])
+            "slug": metadata[flag]
         }
 
 
@@ -46,10 +45,7 @@ class TitleWrapper(SlugWrapper):
         file_name = os.path.basename(metadata["file"]).split(".")[0]
         return {
             "view": metadata["title"],
-            "slug": url_encode(
-                "%s-%s" %
-                (category, file_name)
-            )
+            "slug": "%s-%s" % (category, file_name)
         }
 
 
@@ -62,7 +58,7 @@ class TagsWrapper(SlugWrapper):
         return [
             {
                 "view": tag,
-                "slug": url_encode(tag)
+                "slug": tag
             }
             for tag in metadata["tags"]
         ]
@@ -77,7 +73,7 @@ class AuthorsWrapper(SlugWrapper):
         return [
             {
                 "view": author,
-                "slug": url_encode(author)
+                "slug": author
             }
             for author in metadata["authors"]
         ]
