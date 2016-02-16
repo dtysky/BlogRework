@@ -13,6 +13,7 @@ from watchdog.events import FileSystemEventHandler
 from parser import Parser
 from wrapper import Wrapper
 from writer import Writer
+from sitemap_generator import SitemapGenerator
 from utils import print_database
 from utils import is_markdown_file
 from utils import logger
@@ -27,6 +28,7 @@ class FileMonitor(FileSystemEventHandler):
         self._parser = Parser()
         self._wrapper = Wrapper()
         self._writer = Writer(database)
+        self._sitemap_generator = SitemapGenerator(database)
         self._debug = debug
         self._dir_path = dir_path
         self._database = database
@@ -64,22 +66,26 @@ class FileMonitor(FileSystemEventHandler):
                 self._write(path, mode)
             except:
                 self._error("Writing error !")
-            return
-        page = None
+        else:
+            page = None
+            try:
+                page = self._parse(path)
+            except:
+                self._error("Parsing error !")
+                return
+            try:
+                page = self._wrap(page)
+            except:
+                self._error("Wrapping error !")
+                return
+            try:
+                self._write(path, mode, page)
+            except:
+                self._error("Writing error !")
         try:
-            page = self._parse(path)
+            self._sitemap_generator.generate()
         except:
-            self._error("Parsing error !")
-            return
-        try:
-            page = self._wrap(page)
-        except:
-            self._error("Wrapping error !")
-            return
-        try:
-            self._write(path, mode, page)
-        except:
-            self._error("Writing error !")
+            self._error("Sitemap generating error !")
 
     def on_created(self, event):
         path = event.src_path

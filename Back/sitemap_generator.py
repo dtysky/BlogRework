@@ -54,7 +54,6 @@ class SitemapGenerator(object):
                 self._error("Sitemap: collection 'archives' is necessary !")
             self._collections[url] = database.get_collection(name)
         self._static = [
-            "archives",
             "tags",
             "authors",
             "categories",
@@ -78,6 +77,10 @@ class SitemapGenerator(object):
         logger.info("Sitemap: Writing %s..." % url)
         result = ""
         for item in list(collection.find({})):
+            result += self._add_one(
+                    "%s/%s" % (url, item["slug"]),
+                    datetime.now()
+                )
             for index in xrange(item["count"] / setting["sitemap_articles_per_page"] + 1):
                 result += self._add_one(
                     "%s/%s/%d" % (url, item["slug"], index),
@@ -85,19 +88,23 @@ class SitemapGenerator(object):
                 )
         return result
 
-    def _add_archives(self, url, collection):
-        logger.info("Sitemap: Writing %s..." % url)
+    def _add_archives(self, collection):
+        logger.info("Sitemap: Writing %s..." % "article")
         result = ""
         archives = list(collection.find({}))
         page_count = len(archives) / 10 + 1
+        result += self._add_one(
+                "archives",
+                datetime.now()
+            )
         for index in xrange(page_count):
             result += self._add_one(
-                "%s/%d" % (url, index),
+                "%s/%d" % ("archives", index),
                 datetime.now()
             )
         for article in archives:
             result += self._add_one(
-                "%s/%s" % (url, article["slug"]),
+                "%s/%s" % ("article", article["slug"]),
                 datetime.strptime(article["date"], "%Y.%m.%d %H:%M")
             )
         return result
@@ -121,7 +128,7 @@ class SitemapGenerator(object):
                     self._add_collection(url, self._collections[url])
                 )
             f.write(
-                self._add_archives("article", self._collections["article"])
+                self._add_archives(self._collections["article"])
             )
             f.write(template["end"])
             f.flush()
