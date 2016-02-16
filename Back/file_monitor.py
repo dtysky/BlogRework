@@ -14,6 +14,7 @@ from parser import Parser
 from wrapper import Wrapper
 from writer import Writer
 from sitemap_generator import SitemapGenerator
+from feeds_generator import FeedsGenerator
 from utils import print_database
 from utils import is_markdown_file
 from utils import logger
@@ -29,6 +30,7 @@ class FileMonitor(FileSystemEventHandler):
         self._wrapper = Wrapper()
         self._writer = Writer(database)
         self._sitemap_generator = SitemapGenerator(database)
+        self._feeds_generator = FeedsGenerator(database)
         self._debug = debug
         self._dir_path = dir_path
         self._database = database
@@ -86,6 +88,10 @@ class FileMonitor(FileSystemEventHandler):
             self._sitemap_generator.generate()
         except:
             self._error("Sitemap generating error !")
+        try:
+            self._feeds_generator.generate()
+        except:
+            self._error("Feeds generating error !")
 
     def on_created(self, event):
         path = event.src_path
