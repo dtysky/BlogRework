@@ -52,6 +52,15 @@ def is_markdown_file(file_path):
     return splitext(file_path)[1] == ".md"
 
 
+def format_date(date):
+    if date.tzinfo:
+        tz = date.strftime('%z')
+        tz = tz[:-2] + ':' + tz[-2:]
+    else:
+        tz = "-00:00"
+    return date.strftime("%Y-%m-%dT%H:%M:%S") + tz
+
+
 class Logger(object):
     """
     A monitor for printing and storing server state.

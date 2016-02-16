@@ -272,3 +272,16 @@ class AuthorsWriter(WriterWithCount, DatabaseWriter):
 
     def _get_slug_key(self):
         return "authors"
+
+
+class CategoriesWriter(WriterWithCount, DatabaseWriter):
+    """
+    Writing "categories" collection.
+    """
+
+    def _get_slug_key(self):
+        return "category"
+
+    def _format_page(self, page):
+        key = self._get_slug_key()
+        return [page["metadata"][key]]
