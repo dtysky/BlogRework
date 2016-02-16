@@ -1,0 +1,153 @@
+# T_T coding=utf-8 T_T
+
+"""
+Generating feeds(RSS).
+For:
+    All articles(all.rss)
+    Categories(<category>.rss)
+    Authors(<author>.rss)
+"""
+
+__author__ = "Tianyu Dai (dtysky)"
+__email__ = "dtysky@outlook.com"
+__name__ = "FeedsGenerator"
+
+
+from datetime import datetime
+from utils import logger
+from setting import setting
+from utils import format_date
+
+
+template = {
+    "begin": """<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>{0}</title>
+<link>{1}</link><description>{2}</description><atom:link href="{3}" rel="self"></atom:link>
+<lastBuildDate>{4}</lastBuildDate>
+
+""",
+    "content": """<item>
+<title>{0}</title>
+<link>{1}</link>
+<description>{2}</description>
+{3}<pubDate>{4}</pubDate>
+<guid>tag:{5},{6}:{7}</guid>
+{8}</item>
+
+""",
+    "end": """</channel>
+</rss>""",
+    "creator": """<dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">{0}</dc:creator>
+""",
+    "tag": """<category>{0}</category>
+"""
+}
+
+
+
+class FeedsGenerator(object):
+    """
+    Generating feeds.
+    Depend on collection "article".
+    """
+
+    def __init__(self, database, debug=False):
+        self._collection = database.get_collection("article")
+        self._debug = debug
+        self._files = {}
+
+    def _add_one(self, article):
+        result = template["content"].format(
+            article["title"]["view"],
+            "%s/article/%s" % (
+                setting["site_url"],
+                article["title"]["slug"]
+            ),
+            article["content"],
+            "".join(
+                [
+                    template["creator"].format(
+                        author["view"]
+                    )
+                    for author in article["authors"]
+                ]
+            ),
+            format_date(
+                datetime.strptime(article["date"], "%Y.%m.%d %H:%M"),
+                "feeds"
+            ),
+            setting["site_url"],
+            article["date"],
+            "article/%s" % article["title"]["slug"],
+            "".join(
+                [
+                    template["tag"].format(
+                        tag["view"]
+                    )
+                    for tag in article["tags"]
+                ]
+            )
+        )
+        if self._debug:
+            print result
+        return result
+
+    def _format_article(self, article):
+        return (
+            article,
+            article["authors"] + [
+                article["category"],
+                {
+                    "view": "all",
+                    "slug": "all"
+                }
+            ]
+        )
+
+    def _update_files(self, file_names, time):
+        for name_pair in file_names:
+            name, view = name_pair["slug"], name_pair["view"]
+            if name not in self._files:
+                file_name = "%s/%s.rss.xml" % (
+                        setting["feeds_dir_path"],
+                        name
+                    )
+                self._files[name] = open(file_name, "w")
+                self._files[name].write(
+                    template["begin"].format(
+                        setting["site_title"],
+                        setting["site_url"],
+                        setting["site_description"],
+                        "%s/%s/%s" % (
+                            setting["site_url"],
+                            setting["feeds_slug"],
+                            file_name
+                        ),
+                        time
+                    )
+                )
+                logger.info("Feeds: Writing %s..." % view)
+
+    def generate(self):
+        logger.info("Feeds: Writing start...")
+        self._files = {}
+        time = format_date(datetime.now(), "feeds")
+        articles = list(self._collection.find({}))
+        for article in articles:
+            content, file_names = self._format_article(article)
+            self._update_files(file_names, time)
+            for name in file_names:
+                self._files[name["slug"]].write(self._add_one(content))
+        for file_name, file_obj in self._files.items():
+            file_obj.write(
+                template["end"]
+            )
+            file_obj.close()
+            logger.info("Feeds: Done %s..." % file_name)
+        logger.info("Feeds: Writing done...")
+
+    def _error(self, message):
+        logger.error(message)
+        raise

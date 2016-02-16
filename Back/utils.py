@@ -52,13 +52,16 @@ def is_markdown_file(file_path):
     return splitext(file_path)[1] == ".md"
 
 
-def format_date(date):
+def format_date(date, mode):
     if date.tzinfo:
         tz = date.strftime('%z')
         tz = tz[:-2] + ':' + tz[-2:]
     else:
         tz = "-00:00"
-    return date.strftime("%Y-%m-%dT%H:%M:%S") + tz
+    if mode == "sitemap":
+        return date.strftime("%Y-%m-%dT%H:%M:%S") + tz
+    elif mode == "feeds":
+        return date.strftime("%A, %d %b %Y %H:%M:%S ") + tz
 
 
 class Logger(object):

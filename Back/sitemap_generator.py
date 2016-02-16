@@ -6,7 +6,7 @@ Generating sitemap.
 
 __author__ = "Tianyu Dai (dtysky)"
 __email__ = "dtysky@outlook.com"
-__name__ = "FileMonitor"
+__name__ = "SitemapGenerator"
 
 
 from datetime import datetime
@@ -65,7 +65,7 @@ class SitemapGenerator(object):
         result = template["content"].format(
             setting["site_url"],
             url,
-            format_date(time),
+            format_date(time, "sitemap"),
             setting["sitemap_freq"],
             setting["sitemap_priority"]
         )
@@ -119,7 +119,7 @@ class SitemapGenerator(object):
         ])
 
     def generate(self):
-        logger.info("Sitemap: Writing start")
+        logger.info("Sitemap: Writing start...")
         with open(setting["sitemap_path"], "w") as f:
             f.write(template["begin"])
             f.write(self._add_static())
@@ -131,8 +131,8 @@ class SitemapGenerator(object):
                 self._add_archives(self._collections["article"])
             )
             f.write(template["end"])
-            f.flush()
-        logger.info("Sitemap: Writing done")
+            f.close()
+        logger.info("Sitemap: Writing done...")
 
     def _error(self, message):
         logger.error(message)
