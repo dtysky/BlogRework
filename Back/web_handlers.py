@@ -13,6 +13,7 @@ from flask.views import View
 from json import dumps as to_json
 from utils import convert_to_underline
 from utils import logger
+from setting import setting
 
 
 class WebHandler(View):
@@ -168,4 +169,57 @@ class ArticleHandler(WebHandler):
                 "file": 0
             }
         )
+        return data
+
+
+class SitemapHandler(WebHandler):
+    """
+    Handling "sitemap" request.
+    """
+
+    def _get_collection(self, database):
+        return None
+
+    def _find_data(self, parameters):
+        with open(setting["sitemap_path"]) as f:
+            result = f.read()
+        return result
+
+    def _parse_parameters(self, parameters):
+        return parameters
+
+    def _format_data(self, data):
+        return data
+
+
+class FeedsHandler(WebHandler):
+    """
+    Handling "feeds" request.
+    """
+
+
+    def _get_collection(self, database):
+        return None
+
+    def _find_data(self, parameters):
+        import json
+        with open(
+                "%s/indexes.json" % setting["feeds_dir_path"]
+        ) as f:
+            indexes = json.load(f)
+        if parameters not in indexes:
+            return None
+        with open(
+            "%s/%s" % (
+                        setting["feeds_dir_path"],
+                        indexes[parameters]
+                )
+        ) as f:
+            result = f.read()
+        return result
+
+    def _parse_parameters(self, parameters):
+        return parameters
+
+    def _format_data(self, data):
         return data

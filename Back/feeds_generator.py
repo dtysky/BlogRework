@@ -13,6 +13,7 @@ __email__ = "dtysky@outlook.com"
 __name__ = "FeedsGenerator"
 
 
+import json
 from datetime import datetime
 from utils import logger
 from setting import setting
@@ -140,12 +141,22 @@ class FeedsGenerator(object):
             self._update_files(file_names, time)
             for name in file_names:
                 self._files[name["slug"]].write(self._add_one(content))
+        indexes = {}
         for file_name, file_obj in self._files.items():
             file_obj.write(
                 template["end"]
             )
             file_obj.close()
+            indexes[file_name] = "%s.rss.xml" % file_name
             logger.info("Feeds: Done %s..." % file_name)
+        with open(
+            "%s/%s" % (
+                    setting["feeds_dir_path"],
+                    "indexes.json"
+                ),
+            "w"
+        ) as f:
+            json.dump(indexes ,f)
         logger.info("Feeds: Writing done...")
 
     def _error(self, message):
