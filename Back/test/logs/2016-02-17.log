@@ -1,40 +1,22 @@
-2016-02-17 10:23:55: Info:
+2016-02-17 21:31:15: Info:
 Handlers register start !
-2016-02-17 10:23:55: Info:
-Handler register: '/feeds'
-2016-02-17 10:23:55: Info:
-Handler register: '/tag'
-2016-02-17 10:23:55: Info:
-Handler register: '/article'
-2016-02-17 10:23:55: Info:
-Handler register: '/authors'
-2016-02-17 10:23:55: Info:
-Handler register: '/archives'
-2016-02-17 10:23:55: Info:
-Handler register: '/sitemap'
-2016-02-17 10:23:55: Info:
-Handler register: '/category'
-2016-02-17 10:23:55: Info:
-Handler register: '/author'
-2016-02-17 10:23:55: Info:
-Handler register: '/tags'
-2016-02-17 10:23:55: Info:
+2016-02-17 21:31:15: Info:
+Handler register: 'category'
+2016-02-17 21:31:15: Info:
+Handler register: 'author'
+2016-02-17 21:31:15: Info:
+Handler register: 'tags'
+2016-02-17 21:31:15: Info:
+Handler register: 'tag'
+2016-02-17 21:31:15: Info:
+Handler register: 'archives'
+2016-02-17 21:31:15: Info:
+Handler register: 'authors'
+2016-02-17 21:31:15: Info:
+Handler register: 'article'
+2016-02-17 21:31:15: Info:
+Handler register: 'feeds'
+2016-02-17 21:31:15: Info:
+Handler register: 'sitemap'
+2016-02-17 21:31:15: Info:
 Handlers register done !
-2016-02-17 10:23:58: Info:
-Web, Request: /feeds
-Parameters: dtysky
-2016-02-17 10:23:58: Info:
-Web, Data found: /feeds
-Parameters: dtysky
-2016-02-17 10:24:30: Info:
-Web, Request: /feeds
-Parameters: create
-2016-02-17 10:24:30: Warning:
-Web, 404: /feeds
-Parameters: create
-2016-02-17 10:24:39: Info:
-Web, Request: /feeds
-Parameters: Create
-2016-02-17 10:24:39: Info:
-Web, Data found: /feeds
-Parameters: Create

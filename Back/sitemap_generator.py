@@ -81,7 +81,7 @@ class SitemapGenerator(object):
                     "%s/%s" % (url, item["slug"]),
                     datetime.now()
                 )
-            for index in xrange(item["count"] / setting["sitemap_articles_per_page"] + 1):
+            for index in xrange(item["count"] / setting["articles_per_page"] + 1):
                 result += self._add_one(
                     "%s/%s/%d" % (url, item["slug"], index),
                     datetime.now()

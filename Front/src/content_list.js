@@ -10,9 +10,12 @@ var Loading = require('react-loading');
 var format = require('util').format;
 
 var Pagination = require('./pagination');
-var database = require('./utils').database;
+var cache = require('./cache');
 var getLocalUrl = require('./utils').getLocalUrl;
-var site_title = require('./utils').config.site_title;
+var config = require('./utils').config;
+var site_title = config.site_title;
+var server_url = config.server_url;
+var articles_per_page = config.articles_per_page;
 
 require('./theme/css/sky.css');
 
@@ -24,50 +27,93 @@ module.exports = React.createClass({
             content: []
         };
     },
-    getInfo: function(){
-        var collection = database.db.collection(this.props.type);
-        var totle_count = 0;
-        collection.find({
-            name: this.props.name
-        }).sort({
-            date: -1
-        }).toArray(
-            function(err, data){
-                if(err || data.length === 0){
+    getAll: function(name){
+        this.setState({
+            state: "wait"
+        });
+        $.ajax({
+            url: format(
+                "%s/%s",
+                server_url,
+                name
+            ),
+            success: function(result, status){
+                if(status === 404){
+                    //重定向
+                }
+                else if(status === 200) {
+                    var data = JSON.parse(result);
+                    cache.add(
+                        name,
+                        data.sort(
+                            {
+                                "date": -1
+                            }
+                        )
+                    );
+                }
+                else{
                     this.setState({
                         state: "error"
                     });
                 }
-                totle_count = data.length;
-                var max_index = parseInt(totle_count / 10) + 1;
-                var left = this.props.index;
-                var right = left + 10 < max_index ? left + 10 : max_index;
-                var view = data[0].view;
-                this.setState({
-                    state: "ok",
-                    max_index: max_index,
-                    content: data.slice(left, right)
-                });
-                this.props.handleHead({
-                    title: format("%s-%d - %s", view, this.props.index, site_title),
-                    keywords: format("%s", view),
-                    description: (this.props.description ? this.props.description : format("这是有关%s的所有文章", view)),
-                    author: "dtysky,命月天宇"
-                });
-            });
+            }
+        }).bind(this);
+    },
+    getInfo: function(name){
+        var data = cache.get(name);
+        var totle_count = data.length;
+        var max_index = parseInt(totle_count / articles_per_page) + 1;
+        var left = this.props.index;
+        var right = left + articles_per_page < max_index ? left + articles_per_page : max_index;
+        var view = data.view;
+        this.setState({
+            state: "ok",
+            max_index: max_index,
+            content: data.content.slice(left, right)
+        });
+        this.props.handleHead({
+            title: format(
+                "%s-%d - %s",
+                view,
+                this.props.index,
+                site_title
+            ),
+            keywords: format(
+                "%s",
+                view
+            ),
+            description: (
+                this.props.description ?
+                    this.props.description :
+                    format(
+                        "这是有关%s的所有文章",
+                        view
+                    )
+            ),
+            author: "dtysky,命月天宇"
+        });
     },
     componentDidMount: function(){
-        var timeoutId = 0;
-        var fun = function() {
-            if (database.ready) {
-                clearTimeout(timeoutId);
-                this.getInfo();
-            }
-            else {
-                timeoutId = setTimeout(fun, 500);
-            }
-        };
-        fun();
+        var name = format(
+            "%s/%s",
+            this.props.type,
+            this.props.name
+        );
+        if(!cache.has(name)){
+            this.getAll(name);
+            var timeoutId = 0;
+            var fun = function() {
+                if (cache.has(name)) {
+                    clearTimeout(timeoutId);
+                    this.getInfo(name);
+                }
+                else {
+                    timeoutId = setTimeout(fun, 500);
+                }
+            };
+            fun();
+        }
     },
     render: function(){
         if (this.state.state === "error"){
@@ -92,7 +138,7 @@ module.exports = React.createClass({
                                 <article>
                                     <div>
                                         <Link
-                                            to={getLocalUrl("article", item.slug, 0)}
+                                            to={getLocalUrl("article", item.slug, null)}
                                             rel="bookmark"
                                             title={item.title}
                                         >
@@ -103,7 +149,7 @@ module.exports = React.createClass({
                                         <p>{item.summary}</p>
                                         <hr className='home-main-content-ghr'/>
                                         {
-                                            item.author.map(function(author){
+                                            item.authors.map(function(author){
                                                 return (
                                                     <Link
                                                         to={getLocalUrl("author", author.slug, 0)}
@@ -122,7 +168,7 @@ module.exports = React.createClass({
                                         <p>,</p>
                                         <p>路标：</p>
                                         {
-                                            item.tag.map(function(tag){
+                                            item.tags.map(function(tag){
                                                 return (
                                                     <Link
                                                         to={getLocalUrl("tag", tag.slug, 0)}

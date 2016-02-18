@@ -1,7 +1,7 @@
-'use strict';
 /**
  * Created by dtysky on 16/2/3.
  */
+'use strict';
 
 
 var React = require('react/addons');
@@ -20,7 +20,7 @@ module.exports = React.createClass({
                         links.map(function(item){
                             return (
                                 <Link to={item.url} className="thank">{item.name}</Link>
-                            )
+                            );
                         })
                     }
                 </div>

@@ -14,6 +14,7 @@ from json import dumps as to_json
 from utils import convert_to_underline
 from utils import logger
 from setting import setting
+from flask import Response
 
 
 class WebHandler(View):
@@ -32,7 +33,7 @@ class WebHandler(View):
 
     @property
     def url(self):
-        return "/%s" % self.flag
+        return self.flag
 
     @property
     def collection_name(self):
@@ -53,31 +54,50 @@ class WebHandler(View):
     def _parse_parameters(self, parameters):
         return parameters
 
-    def _format_data(self, data):
-        return to_json(data)
+    def _format_data(self, data, url, parameters):
+        return to_json(
+            {
+                "view": url,
+                "content": data
+            }
+        )
 
     def _handle(self, parameters=None):
         logger.info("Web, Request: %s\nParameters: %s" % (
             self.url, parameters
         ))
+        params = self._parse_parameters(parameters)
         data = self._find_data(
-            self._parse_parameters(parameters)
+            self._parse_parameters(params)
         )
         if not data:
             return self._404(parameters)
         logger.info("Web, Data found: %s\nParameters: %s" % (
             self.url, parameters
         ))
-        return self._format_data(data)
+        return self._format_data(data, self.url, params)
+
+    def _response(self, data, status):
+        response = Response(
+            data,
+            status=status
+        )
+        response.headers.add(
+            'Access-Control-Allow-Origin', '*'
+        )
+        return response
 
     def dispatch_request(self, parameters=None):
-        return self._handle(parameters)
+        return self._response(
+            self._handle(parameters),
+            200
+        )
 
     def _404(self, parameters):
         logger.warning("Web, 404: %s\nParameters: %s" % (
             self.url, parameters
         ))
-        return "Error", 404
+        return self._response("Error", 404)
 
     def _error(self, message):
         line = "Web: %s" % message
@@ -125,6 +145,14 @@ class HandlerWithOneParameter(object):
             {"_id": 0}
         ))
 
+    def _format_data(self, data, url, parameters):
+        return to_json(
+            {
+                "view": data[0][url][parameters]["view"],
+                "content": data
+            }
+        )
+
 
 class TagHandler(HandlerWithOneParameter, WebHandler):
     """
@@ -171,6 +199,15 @@ class ArticleHandler(WebHandler):
         )
         return data
 
+    def _format_data(self, data, url, parameters):
+        return to_json(
+            {
+                "view": data["title"]["view"],
+                "content": data
+            }
+        )
+
+
 
 class SitemapHandler(WebHandler):
     """
@@ -188,7 +225,7 @@ class SitemapHandler(WebHandler):
     def _parse_parameters(self, parameters):
         return parameters
 
-    def _format_data(self, data):
+    def _format_data(self, data, url, parameters):
         return data
 
 
@@ -196,7 +233,6 @@ class FeedsHandler(WebHandler):
     """
     Handling "feeds" request.
     """
-
 
     def _get_collection(self, database):
         return None
@@ -221,5 +257,5 @@ class FeedsHandler(WebHandler):
     def _parse_parameters(self, parameters):
         return parameters
 
-    def _format_data(self, data):
+    def _format_data(self, data, url, parameters):
         return data

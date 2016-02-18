@@ -3,19 +3,46 @@
  * Created by dtysky on 16/2/3.
  */
 
-var Mongo = require('mongodb').MongoClient;
-
-var config = JSON.load("../config.json");
-
-var database = {
-    ready: false,
-    db: undefined
+var config = {
+    "site_title": "dtysky|一个行者的轨迹",
+    //"site_url": "http://dtysky.moe",
+    "site_url": "http://localhost:8000",
+    "server_url": "http://localhost:4444",
+    "tag_cloud_step": 4,
+    "articles_per_page": 10,
+    "links": [
+        {"name": "Pelican", "url" : "http://getpelican.com"},
+        {"name": "Lm7", "url" : "http://lm7.xxxxxxxx.jp"},
+        {"name": "JqColor", "url" : "https://github.com/jquery/jquery-color"},
+        {"name": "APlayer", "url" : "https://github.com/DIYgod/APlayer"},
+        {"name": "Glyph", "url" : "http://glyphicons.com"},
+        {"name": "Nekohand", "url" : "http://blog.nekohand.moe/"}
+    ],
+    "theme_color": {
+        "title-create": "#586181",
+        "title-skill": "#808d6a",
+        "title-art": "#a69e5c",
+        "title-life": "#b57e79",
+        "home-menu-home": "#6ca82b",
+        "home-menu-tags": "#12678e",
+        "home-menu-authors": "#72944e",
+        "home-menu-home-phone": "#6ca82b",
+        "home-menu-tags-phone": "#12678e",
+        "home-menu-authors-phone": "#72944e"
+    },
+    "theme_background": {
+        "title-create": "/theme/image/create.jpg",
+        "title-skill": "/theme/image/skill.jpg",
+        "title-art": "/theme/image/art.jpg",
+        "title-life": "/theme/image/life.jpg",
+        "home-menu-home": "/theme/image/home.jpg",
+        "home-menu-tags": "/theme/image/tags.jpg",
+        "home-menu-authors": "/theme/image/authors.jpg",
+        "home-menu-home-phone": "/theme/image/home.jpg",
+        "home-menu-tags-phone": "/theme/image/tags.jpg",
+        "home-menu-authors-phone": "/theme/image/tags.jpg"
+    }
 };
-
-Mongo.connect(config.mongo_url, function(db){
-    database.ready = true;
-    database.db = db;
-});
 
 var changeTheme = function(id){
     var color = config.theme_color[id];
@@ -39,6 +66,5 @@ var getLocalUrl = function(type, name, index){
 
 module.exports = {
     config: config,
-    database: database,
     getLocalUrl: getLocalUrl
 };

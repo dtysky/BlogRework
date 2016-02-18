@@ -17,4 +17,4 @@ if __name__ == "__main__":
     file_monitor = FileMonitor(database, "./pages", True)
     observer.schedule(file_monitor, path="./pages", recursive=True)
     observer.start()
-    server.run(debug=True)
+    server.run("localhost", 4444, debug=True)

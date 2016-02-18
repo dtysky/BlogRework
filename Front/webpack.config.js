@@ -8,6 +8,7 @@
 var webpack = require('webpack');
 var path = require('path');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     cache: true,
@@ -20,7 +21,7 @@ module.exports = {
 
     output: {
         filename: "bundle.js",
-        publicPath: '/assets/'
+        publicPath: '/asserts/'
     },
 
     stats: {
@@ -32,16 +33,11 @@ module.exports = {
     devtool: false,
 
     resolve: {
-        root:[path.join(__dirname)],
+        root:[path.join(__dirname, "src")],
         extensions: ["", ".webpack.js", ".web.js", ".js", ".node", ".json"]
     },
 
-    node: {
-        net: "empty",
-        tls: "empty"
-    },
-
-    target: "node",
+    target: "web",
 
     module: {
         preLoaders: [{
@@ -88,6 +84,10 @@ module.exports = {
                 test: /\.json$/,
                 loader: "json-loader"
             }
+        ],
+        noParse:[
+            'react-bootstrap',
+            'jquery'
         ]
     },
 
@@ -98,6 +98,10 @@ module.exports = {
         new webpack.NoErrorsPlugin(),
         new webpack.ProvidePlugin({
             $:'jquery'
+        }),
+        new HtmlWebpackPlugin({
+            inject: true,
+            template: './src/index.html'
         })
     ]
 

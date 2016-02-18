@@ -32,7 +32,7 @@ class WebServer(object):
         logger.info("Handlers register start !")
         for handler_name, handler_obj in self._web_handlers.items():
             self._web_server.add_url_rule(
-                "%s/<string:parameters>" % handler_name,
+                "/%s/<string:parameters>" % handler_name,
                 view_func=handler_obj.as_view(handler_name, database)
             )
             logger.info("Handler register: '%s'" % handler_name)

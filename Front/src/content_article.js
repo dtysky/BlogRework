@@ -9,10 +9,12 @@ var Loading = require('react-loading');
 var Link = require('react-router').Link;
 var format = require('util').format;
 
-var database = require('./utils').database;
+var cache = require('./cache');
 var getLocalUrl = require('./utils').getLocalUrl;
-var site_title = require('./utils').config.site_title;
-var site_url = require('./utils').config.site_url;
+var config = require('./utils').config;
+var site_title = config.site_title;
+var server_url = config.server_url;
+var site_url = config.site_url;
 
 require('./theme/css/sky.css');
 require('./theme/css/article.css');
@@ -29,50 +31,83 @@ module.exports = React.createClass({
             content: ""
         };
     },
-    getInfo: function(){
-        var collection = database.db.collection("article");
-        collection.findOne({
-            slug: this.props.name
-        }, function(err, data){
-            if(err){
-                this.setState({
-                    state: "error"
-                });
+    getAll: function(name){
+        this.setState({
+            state: "wait"
+        });
+        $.ajax({
+            url: format(
+                "%s/%s",
+                server_url,
+                name
+            ),
+            success: function(result, status){
+                if(status === 404){
+                    //重定向
+                }
+                else if(status === 200) {
+                    var data = JSON.parse(result);
+                    cache.add(
+                        name,
+                        data.sort(
+                            {
+                                "date": -1
+                            }
+                        )
+                    );
+                }
+                else{
+                    this.setState({
+                        state: "error"
+                    });
+                }
             }
-            this.setState({
-                state: "ok",
-                title: data.title,
-                slug: data.slug,
-                author: data.author,
-                tag: data.tag,
-                content: data.content
-            });
-            var author = data.author.map(function(item){
-                return item.view;
-            });
-            var tag = data.tag.map(function(item){
-                return item.view;
-            });
-            this.props.handleHead({
-                title: format("%s - %s", data.title, site_title),
-                keywords: tag.join(","),
-                description: data.summary,
-                author: author.join(",")
-            });
+        }).bind(this);
+    },
+    getInfo: function(){
+        var data = cache.get(name);
+        this.setState({
+            state: "ok",
+            title: data.content.title.view,
+            slug: data.content.slug,
+            authors: data.content.authors,
+            tags: data.content.tags,
+            category: data.content.category,
+            content: data.content.content
+        });
+        var authors = data.content.author.map(function(item){
+            return item.view;
+        });
+        var tags = data.content.tags.map(function(item){
+            return item.view;
+        });
+        this.props.handleHead({
+            title: format("%s - %s", data.view, site_title),
+            keywords: tags.join(","),
+            description: data.content.summary,
+            author: authors.join(",")
         });
     },
     componentDidMount: function(){
-        var timeoutId = 0;
-        var fun = function() {
-            if (database.ready) {
-                clearTimeout(timeoutId);
-                this.getInfo();
-            }
-            else {
-                timeoutId = setTimeout(fun, 500);
-            }
-        };
-        fun();
+        var name = format(
+            "%s/%s",
+            this.props.type,
+            this.props.name
+        );
+        if(!cache.has(name)){
+            this.getAll(name);
+            var timeoutId = 0;
+            var fun = function() {
+                if (cache.has(name)) {
+                    clearTimeout(timeoutId);
+                    this.getInfo(name);
+                }
+                else {
+                    timeoutId = setTimeout(fun, 500);
+                }
+            };
+            fun();
+        }
     },
     componentDidUpdate: function(){
         bShare.addEntry({
@@ -111,7 +146,7 @@ module.exports = React.createClass({
                     <h1>{this.state.title}</h1>
                     <p>
                         {
-                            this.state.author.map(function(author){
+                            this.state.authors.map(function(author){
                                 return (
                                     <Link
                                         to={getLocalUrl("author", author.slug, 0)}
@@ -122,23 +157,17 @@ module.exports = React.createClass({
                             })
                         }
                          更新于 {this.state.date} 在
-                        {
-                            this.state.category.map(function(category){
-                                return (
-                                    <Link
-                                        to={getLocalUrl("category", category.slug, 0)}
-                                    >
-                                        {category.view}
-                                    </Link>
-                                );
-                            })
-                        }
+                        <Link
+                            to={getLocalUrl("category", this.state.category.slug, 0)}
+                        >
+                            {this.state.category.view}
+                        </Link>
                          内
                     </p>
                     <p>
                         路标：
                         {
-                            this.state.tag.map(function(tag){
+                            this.state.tags.map(function(tag){
                                 return (
                                     <Link
                                         to={getLocalUrl("tag", tag.slug, 0)}

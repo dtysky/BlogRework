@@ -10,7 +10,7 @@ __name__ = "MarkdownParser"
 
 
 setting = {
-    "server_ip": "127.0.0.1",
+    "server_ip": "localhost",
     "server_port": 4444,
     "default_authors": ["dtysky"],
     "site_url": "http://dtysky.moe",
@@ -19,7 +19,7 @@ setting = {
     "sitemap_path": "sitemap.xml",
     "sitemap_freq": "daily",
     "sitemap_priority": 0.5,
-    "sitemap_articles_per_page": 10,
+    "articles_per_page": 10,
     "feeds_dir_path": "feeds",
     "feeds_slug": "feeds",
     "content_path": "pages",

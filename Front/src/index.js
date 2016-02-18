@@ -5,15 +5,17 @@
 
 var React = require('react/addons');
 var ReactDom = require('react-dom');
-var Router = require('react-router');
-var Route = Router.Route;
-var IndexRoute = Router.IndexRoute;
+var ReactRouter = require('react-router');
+var Router = ReactRouter.Router;
+var Route = ReactRouter.Route;
+var IndexRoute = ReactRouter.IndexRoute;
 var Helmet = require('react-helmet');
 
 var Title = require('./title');
 var Menu = require('./menu');
 var MenuPhone = require('./menu_phone');
 var LeftImage = require('./left_image');
+var Footer = require('./footer');
 var Config = require('./utils').config;
 var ContentHome = require('./content_home');
 var ContentTag = require('./content_tag');
@@ -61,28 +63,31 @@ var App = React.createClass({
                 <LeftImage/>
                 <Menu/>
                 <MenuPhone/>
-                <Router.RouteHandler
-                    id="home-main-content"
-                />
+                {this.props.children}
+                <Footer/>
             </div>
         );
     }
 });
 
-
 //name = slug
-var router = (<Router history={Router.browserHistory}>
-    <Route path="/" component={App}>
-        <IndexRoute component={ContentHome}/>
-        <Route path="archives/:index" component={ContentArchives}/>
-        <Route path="tag/:name/:index" component={ContentTag}/>
-        <Route path="category/:name/:index" component={ContentCategory}/>
-        <Route path="author/:name/:index" component={ContentAuthor}/>
-        <Route path="tags/:name" component={ContentTags}/>
-        <Route path="authors/:name" component={ContentAuthors}/>
-        <Route path="article/:name" component={ContentArticle}/>
-        <Route path="*" component={NotFind}/>
-    </Route>
-</Router>);
+var router = (
+    <Router
+        history={ReactRouter.hashHistory}
+        id="home-main-content"
+    >
+        <Route path="/" component={App}>
+            <IndexRoute component={ContentHome}/>
+            <Route path="archives(/:index)" component={ContentArchives}/>
+            <Route path="tag/:name(/:index)" component={ContentTag}/>
+            <Route path="category/:name(/:index)" component={ContentCategory}/>
+            <Route path="author/:name(/:index)" component={ContentAuthor}/>
+            <Route path="tags" component={ContentTags}/>
+            <Route path="authors" component={ContentAuthors}/>
+            <Route path="article/:name" component={ContentArticle}/>
+            <Route path="*" component={NotFind}/>
+        </Route>
+    </Router>
+);
 
 ReactDom.render(router, document.getElementById('content'));

@@ -16,16 +16,16 @@ module.exports = React.createClass({
                 <Link to="/articles/wo-de-jian-li.html" id="home-menu-name">dtysky</Link>
                 <div id="player1" className="aplayer"></div>
                 <div id="home-menu-icons">
-                    <Link className="home-menu-icon" href="/feeds/skill.rss.xml" target="_blank">
+                    <Link to="/feeds/skill.rss.xml" className="home-menu-icon" target="_blank">
                         <img src="/theme/image/rss.png" alt="RSS"/>
                     </Link>
-                    <Link className="home-menu-icon" href="https://github.com/dtysky" target="_blank">
+                    <Link to="https://github.com/dtysky" className="home-menu-icon" target="_blank">
                         <img src="/theme/image/github.png" alt="Github"/>
                     </Link>
-                    <Link className="home-menu-icon" href="https://cn.linkedin.com/pub/tianyu-dai/a8/818/44a" target="_blank">
+                    <Link to="https://cn.linkedin.com/pub/tianyu-dai/a8/818/44a" className="home-menu-icon" target="_blank">
                         <img src="/theme/image/linked-in.png" alt="Linked-In"/>
                     </Link>
-                    <Link className="home-menu-icon" href="http://psnprofiles.com/dtysky" target="_blank">
+                    <Link to="http://psnprofiles.com/dtysky" className="home-menu-icon" target="_blank">
                         <img src="/theme/image/playstation.png" alt="Playstation"/>
                     </Link>
                 </div>

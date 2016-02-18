@@ -11,4 +11,4 @@ if __name__ == "__main__":
     database = client.get_database("test")
     client.close()
     server = WebServer(database).web_server
-    server.run(debug=True)
+    server.run("localhost", 4444, debug=True)
