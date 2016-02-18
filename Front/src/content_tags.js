@@ -12,6 +12,7 @@ var format = require('util').format;
 
 var cache = require('./cache');
 var getLocalUrl = require('./utils').getLocalUrl;
+var redirect = require('./utils').redirect;
 var config = require('./utils').config;
 var site_title = config.site_title;
 var server_url = config.server_url;
@@ -55,8 +56,7 @@ module.exports = React.createClass({
             error: function(obj, info, ex){
                 console.log(obj);
                 if(obj.status === 404){
-                    //重定向到404页面
-                    console.log("rediret");
+                    redirect();
                 }
                 else{
                     this.setState({

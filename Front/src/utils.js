@@ -64,7 +64,12 @@ var getLocalUrl = function(type, name, index){
     return index === null ? "/" + type + "/" + name : "/" + type + "/" + name + "/" + index.toString();
 };
 
+var redirect = function(){
+    console.log("Redirect to 404");
+};
+
 module.exports = {
     config: config,
-    getLocalUrl: getLocalUrl
+    getLocalUrl: getLocalUrl,
+    redirect: redirect
 };

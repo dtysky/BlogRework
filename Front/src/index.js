@@ -29,7 +29,6 @@ var NotFind = require('./not_find');
 
 require('./theme/css/sky.css');
 
-
 var App = React.createClass({
     getInitialState: function(){
         return {
@@ -94,5 +93,6 @@ var router = (
         </Route>
     </Router>
 );
+
 
 ReactDom.render(router, document.getElementById('content'));

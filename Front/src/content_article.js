@@ -11,6 +11,7 @@ var format = require('util').format;
 
 var cache = require('./cache');
 var getLocalUrl = require('./utils').getLocalUrl;
+var redirect = require('./utils').redirect;
 var config = require('./utils').config;
 var site_title = config.site_title;
 var server_url = config.server_url;
@@ -49,8 +50,7 @@ module.exports = React.createClass({
             error: function(obj, info, ex){
                 console.log(obj);
                 if(obj.status === 404){
-                    //重定向到404页面
-                    console.log("rediret");
+                    redirect();
                 }
                 else{
                     this.setState({
@@ -85,12 +85,12 @@ module.exports = React.createClass({
             author: authors.join(",")
         });
     },
-    componentDidMount: function(){
+    updateData: function(props){
         var self = this;
         var name = format(
             "%s/%s",
             "article",
-            this.props.params.name
+            props.params.name
         );
         if(!cache.has(name)){
             this.getAll(name);
@@ -106,6 +106,21 @@ module.exports = React.createClass({
             };
             fun();
         }
+    },
+    componentDidMount: function(){
+        this.updateData(this.props);
+    },
+    shouldComponentUpdate: function(nextProps, nextState){
+        if(
+            (
+                this.props.name !== nextProps.name ||
+                this.props.index !== nextProps.index
+            ) &&
+            this.state.state === nextState.state
+        ){
+            this.updateData(nextProps);
+        }
+        return true;
     },
     componentDidUpdate: function(){
         bShare.addEntry({

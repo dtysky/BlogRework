@@ -12,6 +12,7 @@ var format = require('util').format;
 var Pagination = require('./pagination');
 var cache = require('./cache');
 var getLocalUrl = require('./utils').getLocalUrl;
+var redirect = require('./utils').redirect;
 var config = require('./utils').config;
 var site_title = config.site_title;
 var server_url = config.server_url;
@@ -48,8 +49,7 @@ module.exports = React.createClass({
             error: function(obj, info, ex){
                 console.log(obj);
                 if(obj.status === 404){
-                    //重定向到404页面
-                    console.log("rediret");
+                    redirect();
                 }
                 else{
                     this.setState({
@@ -59,11 +59,14 @@ module.exports = React.createClass({
             }.bind(this)
         });
     },
-    getInfo: function(name){
+    getInfo: function(name, index){
         var data = cache.get(name);
         var totle_count = data.content.length;
         var max_index = parseInt(totle_count / articles_per_page) + 1;
-        var left = this.props.index === undefined ? 0 : parseInt(this.props.index);
+        var left = index === undefined ? 0 : parseInt(this.props.index);
+        if(left > max_index){
+            redirect();
+        }
         var right = left + articles_per_page < max_index ? left + articles_per_page : max_index;
         var view = data.view;
         this.setState({
@@ -98,12 +101,12 @@ module.exports = React.createClass({
             author: "dtysky,命月天宇"
         });
     },
-    componentDidMount: function(){
+    updateData: function(props){
         var self = this;
         var name = format(
             "%s/%s",
-            this.props.type,
-            this.props.name
+            props.type,
+            props.name
         );
         if(!cache.has(name)){
             this.getAll(name);
@@ -111,7 +114,7 @@ module.exports = React.createClass({
             var fun = function() {
                 if (cache.has(name)) {
                     clearTimeout(timeoutId);
-                    self.getInfo(name);
+                    self.getInfo(name, props.index);
                 }
                 else {
                     timeoutId = setTimeout(fun, 500);
@@ -120,8 +123,23 @@ module.exports = React.createClass({
             fun();
         }
         else{
-            self.getInfo(name);
+            self.getInfo(name, props.index);
         }
+    },
+    componentDidMount: function(){
+        this.updateData(this.props);
+    },
+    shouldComponentUpdate: function(nextProps, nextState){
+        if(
+            (
+                this.props.name !== nextProps.name ||
+                this.props.index !== nextProps.index
+            ) &&
+            this.state.state === nextState.state
+        ){
+            this.updateData(nextProps);
+        }
+        return true;
     },
     render: function(){
         if (this.state.state === "error"){
@@ -185,7 +203,7 @@ module.exports = React.createClass({
                                                         {tag.view}
                                                     </Link>
                                                 );
-                                            })
+                                        })
                                         }
                                     </div>
                                 </article>
