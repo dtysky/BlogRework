@@ -2,6 +2,12 @@
   "name": "BlogRework",
   "version": "1.0.0",
   "description": "Rework my blog with node, react, typescript...",
+  "private": true,
+  "src": "src",
+  "test": "test",
+  "dist": "dist",
+  "mainInput": "main",
+  "mainOutput": "main",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -36,7 +42,6 @@
     "grunt-contrib-uglify": "^0.11.0",
     "grunt-open": "^0.2.3",
     "grunt-webpack": "^1.0.11",
-    "html-webpack-plugin": "^2.9.0",
     "json-loader": "^0.5.4",
     "jsxhint-loader": "^0.2.0",
     "load-grunt-tasks": "^3.4.0",

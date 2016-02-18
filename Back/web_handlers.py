@@ -75,7 +75,10 @@ class WebHandler(View):
         logger.info("Web, Data found: %s\nParameters: %s" % (
             self.url, parameters
         ))
-        return self._format_data(data, self.url, params)
+        return self._response(
+            self._format_data(data, self.url, params),
+            200
+        )
 
     def _response(self, data, status):
         response = Response(
@@ -88,10 +91,7 @@ class WebHandler(View):
         return response
 
     def dispatch_request(self, parameters=None):
-        return self._response(
-            self._handle(parameters),
-            200
-        )
+        return self._handle(parameters)
 
     def _404(self, parameters):
         logger.warning("Web, 404: %s\nParameters: %s" % (
@@ -137,6 +137,10 @@ class HandlerWithOneParameter(object):
     def _get_parameter_name(self):
         return "name"
 
+    @property
+    def view_flag(self):
+        return self.flag
+
     def _find_data(self, parameter=None):
         return list(self._collection.find(
             {
@@ -148,7 +152,10 @@ class HandlerWithOneParameter(object):
     def _format_data(self, data, url, parameters):
         return to_json(
             {
-                "view": data[0][url][parameters]["view"],
+                "view":
+                    data[0][self.view_flag]["view"] if
+                    type(data[0][self.view_flag]) != list else
+                    filter(lambda item: item['slug'] == parameters, data[0][self.view_flag])[0]["view"],
                 "content": data
             }
         )
@@ -159,7 +166,9 @@ class TagHandler(HandlerWithOneParameter, WebHandler):
     Handling "tag" request.
     """
 
-    pass
+    @property
+    def view_flag(self):
+        return "tags"
 
 
 class AuthorHandler(HandlerWithOneParameter, WebHandler):
@@ -167,7 +176,9 @@ class AuthorHandler(HandlerWithOneParameter, WebHandler):
     Handling "author" request.
     """
 
-    pass
+    @property
+    def view_flag(self):
+        return "authors"
 
 
 class CategoryHandler(HandlerWithOneParameter, WebHandler):
@@ -176,7 +187,9 @@ class CategoryHandler(HandlerWithOneParameter, WebHandler):
     Only one category can one article have.
     """
 
-    pass
+    @property
+    def view_flag(self):
+        return "category"
 
 
 class ArticleHandler(WebHandler):

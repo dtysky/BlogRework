@@ -16,18 +16,18 @@ module.exports = React.createClass({
                 <Link to="/articles/wo-de-jian-li.html" id="home-menu-name">dtysky</Link>
                 <div id="player1" className="aplayer"></div>
                 <div id="home-menu-icons">
-                    <Link to="/feeds/skill.rss.xml" className="home-menu-icon" target="_blank">
+                    <a href="/feeds/skill.rss.xml" className="home-menu-icon" target="_blank">
                         <img src="/theme/image/rss.png" alt="RSS"/>
-                    </Link>
-                    <Link to="https://github.com/dtysky" className="home-menu-icon" target="_blank">
+                    </a>
+                    <a href="https://github.com/dtysky" className="home-menu-icon" target="_blank">
                         <img src="/theme/image/github.png" alt="Github"/>
-                    </Link>
-                    <Link to="https://cn.linkedin.com/pub/tianyu-dai/a8/818/44a" className="home-menu-icon" target="_blank">
+                    </a>
+                    <a href="https://cn.linkedin.com/pub/tianyu-dai/a8/818/44a" className="home-menu-icon" target="_blank">
                         <img src="/theme/image/linked-in.png" alt="Linked-In"/>
-                    </Link>
-                    <Link to="http://psnprofiles.com/dtysky" className="home-menu-icon" target="_blank">
+                    </a>
+                    <a href="http://psnprofiles.com/dtysky" className="home-menu-icon" target="_blank">
                         <img src="/theme/image/playstation.png" alt="Playstation"/>
-                    </Link>
+                    </a>
                 </div>
                 <div id="home-menu-hr1"></div>
                 <div>
@@ -35,8 +35,8 @@ module.exports = React.createClass({
                         <Link to="/" id="home-menu-home">Home</Link>
                     </div>
                     <div id="home-menu-tag-ath">
-                        <Link to="/tags.html" id="home-menu-tags" >Tags</Link>
-                        <Link to="/authors.html" id="home-menu-authors">Authors</Link>
+                        <Link to="/tags" id="home-menu-tags" >Tags</Link>
+                        <Link to="/authors" id="home-menu-authors">Authors</Link>
                     </div>
                 </div>
                 <div id="home-menu-hr2"></div>

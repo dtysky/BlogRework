@@ -8,7 +8,7 @@
 var webpack = require('webpack');
 var path = require('path');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+var srcPath = path.join(__dirname, 'src');
 
 module.exports = {
     cache: true,
@@ -16,7 +16,7 @@ module.exports = {
     entry: [
         'webpack-dev-server/client?http://0.0.0.0:8000',
         'webpack/hot/only-dev-server',
-        './src/index.js'
+        path.join(srcPath, 'index.js')
     ],
 
     output: {
@@ -33,8 +33,8 @@ module.exports = {
     devtool: false,
 
     resolve: {
-        root:[path.join(__dirname, "src")],
-        extensions: ["", ".webpack.js", ".web.js", ".js", ".node", ".json"]
+        root: [srcPath],
+        extensions: ["", ".webpack.js", ".web.js", ".js"]
     },
 
     target: "web",
@@ -50,7 +50,7 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loaders: ['react-hot','babel'],
-                include : path.join(__dirname, 'src')
+                include : srcPath
             },
             {
                 test: /\.css$/,
@@ -93,15 +93,10 @@ module.exports = {
 
     plugins: [
         new ExtractTextPlugin("[name].css"),
-        new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json",["main"]),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
         new webpack.ProvidePlugin({
             $:'jquery'
-        }),
-        new HtmlWebpackPlugin({
-            inject: true,
-            template: './src/index.html'
         })
     ]
 

@@ -9,9 +9,11 @@ var Link = require('react-router').Link;
 var Loading = require('react-loading');
 var format = require('util').format;
 
-var database = require('./utils').database;
+var cache = require('./cache');
 var getLocalUrl = require('./utils').getLocalUrl;
-var site_title = require('./utils').config.site_title;
+var config = require('./utils').config;
+var site_title = config.site_title;
+var server_url = config.server_url;
 
 require('./theme/css/sky.css');
 
@@ -21,40 +23,71 @@ module.exports = React.createClass({
             content: []
         };
     },
-    getInfo: function(){
-        var collection = database.db.collection("authors");
-        collection
-            .find()
-            .toArray(function(err, data){
-                if(err){
+    getAll: function(name){
+        this.setState({
+            state: "wait"
+        });
+        $.ajax({
+            url: format(
+                "%s/%s",
+                server_url,
+                name
+            ),
+            success: function(result, status){
+                var data = JSON.parse(result);
+                cache.add(name, data);
+            }.bind(this),
+            error: function(obj, info, ex){
+                console.log(obj);
+                if(obj.status === 404){
+                    //重定向到404页面
+                    console.log("rediret");
+                }
+                else{
                     this.setState({
                         state: "error"
                     });
                 }
-                this.setState({
-                    state: "ok",
-                    content: data
-                });
-                this.props.handleHead({
-                    title: format("%s - %s", "Authors", site_title),
-                    keywords: "Authors",
-                    description: "所有的路标",
-                    author: "dtysky,命月天宇"
-                });
-            });
+            }.bind(this)
+        });
+    },
+    getInfo: function(name){
+        var data = cache.get(name);
+        this.setState({
+            state: "ok",
+            content: data.content
+        });
+        this.props.handleHead({
+            title: format("%s - %s", "Authors", site_title),
+            keywords: "Authors",
+            description: "所有的路标",
+            author: "dtysky,命月天宇"
+        });
     },
     componentDidMount: function(){
-        var timeoutId = 0;
-        var fun = function() {
-            if (database.ready) {
-                clearTimeout(timeoutId);
-                this.getInfo();
-            }
-            else {
-                timeoutId = setTimeout(fun, 500);
-            }
-        };
-        fun();
+        var self = this;
+        var name = format(
+            "%s/%s",
+            "authors",
+            "all"
+        );
+        if(!cache.has(name)){
+            this.getAll(name);
+            var timeoutId = 0;
+            var fun = function() {
+                if (cache.has(name)) {
+                    clearTimeout(timeoutId);
+                    self.getInfo(name);
+                }
+                else {
+                    timeoutId = setTimeout(fun, 500);
+                }
+            };
+            fun();
+        }
+        else{
+            self.getInfo(name);
+        }
     },
     render: function(){
         if (this.state.state === "error"){

@@ -14,7 +14,8 @@ module.exports = React.createClass({
             <ContentList
                 type="archives"
                 name="all"
-                index={parseInt(this.props.index)}
+                index={this.props.params.index}
+                handleHead={this.props.handleHead}
             />
         );
     }

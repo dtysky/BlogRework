@@ -63,7 +63,12 @@ var App = React.createClass({
                 <LeftImage/>
                 <Menu/>
                 <MenuPhone/>
-                {this.props.children}
+                {
+                    this.props.children && React.cloneElement(
+                        this.props.children,
+                        {handleHead: this.handleHead}
+                    )
+                }
                 <Footer/>
             </div>
         );

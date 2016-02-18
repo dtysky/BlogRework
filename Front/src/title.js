@@ -13,10 +13,10 @@ module.exports = React.createClass({
         return (
             <div id="home-main-title">
                 <div id="title-list">
-                    <li id="title-create"><Link to="/category/create">Create</Link></li>
-                    <li id="title-skill"><Link to="/category/skill">Skill</Link></li>
-                    <li id="title-art"><Link to="/category/art">Art</Link></li>
-                    <li id="title-life"><Link to="/category/life">Life</Link></li>
+                    <li id="title-create"><Link to="/category/Create">Create</Link></li>
+                    <li id="title-skill"><Link to="/category/Skill">Skill</Link></li>
+                    <li id="title-art"><Link to="/category/Art">Art</Link></li>
+                    <li id="title-life"><Link to="/category/Life">Life</Link></li>
                 </div>
                 <div className="home-main-title-bar">
                     <span id="title-bar"/>

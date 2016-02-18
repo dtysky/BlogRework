@@ -13,11 +13,11 @@ require('./theme/css/sky.css');
 module.exports = React.createClass({
     render: function(){
         var max_index = this.props.max_index;
-        var index = this.props.index;
+        var index = this.props.now_index;
         var type = this.props.type;
         var name = this.props.name;
         var left = parseInt(index / 10);
-        var right = left + 11 > max_index ? left + 10 : max_index;
+        var right = left + 11 > max_index ? max_index : left + 10;
         var index_nums = [];
         for(var i=left; i<right; i++){
             index_nums.push(i);
@@ -40,7 +40,7 @@ module.exports = React.createClass({
                                         <Link
                                             to={getLocalUrl(type, name, index - 1)}
                                         >
-                                            &larr;
+                                            &rarr;
                                         </Link>
                                     </li>
                                 );

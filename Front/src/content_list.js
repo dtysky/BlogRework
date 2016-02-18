@@ -24,6 +24,7 @@ module.exports = React.createClass({
         return {
             state: "wait",
             max_index: 1,
+            now_index: 0,
             content: []
         };
     },
@@ -38,46 +39,49 @@ module.exports = React.createClass({
                 name
             ),
             success: function(result, status){
-                if(status === 404){
-                    //重定向
-                }
-                else if(status === 200) {
-                    var data = JSON.parse(result);
-                    cache.add(
-                        name,
-                        data.sort(
-                            {
-                                "date": -1
-                            }
-                        )
-                    );
+                var data = JSON.parse(result);
+                data.content.sort({
+                    "date": -1
+                });
+                cache.add(name, data);
+            }.bind(this),
+            error: function(obj, info, ex){
+                console.log(obj);
+                if(obj.status === 404){
+                    //重定向到404页面
+                    console.log("rediret");
                 }
                 else{
                     this.setState({
                         state: "error"
                     });
                 }
-            }
-        }).bind(this);
+            }.bind(this)
+        });
     },
     getInfo: function(name){
         var data = cache.get(name);
-        var totle_count = data.length;
+        var totle_count = data.content.length;
         var max_index = parseInt(totle_count / articles_per_page) + 1;
-        var left = this.props.index;
+        var left = this.props.index === undefined ? 0 : parseInt(this.props.index);
         var right = left + articles_per_page < max_index ? left + articles_per_page : max_index;
         var view = data.view;
         this.setState({
             state: "ok",
+            now_index: left,
             max_index: max_index,
             content: data.content.slice(left, right)
         });
         this.props.handleHead({
-            title: format(
-                "%s-%d - %s",
-                view,
-                this.props.index,
-                site_title
+            title: (
+                this.props.title ?
+                    this.props.title :
+                    format(
+                        "%s-%d - %s",
+                        view,
+                        this.state.now_index,
+                        site_title
+                    )
             ),
             keywords: format(
                 "%s",
@@ -95,6 +99,7 @@ module.exports = React.createClass({
         });
     },
     componentDidMount: function(){
+        var self = this;
         var name = format(
             "%s/%s",
             this.props.type,
@@ -106,13 +111,16 @@ module.exports = React.createClass({
             var fun = function() {
                 if (cache.has(name)) {
                     clearTimeout(timeoutId);
-                    this.getInfo(name);
+                    self.getInfo(name);
                 }
                 else {
                     timeoutId = setTimeout(fun, 500);
                 }
             };
             fun();
+        }
+        else{
+            self.getInfo(name);
         }
     },
     render: function(){
@@ -140,13 +148,14 @@ module.exports = React.createClass({
                                         <Link
                                             to={getLocalUrl("article", item.slug, null)}
                                             rel="bookmark"
-                                            title={item.title}
+                                            title={item.title.view}
                                         >
-                                            <h3>{item.title}</h3>
+                                            <h3>{item.title.view}</h3>
                                         </Link>
                                     </div>
                                     <div>
-                                        <p>{item.summary}</p>
+                                        <p dangerouslySetInnerHTML={{__html: item.summary}}>
+                                        </p>
                                         <hr className='home-main-content-ghr'/>
                                         {
                                             item.authors.map(function(author){
@@ -187,7 +196,7 @@ module.exports = React.createClass({
                 <Pagination
                     type={this.props.type}
                     name={this.props.name}
-                    now_index={this.props.index}
+                    now_index={this.state.now_index}
                     max_index={this.state.max_index}
                 />
             </div>

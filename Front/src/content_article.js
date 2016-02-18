@@ -26,8 +26,9 @@ module.exports = React.createClass({
             state: "wait",
             title: "",
             slug: "",
-            author: [],
-            tag: [],
+            authors: [],
+            tags: [],
+            category: "",
             content: ""
         };
     },
@@ -42,29 +43,24 @@ module.exports = React.createClass({
                 name
             ),
             success: function(result, status){
-                if(status === 404){
-                    //重定向
-                }
-                else if(status === 200) {
-                    var data = JSON.parse(result);
-                    cache.add(
-                        name,
-                        data.sort(
-                            {
-                                "date": -1
-                            }
-                        )
-                    );
+                var data = JSON.parse(result);
+                cache.add(name, data);
+            }.bind(this),
+            error: function(obj, info, ex){
+                console.log(obj);
+                if(obj.status === 404){
+                    //重定向到404页面
+                    console.log("rediret");
                 }
                 else{
                     this.setState({
                         state: "error"
                     });
                 }
-            }
-        }).bind(this);
+            }.bind(this)
+        });
     },
-    getInfo: function(){
+    getInfo: function(name){
         var data = cache.get(name);
         this.setState({
             state: "ok",
@@ -73,6 +69,7 @@ module.exports = React.createClass({
             authors: data.content.authors,
             tags: data.content.tags,
             category: data.content.category,
+            date: data.content.date,
             content: data.content.content
         });
         var authors = data.content.author.map(function(item){
@@ -89,10 +86,11 @@ module.exports = React.createClass({
         });
     },
     componentDidMount: function(){
+        var self = this;
         var name = format(
             "%s/%s",
-            this.props.type,
-            this.props.name
+            "article",
+            this.props.params.name
         );
         if(!cache.has(name)){
             this.getAll(name);
@@ -100,7 +98,7 @@ module.exports = React.createClass({
             var fun = function() {
                 if (cache.has(name)) {
                     clearTimeout(timeoutId);
-                    this.getInfo(name);
+                    self.getInfo(name);
                 }
                 else {
                     timeoutId = setTimeout(fun, 500);
@@ -180,8 +178,7 @@ module.exports = React.createClass({
                     </p>
                     <div className="home-article-sphr"></div>
                 </div>
-                <div className="home-article-middle">
-                    {this.state.content}
+                <div className="home-article-middle" dangerouslySetInnerHTML={{__html: this.state.content}}>
                 </div>
                 <div id="disqus_container">
                     <a href="#" className="disqus_button" onclick="return false;">点击查看评论</a>

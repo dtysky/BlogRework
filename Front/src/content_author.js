@@ -13,8 +13,9 @@ module.exports = React.createClass({
         return (
             <ContentList
                 type="author"
-                name={this.props.name}
-                index={parseInt(this.props.index)}
+                name={this.props.params.name}
+                index={this.props.params.index}
+                handleHead={this.props.handleHead}
             />
         );
     }
