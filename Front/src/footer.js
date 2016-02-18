@@ -13,7 +13,7 @@ require('./theme/css/sky.css');
 module.exports = React.createClass({
     render: function(){
         return (
-            <footer id="home-links">
+            <footer>
                 <p>Links</p>
                 <div id="home-links-phone">
                     {

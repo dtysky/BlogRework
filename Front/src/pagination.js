@@ -40,7 +40,7 @@ module.exports = React.createClass({
                                         <Link
                                             to={getLocalUrl(type, name, index - 1)}
                                         >
-                                            &rarr;
+                                            &larr;
                                         </Link>
                                     </li>
                                 );
@@ -74,7 +74,7 @@ module.exports = React.createClass({
                             if(index === max_index - 1){
                                 return (
                                     <li className="next disabled">
-                                        &larr;
+                                        &rarr;
                                     </li>
                                 );
                             }
@@ -84,7 +84,7 @@ module.exports = React.createClass({
                                         <Link
                                             to={getLocalUrl(type, name, index + 1)}
                                         >
-                                            &larr;
+                                            &rarr;
                                         </Link>
                                     </li>
                                 );

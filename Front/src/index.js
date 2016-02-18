@@ -58,16 +58,18 @@ var App = React.createClass({
                             {name: "description", "content": this.state.head.description}
                     ]}
                 />
-                <Title/>
                 <LeftImage/>
                 <Menu/>
                 <MenuPhone/>
-                {
-                    this.props.children && React.cloneElement(
-                        this.props.children,
-                        {handleHead: this.handleHead}
-                    )
-                }
+                <div id="home-main">
+                    <Title/>
+                    {
+                        this.props.children && React.cloneElement(
+                            this.props.children,
+                            {handleHead: this.handleHead}
+                        )
+                    }
+                </div>
                 <Footer/>
             </div>
         );

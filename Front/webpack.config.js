@@ -21,7 +21,7 @@ module.exports = {
 
     output: {
         filename: "bundle.js",
-        publicPath: '/asserts/'
+        publicPath: '/assets/'
     },
 
     stats: {
@@ -92,7 +92,7 @@ module.exports = {
     },
 
     plugins: [
-        new ExtractTextPlugin("[name].css"),
+        new ExtractTextPlugin("main.css"),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
         new webpack.ProvidePlugin({

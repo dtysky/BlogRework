@@ -156,7 +156,7 @@ module.exports = React.createClass({
             );
         }
         return (
-            <div className="content-list">
+            <div id="home-main-content">
                 <ul>
                     {
                         this.state.content.map(function(item){

@@ -2,6 +2,11 @@ h1,h2,h3,h4,h5,h6,a,p,button{
 	font-family: "Microsoft YaHei",Arial ! important;
 }
 
+body{
+    margin: 0;
+    padding: 0;
+}
+
 button:focus{
 	outline: 0;
 }
@@ -11,16 +16,11 @@ button:focus{
 	height: 100%;
 }
 
-#home-none{
-	position: fixed;
-	z-index: 0;
-}
-
 .home-canbackchange{}
 
 #home-menu-id{}
 
-.home-menu{
+#home-menu{
 	display: none;
 	position: fixed;
 	background-color: rgb(137,255,154);
@@ -31,19 +31,11 @@ button:focus{
 	right: 0px;
 }
 
-.home-menu a,p{
+#home-menu a,p{
 	display: inline-block;
 	color: black;
 	text-decoration: none;
 	text-align: center;
-}
-
-.home-menu-top{
-	/*height: 50%;*/
-}
-
-.home-menu-bottom{
-	height: 50%;
 }
 
 #home-menu-name{
@@ -53,7 +45,7 @@ button:focus{
 	font-size: 24px;
 }
 
-.home-menu-icons{
+#home-menu-icons{
 	margin-top: 15px;
 }
 
@@ -78,7 +70,7 @@ button:focus{
 	font-size: 20px;
 }
 
-.home-menu-tagath{
+#home-menu-tagath{
 	display: block;
 	margin-top: 5px;
 	margin-left: 30px;
@@ -102,7 +94,7 @@ button:focus{
 	text-align: center;
 }
 
-.home-menu-links{
+#home-menu-links{
 	display: block;
 	margin-bottom: 5px;
 	font-size: 16px;
@@ -141,8 +133,8 @@ button:focus{
 
 #home-left{
 	position: fixed;
+    left: 0%;
 	top: 0px;
-	left: -25%;
 	width: 25%;
 	height: 100%;
 	background: #000;
@@ -150,21 +142,18 @@ button:focus{
 	background-position: 50% 50%
 }
 
-.home-main{
+
+#home-main{
 	position: relative;
-	top: 40px;
-	margin-left: 30%;
-	margin-right: 25%;
-	width: 50%;
 }
 
-.home-main-title{
+#home-main-title{
 	position: relative;
 	margin-top: 20px;
 	height: 50px;
 }
 
-.home-main-title a{
+#home-main-title a{
 	display: inline-block;
 	color: black;
 	text-decoration: none;
@@ -172,24 +161,24 @@ button:focus{
 	opacity: 1.0;
 }
 
-.title-list{
+#title-list{
 	margin: 0px;
 	padding: 0px;
 	width: 100%;
 	list-style: none;;
 }
 
-.title-list li{
+#title-list li{
 	display: inline-block;
 	width: 25%;
 }
 
-.title-list a{
+#title-list a{
 	display: inline-block;
 	width: 100%;
 }
 
-.title-on{}
+#title-on{}
 
 #title-create a{
 	text-align: left;
@@ -207,31 +196,31 @@ button:focus{
 	text-align: right;
 }
 
-.home-main-titlebar{
+#home-main-titlebar{
 	margin-top: 0px;
 	width: 100%;
 	height: 3px;
 }
 
-.home-main-titlebar #titlebar{
+#home-main-titlebar #titlebar{
 	display: inline-block;
 	height: 3px;
 	width: 75px;
 	left: 100px;
 }
 
-.home-main-content{
+#home-main-content{
 	top: 10px;
 	width: 100%;
 	height: 85%;
 	padding: 0px;
 }
 
-.home-main-content ul{
+#home-main-content ul{
 	padding: 0px;
 }
 
-.home-main-content a{
+#home-main-content a{
 	color: #888888;
 	font-size: 14px;
 	font-weight: bolder;
@@ -240,24 +229,23 @@ button:focus{
 	margin-top: 0px;
 }
 
-.home-main-content a:hover{
+#home-main-content a:hover{
 	color: #000000;
 	text-decoration: none;
 }
 
-.home-main-content h3{
+#home-main-content h3{
 	font-size: 18px;
 	color: #000000;
 	margin-top: 50px;
 }
 
-.home-main-content p{
+#home-main-content p{
 	margin-top: 0px;
 	text-align: left;
 	line-height: 20px;
 	font-size: 14px;
 	color: gray;
-	text-align: left;
 }
 
 .home-main-content-ghr{
@@ -265,22 +253,23 @@ button:focus{
 	margin: -10px;
 }
 
-.home-menu-top-phone a,p{
+#home-menu-phone a,p{
 	display: inline-block;
 	color: black;
 	text-decoration: none;
 	text-align: center;
 }
 
-.home-menu-top-phone{
+#home-menu-phone{
 	display: none;
 	position: relative;
 	margin-top: 0px;
 	width: 100%;
 	height: 120px;
+    background-color: rgb(137,255,154);
 }
 
-.home-menu-top-phone .top{
+#home-menu-phone .top{
 	display: inline-block;
 	position: relative;
 	width: 70%;
@@ -289,7 +278,7 @@ button:focus{
 	margin-bottom: 20px;
 }
 
-.home-menu-top-phone .bottom{
+#home-menu-phone .bottom{
 	display: inline-block;
 	width: 100%;
 }
@@ -299,14 +288,13 @@ button:focus{
 	width: 20%;
 }
 
-
-.home-menu-index-phone{
+#home-menu-index-phone{
 	font-size: 20px;
 	width: 80%;
 	margin-left: 10%;
 }
 
-.home-menu-index-phone a{
+#home-menu-index-phone a{
 	width: 33%;
 	text-align: center;
 }
@@ -320,13 +308,6 @@ button:focus{
 	color: black;
 }
 
-.home-menu-bottom-phone a,p{
-	display: inline-block;
-	color: black;
-	text-decoration: none;
-	text-align: center;
-}
-
 #home-menu-hr2-phone{
 	width: 60%;
 	margin:0 auto;
@@ -336,32 +317,36 @@ button:focus{
 	color: black;
 }
 
-.home-menu-bottom-phone{
-	display: none;
+footer{
+    display: none;
 	position: relative;
 	margin-top: 20px;
-	width: 100%;
-	top: 20px;
-}
-
-#home-menu-thanks-phone{
-	display: block;
-	width: 100%;
 	padding-top: 10px;
 	margin-bottom: 5px;
-	font-size: 18px;
+	width: 100%;
+	top: 20px;
+    font-size: 18px;
+    text-align: center;
+    background-color: rgb(137,255,154);
 }
 
-.home-menu-thanksto-phone{
+#home-links-phone{
 	display: block;
 	margin-bottom: 5px;
 	width: 60%;
 	margin: auto;
 }
 
-.home-menu-thanksto-phone .thank{
+#home-links-phone .thank{
 	width: 32%;
 	font-size: 14px;
+}
+
+footer a, p {
+    display: inline-block;
+    color: black;
+    text-decoration: none;
+    text-align: center;
 }
 
 #home-menu-hr3-phone{
@@ -451,28 +436,76 @@ button:focus{
 	background: url(/src/theme/image/return.png) no-repeat left 0px;
 }
 
-.pagination{
+#pagination{
 	text-align: center;
 	margin-top: 40px;
 }
 
-.pagination ul{
+#pagination ul{
 	list-style: none;
 }
 
-.pagination ul li{
+#pagination ul li{
 	display: inline;
 	padding: 5px;
 }
 
-.pagination ul li a{
+#pagination ul li a{
 	font-size: 16px;
 }
 
-.pagination .active ul li a{
+#pagination .active ul li a{
 	font-size: 20px;
 }
 
-.pagination .disable a:hover{
+#pagination .disable a:hover{
 	color: #888888;
+}
+
+/*For PC*/
+@media (min-width: 800px) {
+    #home-left{
+        display: block;
+    }
+    #home-menu{
+        display: block;
+    }
+    #home-menu-phone{
+        display: none;
+    }
+    footer{
+        display: none;
+    }
+    #return-top{
+        display: block;
+    }
+    #home-main{
+        width: 50%;
+        margin-left: 30%;
+        top: 60px;
+    }
+}
+
+/*For Phone*/
+@media (max-width: 800px) {
+    #home-left{
+        display: none;
+    }
+    #home-menu{
+        display: none;
+    }
+    #home-menu-phone{
+        display: block;
+    }
+    footer{
+        display: block;
+    }
+    #return-top{
+        display: none;
+    }
+    #home-main{
+        width: 80%;
+        margin-left: 10%;
+        top: 20px;
+    }
 }
