@@ -6,16 +6,31 @@
 
 var React = require('react/addons');
 var Link = require('react-router').Link;
+var config = require('./utils').config;
+var theme_color = config.theme_color;
 
 require('./theme/css/sky.css');
 
 module.exports = React.createClass({
+    changeThemeRequire: function(info){
+        this.props.changeTheme(info, true);
+    },
+    changeThemeToDefault: function(){
+        this.props.changeTheme(this.props.theme_default, false);
+    },
+    setDefaultTheme: function(info){
+        this.props.setDefaultTheme(info);
+    },
     render: function(){
+        var self = this;
+        var style = {
+            backgroundColor: theme_color[this.props.theme_info]
+        };
         return (
-            <div id="home-menu">
+            <div className="home-menu" style={style}>
                 <Link to="/articles/wo-de-jian-li.html" id="home-menu-name">dtysky</Link>
                 <div id="player1" className="aplayer"></div>
-                <div id="home-menu-icons">
+                <div className="home-menu-icons">
                     <a href="/feeds/skill.rss.xml" className="home-menu-icon" target="_blank">
                         <img src="/theme/image/rss.png" alt="RSS"/>
                     </a>
@@ -29,24 +44,42 @@ module.exports = React.createClass({
                         <img src="/theme/image/playstation.png" alt="Playstation"/>
                     </a>
                 </div>
-                <div id="home-menu-hr1"></div>
+                <div className="home-menu-hr1"></div>
                 <div>
                     <div>
-                        <Link to="/" id="home-menu-home">Home</Link>
+                        <Link to="/" id="home-menu-home"
+                              onMouseEnter={function(e){self.changeThemeRequire("home");}}
+                              onMouseLeave={function(e){self.changeThemeToDefault();}}
+                              onClick={function(e){self.setDefaultTheme("home");}}
+                        >
+                            Home
+                        </Link>
                     </div>
-                    <div id="home-menu-tag-ath">
-                        <Link to="/tags" id="home-menu-tags" >Tags</Link>
-                        <Link to="/authors" id="home-menu-authors">Authors</Link>
+                    <div className="home-menu-tag-ath">
+                        <Link to="/tags" id="home-menu-tags"
+                              onMouseEnter={function(e){self.changeThemeRequire("tags");}}
+                              onMouseLeave={function(e){self.changeThemeToDefault();}}
+                              onClick={function(e){self.setDefaultTheme("tags");}}
+                        >
+                            Tags
+                        </Link>
+                        <Link to="/authors" id="home-menu-authors"
+                              onMouseEnter={function(e){self.changeThemeRequire("authors");}}
+                              onMouseLeave={function(e){self.changeThemeToDefault();}}
+                              onClick={function(e){self.setDefaultTheme("authors");}}
+                        >
+                            Authors
+                        </Link>
                     </div>
                 </div>
-                <div id="home-menu-hr2"></div>
-                <p id="home-menu-links-p">Links</p>
-                <div id="home-menu-links">
-                    <Link to="http://proj.dtysky.moe" id="home-menu-proj" target="_blank">Projects</Link>
+                <div className="home-menu-hr2"></div>
+                <p className="home-menu-links-p">Links</p>
+                <div className="home-menu-links">
+                    <Link id="home-menu-proj" to="http://proj.dtysky.moe" target="_blank">Projects</Link>
                     <button id="home-menu-friend" onclick="$.actLinks('show')">Friends</button>
                 </div>
-                <div id="home-menu-hr3"></div>
-                <p id="home-menu-end">这是一个孤独行者的轨迹。</p>
+                <div className="home-menu-hr3"></div>
+                <p className="home-menu-end">这是一个孤独行者的轨迹。</p>
             </div>
         );
     }

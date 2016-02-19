@@ -31,13 +31,16 @@ require('./theme/css/sky.css');
 
 var App = React.createClass({
     getInitialState: function(){
+        this.timeout_id = 0;
         return {
             head: {
                 title: "",
                 keywords: "",
                 description: "",
                 author: ""
-            }
+            },
+            theme_default: "home",
+            theme_info: "home"
         };
     },
     handleHead: function(head){
@@ -45,9 +48,39 @@ var App = React.createClass({
             head: head
         });
     },
+    setDefaultTheme: function(info){
+        this.setState({
+            theme_default: info
+        });
+    },
+    changeTheme: function(info, enter){
+        var self = this;
+        function update(){
+            self.setState({
+                theme_info: info
+            });
+        }
+        function fun(){
+            clearTimeout(self.timeout_id);
+            self.timeout_id = setTimeout(
+                update(),
+                500
+            );
+        }
+        if(!enter && info !== this.state.theme_info) {
+            fun();
+        }
+        else if(enter){
+            clearTimeout(self.timeout_id);
+            update();
+        }
+    },
     render: function(){
+        var self = this;
         return (
-            <div>
+            <div
+                className="full"
+            >
                 <Helmet
                     title={this.state.head.title}
                     titleTemplate= {"%s"}
@@ -58,19 +91,49 @@ var App = React.createClass({
                             {name: "description", "content": this.state.head.description}
                     ]}
                 />
-                <LeftImage/>
-                <Menu/>
-                <MenuPhone/>
+                <LeftImage
+                    theme_info={this.state.theme_info}
+                    theme_default={this.state.theme_default}
+                />
+                <Menu
+                    theme_info={this.state.theme_info}
+                    theme_default={this.state.theme_default}
+                    changeTheme={this.changeTheme}
+                    setDefaultTheme={this.setDefaultTheme}
+                />
+                <MenuPhone
+                    theme_info={this.state.theme_info}
+                    theme_default={this.state.theme_default}
+                    changeTheme={this.changeTheme}
+                    setDefaultTheme={this.setDefaultTheme}
+                />
                 <div id="home-main">
-                    <Title/>
-                    {
-                        this.props.children && React.cloneElement(
-                            this.props.children,
-                            {handleHead: this.handleHead}
-                        )
-                    }
+                    <Title
+                        theme_default={this.state.theme_default}
+                        changeTheme={this.changeTheme}
+                        setDefaultTheme={this.setDefaultTheme}
+                    />
+                    <div
+                        className="home-main-content"
+                    >
+                        {
+                            this.props.children && React.cloneElement(
+                                this.props.children,
+                                {
+                                    handleHead: this.handleHead,
+                                    setDefaultTheme: this.setDefaultTheme,
+                                    changeTheme: this.changeTheme,
+                                    theme_info: this.state.theme_info,
+                                    theme_default: this.state.theme_default
+                        }
+                            )
+                        }
+                    </div>
                 </div>
-                <Footer/>
+                <Footer
+                    theme_info={this.state.theme_info}
+                    theme_default={this.state.theme_default}
+                />
             </div>
         );
     }

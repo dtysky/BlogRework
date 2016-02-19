@@ -2,36 +2,38 @@ h1,h2,h3,h4,h5,h6,a,p,button{
 	font-family: "Microsoft YaHei",Arial ! important;
 }
 
-body{
+html, body, #content{
     margin: 0;
     padding: 0;
+    width: 100%;
+    height: 100%;
 }
 
-button:focus{
-	outline: 0;
+button:focus {
+    outline: 0;
 }
 
 .full{
-	width: 100%;
-	height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .home-canbackchange{}
 
 #home-menu-id{}
 
-#home-menu{
+.home-menu{
 	display: none;
 	position: fixed;
 	background-color: rgb(137,255,154);
-	opacity: 0.2;
+	/*opacity: 0.2;*/
 	width: 160px;
 	height: 320px;
 	bottom: 0px;
 	right: 0px;
 }
 
-#home-menu a,p{
+.home-menu a,p{
 	display: inline-block;
 	color: black;
 	text-decoration: none;
@@ -45,7 +47,7 @@ button:focus{
 	font-size: 24px;
 }
 
-#home-menu-icons{
+.home-menu-icons{
 	margin-top: 15px;
 }
 
@@ -55,7 +57,7 @@ button:focus{
 	width: 25px;
 }
 
-#home-menu-hr1{
+.home-menu-hr1{
 	width: 180px;
 	border: 1px solid;
 	color: black;
@@ -70,14 +72,22 @@ button:focus{
 	font-size: 20px;
 }
 
-#home-menu-tagath{
+.home-menu-tag-ath{
 	display: block;
 	margin-top: 5px;
 	margin-left: 30px;
 	font-size: 16px;
 }
 
-#home-menu-hr2{
+#home-menu-tags{
+    padding-right: 2px;
+}
+
+#home-menu-authors{
+    padding-left: 2px;
+}
+
+.home-menu-hr2{
 	width: 120px;
 	border: 1px solid;
 	color: black;
@@ -85,7 +95,7 @@ button:focus{
 	margin-left: 20px;
 }
 
-#home-menu-links-p{
+.home-menu-links-p{
 	display: block;
 	width: 100%;
 	margin-top: 10px;
@@ -94,7 +104,7 @@ button:focus{
 	text-align: center;
 }
 
-#home-menu-links{
+.home-menu-links{
 	display: block;
 	margin-bottom: 5px;
 	font-size: 16px;
@@ -102,6 +112,7 @@ button:focus{
 
 #home-menu-proj{
 	margin-left: 20px;
+    padding-right: 2px;
 }
 
 #home-menu-friend{
@@ -112,10 +123,10 @@ button:focus{
 	padding: 0px;
 	color: #000000;
 	text-align: right;
-	font-family: "Microsoft YaHei" ! important;
+	padding-left: 2px;
 }
 
-#home-menu-hr3{
+.home-menu-hr3{
 	width: 140px;
 	border: 1px solid;
 	color: black;
@@ -123,7 +134,7 @@ button:focus{
 	margin-left: 10px;
 }
 
-#home-menu-end{
+.home-menu-end{
 	display: block;
 	margin-top: 10px;
 	margin-left: 10px;
@@ -137,9 +148,8 @@ button:focus{
 	top: 0px;
 	width: 25%;
 	height: 100%;
-	background: #000;
-	background-size: cover;
-	background-position: 50% 50%
+    background-size: cover;
+    background: #000 50% 50%;
 }
 
 
@@ -209,18 +219,18 @@ button:focus{
 	left: 100px;
 }
 
-#home-main-content{
+.home-main-content{
 	top: 10px;
 	width: 100%;
 	height: 85%;
 	padding: 0px;
 }
 
-#home-main-content ul{
+.home-main-content ul{
 	padding: 0px;
 }
 
-#home-main-content a{
+.home-main-content a{
 	color: #888888;
 	font-size: 14px;
 	font-weight: bolder;
@@ -229,18 +239,18 @@ button:focus{
 	margin-top: 0px;
 }
 
-#home-main-content a:hover{
+.home-main-content a:hover{
 	color: #000000;
 	text-decoration: none;
 }
 
-#home-main-content h3{
+.home-main-content h3{
 	font-size: 18px;
 	color: #000000;
 	margin-top: 50px;
 }
 
-#home-main-content p{
+.home-main-content p{
 	margin-top: 0px;
 	text-align: left;
 	line-height: 20px;
@@ -436,29 +446,31 @@ footer a, p {
 	background: url(/src/theme/image/return.png) no-repeat left 0px;
 }
 
-#pagination{
+.pagination{
+    position: fixed;
 	text-align: center;
-	margin-top: 40px;
+	bottom: 0;
+    width: 50%;
 }
 
-#pagination ul{
+.pagination ul{
 	list-style: none;
 }
 
-#pagination ul li{
+.pagination ul li{
 	display: inline;
 	padding: 5px;
 }
 
-#pagination ul li a{
+.pagination ul li a{
 	font-size: 16px;
 }
 
-#pagination .active ul li a{
+.pagination .active ul li a{
 	font-size: 20px;
 }
 
-#pagination .disable a:hover{
+.pagination .disable a:hover{
 	color: #888888;
 }
 
@@ -467,7 +479,7 @@ footer a, p {
     #home-left{
         display: block;
     }
-    #home-menu{
+    .home-menu{
         display: block;
     }
     #home-menu-phone{
@@ -484,6 +496,10 @@ footer a, p {
         margin-left: 30%;
         top: 60px;
     }
+    .pagination{
+        position: fixed;
+        width: 50%;
+    }
 }
 
 /*For Phone*/
@@ -491,7 +507,7 @@ footer a, p {
     #home-left{
         display: none;
     }
-    #home-menu{
+    .home-menu{
         display: none;
     }
     #home-menu-phone{
@@ -507,5 +523,9 @@ footer a, p {
         width: 80%;
         margin-left: 10%;
         top: 20px;
+    }
+    .pagination{
+        position: relative;
+        width: 100%;
     }
 }

@@ -6,13 +6,28 @@
 
 var React = require('react/addons');
 var Link = require('react-router').Link;
+var config = require('./utils').config;
+var theme_color = config.theme_color;
 
 require('./theme/css/sky.css');
 
 module.exports = React.createClass({
+    changeThemeRequire: function(info){
+        this.props.changeTheme(info, true);
+    },
+    changeThemeToDefault: function(){
+        this.props.changeTheme(this.props.theme_default, false);
+    },
+    setDefaultTheme: function(info){
+        this.props.setDefaultTheme(info);
+    },
     render: function(){
+        var self= this;
+        var style = {
+            backgroundColor: theme_color[this.props.theme_info]
+        };
         return (
-            <div id="home-menu-phone">
+            <div id="home-menu-phone" style={style}>
                 <div className="top">
                     <a href="/feeds/all.rss.xml" className="home-menu-icon-phone" target="_blank">
                         <img src="/theme/image/rss.png" alt="RSS"/>
@@ -33,9 +48,27 @@ module.exports = React.createClass({
                 <div id="home-menu-hr1-phone"></div>
                 <div className="bottom">
                     <div id="home-menu-index-phone" className="home-canbackchange">
-                        <Link to="/tags" id="home-menu-tags-phone">Tags</Link>
-                        <Link to="/" id="home-menu-home-phone">Home</Link>
-                        <Link to="/authors" id="home-menu-authors-phone">Authors</Link>
+                        <Link to="/tags" id="home-menu-tags-phone"
+                              onMouseEnter={function(e){self.changeThemeRequire("tags");}}
+                              onMouseLeave={function(e){self.changeThemeToDefault();}}
+                              onClick={function(e){self.setDefaultTheme("tags");}}
+                        >
+                            Tags
+                        </Link>
+                        <Link to="/" id="home-menu-home-phone"
+                              onMouseEnter={function(e){self.changeThemeRequire("home");}}
+                              onMouseLeave={function(e){self.changeThemeToDefault();}}
+                              onClick={function(e){self.setDefaultTheme("home");}}
+                        >
+                            Home
+                        </Link>
+                        <Link to="/authors" id="home-menu-authors-phone"
+                              onMouseEnter={function(e){self.changeThemeRequire("authors");}}
+                              onMouseLeave={function(e){self.changeThemeToDefault();}}
+                              onClick={function(e){self.setDefaultTheme("authors");}}
+                        >
+                            Authors
+                        </Link>
                     </div>
                 </div>
             </div>

@@ -110,14 +110,13 @@ ol{
 	font-weight: bolder;
 }
 
-.list-authrs{
-	margin-top: 140px;
+.authors-list{
 	margin-top: 100px;
 	width: 100%;
 	text-align: center;
 }
 
-.list-authrs a{
+.authors-list a{
 	width: 100%;
 	margin-bottom: 40px;
 	font-size: 40px;
@@ -165,9 +164,13 @@ pre{
 	text-align: center;
 }
 
-.tag_cloud{
+.tag-cloud{
 	margin-top: 10%;
 	line-height: 30px;
+}
+
+.tag-cloud a{
+    padding: 2px;
 }
 
 a.tag-4{

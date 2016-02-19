@@ -17,6 +17,7 @@ var site_title = config.site_title;
 var server_url = config.server_url;
 
 require('./theme/css/sky.css');
+require('./theme/css/article.css');
 
 module.exports = React.createClass({
     getInitialState: function(){
@@ -89,6 +90,12 @@ module.exports = React.createClass({
             self.getInfo(name);
         }
     },
+    componentDidUpdate: function(){
+        if(this.props.theme_default !== "authors"){
+            this.props.setDefaultTheme("authors");
+            this.props.changeTheme("authors", true);
+        }
+    },
     render: function(){
         if (this.state.state === "error"){
             return (
@@ -106,17 +113,15 @@ module.exports = React.createClass({
             );
         }
         return (
-            <ul id="authors-list">
+            <ul className="authors-list">
                 {
                     this.state.content.map(function(author){
                         return (
-                            <li>
-                                <Link
-                                    to={getLocalUrl("authors", author.slug, null)}
-                                >
-                                    {author.view}
-                                </Link>
-                            </li>
+                            <Link
+                                to={getLocalUrl("authors", author.slug, null)}
+                            >
+                                {author.view}
+                            </Link>
                         );
                     })
                 }

@@ -19,28 +19,28 @@ var config = {
         {"name": "Nekohand", "url" : "http://blog.nekohand.moe/"}
     ],
     "theme_color": {
-        "title-create": "#586181",
-        "title-skill": "#808d6a",
-        "title-art": "#a69e5c",
-        "title-life": "#b57e79",
-        "home-menu-home": "#6ca82b",
-        "home-menu-tags": "#12678e",
-        "home-menu-authors": "#72944e",
-        "home-menu-home-phone": "#6ca82b",
-        "home-menu-tags-phone": "#12678e",
-        "home-menu-authors-phone": "#72944e"
+        "Create": "#586181",
+        "Skill": "#808d6a",
+        "Art": "#a69e5c",
+        "Life": "#b57e79",
+        "home": "#6ca82b",
+        "tags": "#12678e",
+        "authors": "#72944e",
+        "ome-phone": "#6ca82b",
+        "tags-phone": "#12678e",
+        "authors-phone": "#72944e"
     },
     "theme_background": {
-        "title-create": "/theme/image/create.jpg",
-        "title-skill": "/theme/image/skill.jpg",
-        "title-art": "/theme/image/art.jpg",
-        "title-life": "/theme/image/life.jpg",
-        "home-menu-home": "/theme/image/home.jpg",
-        "home-menu-tags": "/theme/image/tags.jpg",
-        "home-menu-authors": "/theme/image/authors.jpg",
-        "home-menu-home-phone": "/theme/image/home.jpg",
-        "home-menu-tags-phone": "/theme/image/tags.jpg",
-        "home-menu-authors-phone": "/theme/image/tags.jpg"
+        "Create": "theme/image/create.jpg",
+        "Skill": "theme/image/skill.jpg",
+        "Art": "theme/image/art.jpg",
+        "Life": "theme/image/life.jpg",
+        "home": "theme/image/home.jpg",
+        "tags": "theme/image/tags.jpg",
+        "authors": "theme/image/authors.jpg",
+        "home-phone": "theme/image/home.jpg",
+        "tags-phone": "theme/image/tags.jpg",
+        "authors-phone": "theme/image/tags.jpg"
     }
 };
 

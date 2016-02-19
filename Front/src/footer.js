@@ -6,14 +6,19 @@
 
 var React = require('react/addons');
 var Link = require('react-router').Link;
-var links = require('./utils').config.links;
+var config = require('./utils').config;
+var theme_color = config.theme_color;
+var links = config.links;
 
 require('./theme/css/sky.css');
 
 module.exports = React.createClass({
     render: function(){
+        var style = {
+            backgroundColor: theme_color[this.props.theme_info]
+        };
         return (
-            <footer>
+            <footer style={style}>
                 <p>Links</p>
                 <div id="home-links-phone">
                     {

@@ -22,31 +22,50 @@ module.exports = React.createClass({
         for(var i=left; i<right; i++){
             index_nums.push(i);
         }
+        function pre(){
+            if(index === 0){
+                return (
+                    <li className="prev disabled">
+                        &larr;
+                    </li>
+                );
+            }
+            else{
+                return (
+                    <li className="prev">
+                        <Link
+                            to={getLocalUrl(type, name, index - 1)}
+                        >
+                            &larr;
+                        </Link>
+                    </li>
+                );
+            }
+        }
+        function next(){
+            if(index === max_index - 1){
+                return (
+                    <li className="next disabled">
+                        &rarr;
+                    </li>
+                );
+            }
+            else{
+                return (
+                    <li className="next">
+                        <Link
+                            to={getLocalUrl(type, name, index + 1)}
+                        >
+                            &rarr;
+                        </Link>
+                    </li>
+                );
+            }
+        }
         return (
-            <div id="pagination">
+            <div className="pagination">
                 <ul>
-                    {
-                        function(){
-                            if(index === 0){
-                                return (
-                                    <li className="prev disabled">
-                                        &larr;
-                                    </li>
-                                );
-                            }
-                            else{
-                                return (
-                                    <li className="prev">
-                                        <Link
-                                            to={getLocalUrl(type, name, index - 1)}
-                                        >
-                                            &larr;
-                                        </Link>
-                                    </li>
-                                );
-                            }
-                        }()
-                    }
+                    {pre()}
                     {
                         index_nums.map(function(i){
                             if (i === index){
@@ -69,28 +88,7 @@ module.exports = React.createClass({
                             }
                         })
                     }
-                    {
-                        function(){
-                            if(index === max_index - 1){
-                                return (
-                                    <li className="next disabled">
-                                        &rarr;
-                                    </li>
-                                );
-                            }
-                            else{
-                                return (
-                                    <li className="next">
-                                        <Link
-                                            to={getLocalUrl(type, name, index + 1)}
-                                        >
-                                            &rarr;
-                                        </Link>
-                                    </li>
-                                );
-                            }
-                        }()
-                    }
+                    {next()}
                 </ul>
             </div>
         );

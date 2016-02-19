@@ -10,6 +10,12 @@ var ContentList = require('./content_list');
 require('./theme/css/sky.css');
 
 module.exports = React.createClass({
+    componentDidUpdate: function(){
+        if(this.props.theme_default !== "tags"){
+            this.props.setDefaultTheme("tags");
+            this.props.changeTheme("tags", true);
+        }
+    },
     render: function(){
         return (
             <ContentList

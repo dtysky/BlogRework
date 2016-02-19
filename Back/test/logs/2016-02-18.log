@@ -351,4 +351,20 @@ Parameters: Art-test
 Web, Data found: article
 Parameters: Art-test
 2016-02-18 23:58:04: Info:
-Web, Request
+Web, Request: category
+Parameters: Art
+2016-02-18 23:58:04: Info:
+Web, Data found: category
+Parameters: Art
+2016-02-18 23:58:04: Info:
+Web, Request: category
+Parameters: Skill
+2016-02-18 23:58:04: Info:
+Web, Data found: category
+Parameters: Skill
+2016-02-18 23:58:04: Info:
+Web, Request: category
+Parameters: Art
+2016-02-18 23:58:04: Info:
+Web, Data found: category
+Parameters: Art

@@ -19,6 +19,7 @@ var server_url = config.server_url;
 var tag_cloud_step = config.tag_cloud_step;
 
 require('./theme/css/sky.css');
+require('./theme/css/article.css');
 
 module.exports = React.createClass({
     getInitialState: function(){
@@ -105,6 +106,12 @@ module.exports = React.createClass({
             self.getInfo(name);
         }
     },
+    componentDidUpdate: function(){
+        if(this.props.theme_default !== "tags"){
+            this.props.setDefaultTheme("tags");
+            this.props.changeTheme("tags", true);
+        }
+    },
     render: function(){
         if (this.state.state === "error"){
             return (
@@ -122,18 +129,16 @@ module.exports = React.createClass({
             );
         }
         return (
-            <ul id="tag-cloud">
+            <ul className="tag-cloud">
                 {
                     this.state.content.map(function(tag){
                         return (
-                            <li>
-                                <Link
-                                    to={tag.url}
-                                    className={tag.style}
-                                >
-                                    {tag.view}
-                                </Link>
-                            </li>
+                            <Link
+                                to={tag.url}
+                                className={tag.style}
+                            >
+                                {tag.view}
+                            </Link>
                         );
                     })
                 }

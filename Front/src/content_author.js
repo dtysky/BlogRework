@@ -9,6 +9,12 @@ var ContentList = require('./content_list');
 require('./theme/css/sky.css');
 
 module.exports = React.createClass({
+    componentDidUpdate: function(){
+        if(this.props.theme_default !== "authors"){
+            this.props.setDefaultTheme("authors");
+            this.props.changeTheme("authors", true);
+        }
+    },
     render: function(){
         return (
             <ContentList
