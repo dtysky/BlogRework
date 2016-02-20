@@ -3,6 +3,9 @@
  * Created by dtysky on 16/2/3.
  */
 
+var velocityHelpers = require('velocity-react').velocityHelpers;
+
+
 var config = {
     "site_title": "dtysky|一个行者的轨迹",
     //"site_url": "http://dtysky.moe",
@@ -10,6 +13,7 @@ var config = {
     "server_url": "http://localhost:4444",
     "tag_cloud_step": 4,
     "articles_per_page": 10,
+    "animation_default_duration": 800,
     "links": [
         {"name": "Pelican", "url" : "http://getpelican.com"},
         {"name": "Lm7", "url" : "http://lm7.xxxxxxxx.jp"},
@@ -68,8 +72,25 @@ var redirect = function(){
     console.log("Redirect to 404");
 };
 
+var colorNextEffect = function(color_info){
+    return velocityHelpers.registerEffect({
+        defaultDuration: config.animation_default_duration,
+        calls:[
+            [{
+                backgroundColor: config.theme_color[color_info]
+            },
+                1,
+                {
+                    delay: 0,
+                    easing: "ease-in"
+                }]
+        ]
+    });
+};
+
 module.exports = {
     config: config,
     getLocalUrl: getLocalUrl,
-    redirect: redirect
+    redirect: redirect,
+    colorNextEffect: colorNextEffect
 };

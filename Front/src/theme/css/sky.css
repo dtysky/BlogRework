@@ -144,14 +144,21 @@ button:focus {
 
 #home-left{
 	position: fixed;
-    left: 0%;
+    left: -25%;
 	top: 0px;
-	width: 25%;
+	width: 50%;
 	height: 100%;
     background-size: cover;
     background: #000 50% 50%;
+    overflow: hidden;
 }
 
+.home-left-image{
+    height: 100%;
+    width: 50%;
+    position: absolute;
+    background-size: cover;
+}
 
 #home-main{
 	position: relative;
