@@ -89,8 +89,6 @@ module.exports = React.createClass({
         else{
             self.getInfo(name);
         }
-    },
-    componentDidUpdate: function(){
         if(this.props.theme_default !== "authors"){
             this.props.setDefaultTheme("authors");
             this.props.changeTheme("authors", true);

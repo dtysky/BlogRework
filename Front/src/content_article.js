@@ -4,10 +4,17 @@
  */
 
 
+require('velocity-animate');
+require('velocity-animate/velocity.ui');
+require('velocity-animate/velocity');
+
 var React = require('react/addons');
-var Loading = require('react-loading');
+var VelocityComponent = require('velocity-react').VelocityComponent;
 var Link = require('react-router').Link;
 var format = require('util').format;
+
+var Loading = require('./loading');
+var NormalError = require('./normal_error');
 
 var cache = require('./cache');
 var getLocalUrl = require('./utils').getLocalUrl;
@@ -15,8 +22,7 @@ var redirect = require('./utils').redirect;
 var config = require('./utils').config;
 var site_title = config.site_title;
 var server_url = config.server_url;
-var site_url = config.site_url;
-var theme_color = config.theme_color;
+var colorNextEffect = require('./utils').colorNextEffect;
 
 require('./theme/css/sky.css');
 require('./theme/css/article.css');
@@ -35,6 +41,7 @@ module.exports = React.createClass({
         };
     },
     getAll: function(name){
+        var self = this;
         this.setState({
             state: "wait"
         });
@@ -126,44 +133,20 @@ module.exports = React.createClass({
         return true;
     },
     componentDidUpdate: function(){
-        //bShare.addEntry({
-        //        title: format("%s - %s\n", this.state.title, site_title),
-        //        url: format("%s%s", site_url, getLocalUrl("article", this.state.slug, 0)),
-        //        summary: format("作者：%s\n%s", this.state.author, this.state.summary.replace('<p>','').replace('</p>',''))
-        //});
-        $("blockquote")
-            .stop()
-            .animate({
-                "background-color": theme_color[this.props.theme_info]
-            },
-            800);
+        //console.log($('blockquote'), $('blockquote').Velocity);
+        //Velocity($('blockquote'), {'background-color': theme_color[this.props.theme_info]}, 800);
     },
     render: function(){
         if (this.state.state === "error"){
             return (
-                <div className="content-error">Error!</div>
+                <NormalError/>
             );
         }
         if (this.state.state === "wait"){
-            return (
-                <div className="content-wait">
-                    <Loading
-                        type = "spin"
-                        color = "#e3e3e3"
-                    />
-                </div>
-            );
+            return <Loading/>;
         }
         return (
             <article className="home-article">
-                <div className="plugin-share">
-                    <a className="bshareDiv" href="http://www.bshare.cn/share">分享按钮</a>
-                </div>
-                <script
-                    type="text/javascript"
-                    charset="utf-8"
-                    src="http://static.bshare.cn/b/buttonLite.js#uuid=4b985bfb-394b-4ee6-893b-1742af251c63&style=999&img=/theme/image/share.png&h=50&w=50&bp=sinaminiblog,weixin,renren,douban,facebook,twitter,linkedin,qzone,qqmb">
-                </script>
                 <div className="home-article-top">
                     <h1>{this.state.title}</h1>
                     <p>
@@ -200,7 +183,9 @@ module.exports = React.createClass({
                             })
                         }
                     </p>
-                    <div className="home-article-sphr"></div>
+                    <VelocityComponent animation={colorNextEffect(this.props.theme_info)}>
+                        <div className="home-article-sphr"></div>
+                    </VelocityComponent>
                 </div>
                 <div className="home-article-middle" dangerouslySetInnerHTML={{__html: this.state.content}}>
                 </div>

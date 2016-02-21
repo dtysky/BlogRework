@@ -105,8 +105,6 @@ module.exports = React.createClass({
         else{
             self.getInfo(name);
         }
-    },
-    componentDidUpdate: function(){
         if(this.props.theme_default !== "tags"){
             this.props.setDefaultTheme("tags");
             this.props.changeTheme("tags", true);

@@ -10,7 +10,7 @@ var ContentList = require('./content_list');
 require('./theme/css/sky.css');
 
 module.exports = React.createClass({
-    componentDidUpdate: function(){
+    componentDidMount: function(){
         if(this.props.theme_default !== this.props.params.name){
             this.props.setDefaultTheme(this.props.params.name);
             this.props.changeTheme(this.props.params.name, true);

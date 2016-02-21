@@ -16,8 +16,8 @@ module.exports = React.createClass({
         var index = this.props.now_index;
         var type = this.props.type;
         var name = this.props.name;
-        var left = parseInt(index / 10);
-        var right = left + 11 > max_index ? max_index : left + 10;
+        var left = parseInt(index / 8);
+        var right = left + 9 > max_index ? max_index : left + 8;
         var index_nums = [];
         for(var i=left; i<right; i++){
             index_nums.push(i);

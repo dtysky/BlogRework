@@ -25,7 +25,7 @@ var ContentArchives = require('./content_archives');
 var ContentTags = require('./content_tags');
 var ContentAuthors = require('./content_authors');
 var ContentArticle = require('./content_article');
-var NotFind = require('./not_find');
+var NotFound = require('./not_found');
 
 require('./theme/css/sky.css');
 
@@ -109,6 +109,7 @@ var App = React.createClass({
                 />
                 <div id="home-main">
                     <Title
+                        theme_info={this.state.theme_info}
                         theme_default={this.state.theme_default}
                         changeTheme={this.changeTheme}
                         setDefaultTheme={this.setDefaultTheme}
@@ -154,7 +155,7 @@ var router = (
             <Route path="tags" component={ContentTags}/>
             <Route path="authors" component={ContentAuthors}/>
             <Route path="article/:name" component={ContentArticle}/>
-            <Route path="*" component={NotFind}/>
+            <Route path="*" component={NotFound}/>
         </Route>
     </Router>
 );

@@ -213,13 +213,13 @@ button:focus {
 	text-align: right;
 }
 
-#home-main-titlebar{
+#home-main-title-bar{
 	margin-top: 0px;
 	width: 100%;
 	height: 3px;
 }
 
-#home-main-titlebar #titlebar{
+#title-bar{
 	display: inline-block;
 	height: 3px;
 	width: 75px;
@@ -385,10 +385,9 @@ footer a, p {
 
 .my404{
 	display: block;
-	width : 60%;
+	width : 80%;
 	margin-top: 5%;
-	margin-left: 20%;
-	height: 30px;
+	margin-left: 10%;
 	font-size: 14px;
 	text-align: center;
 }
@@ -436,6 +435,31 @@ footer a, p {
 	text-align: right;
 }
 
+.content-wait{
+    text-align: center;
+    margin-top: 20%;
+    margin-bottom: 20%;
+}
+
+.content-error{
+    display: block;
+    width : 80%;
+    margin-top: 5%;
+    margin-left: 10%;
+    font-size: 14px;
+    text-align: center;
+}
+
+.content-error a{
+    color: #888888;
+    font-size: 18px;
+    font-weight: bolder;
+    text-decoration: none;
+    line-height: 40px;
+    margin-top: 0px;
+    text-align: center;
+}
+
 #return-top{
 	display: none;
 	position: fixed;
@@ -450,7 +474,7 @@ footer a, p {
 	color: #000000;
 	width: 48px;
 	height: 48px;
-	background: url(/src/theme/image/return.png) no-repeat left 0px;
+	background: url(../image/return.png) no-repeat left 0px;
 }
 
 .pagination{

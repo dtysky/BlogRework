@@ -27,7 +27,7 @@ module.exports = React.createClass({
     render: function(){
         var self = this;
         return (
-            <VelocityComponent animation={colorNextEffect(self.props.theme_info)}>
+            <VelocityComponent animation={colorNextEffect(this.props.theme_info)}>
                 <div className="home-menu">
                     <Link to="/articles/wo-de-jian-li.html" id="home-menu-name">dtysky</Link>
                     <div id="player1" className="aplayer"></div>
