@@ -7,8 +7,10 @@
 
 var React = require('react/addons');
 var Link = require('react-router').Link;
-var Loading = require('react-loading');
 var format = require('util').format;
+
+var Loading = require('./loading');
+var NormalError = require('./normal_error');
 
 var cache = require('./cache');
 var getLocalUrl = require('./utils').getLocalUrl;
@@ -112,19 +114,10 @@ module.exports = React.createClass({
     },
     render: function(){
         if (this.state.state === "error"){
-            return (
-                <div className="content-error">Error!</div>
-            );
+            return <NormalError/>;
         }
         if (this.state.state === "wait"){
-            return (
-                <div className="content-wait">
-                    <Loading
-                        type = "spin"
-                        color = "#e3e3e3"
-                    />
-                </div>
-            );
+            return <Loading/>;
         }
         return (
             <ul className="tag-cloud">
