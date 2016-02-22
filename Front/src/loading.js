@@ -4,7 +4,6 @@
  */
 
 var React = require('react/addons');
-var Loading = require('react-loading');
 
 require('./theme/css/sky.css');
 
@@ -16,10 +15,11 @@ module.exports = React.createClass({
     render: function() {
         return (
             <div className="content-wait">
-                <Loading
-                    type = "spin"
-                    color = "#e3e3e3"
-                />
+                <img src="theme/image/logo.png" alt="wait-image"/>
+                <br/>
+                <p>
+                    少女祈祷中......
+                </p>
             </div>
         );
     }

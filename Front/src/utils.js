@@ -30,9 +30,7 @@ var config = {
         "home": "#6ca82b",
         "tags": "#12678e",
         "authors": "#72944e",
-        "ome-phone": "#6ca82b",
-        "tags-phone": "#12678e",
-        "authors-phone": "#72944e"
+        "404": "#666666"
     },
     "theme_background": {
         "Create": "theme/image/create.jpg",
@@ -42,26 +40,8 @@ var config = {
         "home": "theme/image/home.jpg",
         "tags": "theme/image/tags.jpg",
         "authors": "theme/image/authors.jpg",
-        "home-phone": "theme/image/home.jpg",
-        "tags-phone": "theme/image/tags.jpg",
-        "authors-phone": "theme/image/tags.jpg"
+        "404": "theme/image/404.jpg"
     }
-};
-
-var changeTheme = function(id){
-    var color = config.theme_color[id];
-    var background = config.theme_background[id];
-    var left = $("#home-left");
-    var title_bar = $("#home-main-title-bar");
-    var menu = $("#home-main-menu");
-    var footer = $("#footer");
-    var hr = $(".home-sphr");
-    var blockquote = $("blockquote");
-    //left.animate({})
-};
-
-var changeWebMode = function(width){
-    return;
 };
 
 var getLocalUrl = function(type, name, index){
@@ -70,6 +50,7 @@ var getLocalUrl = function(type, name, index){
 
 var redirect = function(){
     console.log("Redirect to 404");
+    window.location.href = config.site_url + "/#/404";
 };
 
 var colorNextEffect = function(color_info){

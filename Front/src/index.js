@@ -49,28 +49,32 @@ var App = React.createClass({
         });
     },
     setDefaultTheme: function(info){
-        this.setState({
-            theme_default: info
-        });
+        if(this.state.theme_default !== info){
+            this.setState({
+                theme_default: info
+            });
+        }
     },
     changeTheme: function(info, enter){
         var self = this;
         function update(){
+            console.log("update");
             self.setState({
                 theme_info: info
             });
         }
         function fun(){
+            console.log("fun");
             clearTimeout(self.timeout_id);
             self.timeout_id = setTimeout(
-                update(),
+                update,
                 500
             );
         }
         if(!enter && info !== this.state.theme_info) {
             fun();
         }
-        else if(enter){
+        else if(enter && info !== this.state.theme_info){
             clearTimeout(self.timeout_id);
             update();
         }

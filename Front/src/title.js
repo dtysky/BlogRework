@@ -37,10 +37,20 @@ module.exports = React.createClass({
             }
         ];
         this.theme_now = this.props.theme_info;
-        return {};
+        return {
+            flag: true
+        };
+    },
+    componentDidMount: function() {
+        window.addEventListener("resize", this.onWindowResize);
     },
     componentDidUpdate: function(){
         this.theme_now = this.props.theme_info;
+    },
+    onWindowResize: function(){
+        this.setState({
+            flag: !this.state.flag
+        });
     },
     titleEffect: function(){
         var self = this;

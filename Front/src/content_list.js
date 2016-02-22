@@ -32,6 +32,7 @@ module.exports = React.createClass({
         };
     },
     getAll: function(name){
+        var self = this;
         this.setState({
             state: "wait"
         });
@@ -54,7 +55,7 @@ module.exports = React.createClass({
                     redirect();
                 }
                 else{
-                    this.setState({
+                    self.setState({
                         state: "error"
                     });
                 }
@@ -144,6 +145,8 @@ module.exports = React.createClass({
         return true;
     },
     render: function(){
+        //this.state.state = "error";
+        //redirect();
         if (this.state.state === "error"){
             return <NormalError/>;
         }

@@ -60,8 +60,11 @@ module.exports = React.createClass({
         });
     },
     render: function(){
+        var self = this;
+        console.log(this.theme_now);
         var image_list = [
             {
+                left: this.flag ? "50%" : "0%",
                 animation: this.flag ? this.imageEffectLeft : this.imageEffectMiddle,
                 key: "bk1",
                 backgroundImage: this.flag ?
@@ -69,6 +72,7 @@ module.exports = React.createClass({
                     "url(" + theme_backgrouds[this.theme_now] + ")"
             },
             {
+                left: this.flag ? "100%" : "50%",
                 animation: this.flag ? this.imageEffectMiddle : this.imageEffectLeft,
                 key: "bk2",
                 backgroundImage: this.flag ?
@@ -80,20 +84,32 @@ module.exports = React.createClass({
             <div id="home-left">
                 {
                     image_list.map(function(e){
-                        return (
-                        <VelocityComponent
-                            key={e.key}
-                            animation={e.animation()}
-                        >
-                            <div
-                                className="home-left-image"
-                                style={{
-                                    backgroundImage: e.backgroundImage
-                                }}
+                        return self.theme_now !== self.props.theme_info ?
+                            <VelocityComponent
+                                key={e.key}
+                                animation={e.animation()}
                             >
-                            </div>
-                        </VelocityComponent>
-                        );
+                                <div
+                                    className="home-left-image"
+                                    style={{
+                                        backgroundImage: e.backgroundImage
+                                    }}
+                                >
+                                </div>
+                            </VelocityComponent>
+                        :
+                            <VelocityComponent
+                                key={e.key}
+                            >
+                                <div
+                                    className="home-left-image"
+                                    style={{
+                                        backgroundImage: e.backgroundImage,
+                                        left: e.left
+                                    }}
+                                >
+                                </div>
+                            </VelocityComponent>;
                     })
                 }
             </div>

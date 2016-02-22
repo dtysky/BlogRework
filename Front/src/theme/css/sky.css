@@ -25,8 +25,6 @@ button:focus {
 .home-menu{
 	display: none;
 	position: fixed;
-	background-color: rgb(137,255,154);
-	/*opacity: 0.2;*/
 	width: 160px;
 	height: 320px;
 	bottom: 0px;
@@ -158,6 +156,7 @@ button:focus {
     width: 50%;
     position: absolute;
     background-size: cover;
+    background-position: 50% 50%;
 }
 
 #home-main{
@@ -283,7 +282,6 @@ button:focus {
 	margin-top: 0px;
 	width: 100%;
 	height: 120px;
-    background-color: rgb(137,255,154);
 }
 
 #home-menu-phone .top{
@@ -349,7 +347,6 @@ footer{
 
 #home-links-phone{
 	display: block;
-	margin-bottom: 5px;
 	width: 60%;
 	margin: auto;
 }
@@ -381,25 +378,6 @@ footer a, p {
 	margin-left: 10px;
 	height: 30px;
 	font-size: 14px;
-}
-
-.my404{
-	display: block;
-	width : 80%;
-	margin-top: 5%;
-	margin-left: 10%;
-	font-size: 14px;
-	text-align: center;
-}
-
-.my404 a{
-	color: #888888;
-	font-size: 18px;
-	font-weight: bolder;
-	text-decoration: none;
-	line-height: 40px;
-	margin-top: 0px;
-	text-align: center;
 }
 
 #home-links{
@@ -435,13 +413,70 @@ footer a, p {
 	text-align: right;
 }
 
+@keyframes rotate-full {
+    from {
+        -webkit-transform: rotate(0deg);
+
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
 .content-wait{
     text-align: center;
     margin-top: 20%;
     margin-bottom: 20%;
 }
 
+.content-wait img{
+    width: 25%;
+    border-radius: 50%;
+    border-left: dashed;
+    border-bottom: dashed;
+    margin-bottom: 40px;
+    animation: rotate-full 3s linear 0s infinite normal;
+}
+
+.content-wait p{
+    font-size: 18px;
+    color: darkslategrey;
+}
+
+@keyframes rotate-half-roll {
+    0% {
+        -webkit-transform: rotate(0deg);
+
+    }
+    50% {
+        -webkit-transform: rotate(180deg);
+    }
+    100% {
+        -webkit-transform: rotate(0deg);
+    }
+}
+
 .content-error{
+    text-align: center;
+    margin-top: 20%;
+    margin-bottom: 20%;
+}
+
+.content-error img{
+    width: 25%;
+    border-radius: 50%;
+    border-left: dashed;
+    border-bottom: dashed;
+    margin-bottom: 40px;
+    animation: rotate-half-roll 4s ease-out 0s infinite normal;
+}
+
+.content-error p{
+    font-size: 16px;
+    color: darkslategrey;
+}
+
+.my404{
     display: block;
     width : 80%;
     margin-top: 5%;
@@ -450,7 +485,11 @@ footer a, p {
     text-align: center;
 }
 
-.content-error a{
+.my404-content{
+    margin-top: 90px;
+}
+
+.my404 a{
     color: #888888;
     font-size: 18px;
     font-weight: bolder;
@@ -458,6 +497,80 @@ footer a, p {
     line-height: 40px;
     margin-top: 0px;
     text-align: center;
+}
+
+.my404-img{
+    margin-top: 20px;
+}
+
+.my404-img img{
+    position: relative;
+    top: 30px;
+    width: 60px;
+}
+
+@keyframes move-up-down-1 {
+    0% {
+        top: 30px;
+    }
+    50% {
+        top: 60px;
+    }
+    100% {
+        top: 30px;
+    }
+}
+.my404-img1{
+    left: -5%;
+    animation: move-up-down-1 3s ease-out 0s infinite normal;
+}
+
+@keyframes move-up-down-2 {
+    0% {
+        top: 10px;
+    }
+    50% {
+        top: 50px;
+    }
+    100% {
+        top: 10px;
+    }
+}
+.my404-img2{
+    left: 0;
+    animation: move-up-down-2 3s ease-out 0s infinite normal;
+}
+
+@keyframes move-up-down-3 {
+    0% {
+        top: 20px;
+    }
+    50% {
+        top: 60px;
+    }
+    100% {
+        top: 20px;
+    }
+}
+.my404-img3{
+    left: 5%;
+    animation: move-up-down-3 3s ease-out 0s infinite normal;
+}
+
+@keyframes move-up-down-4 {
+    0% {
+        top: 30px;
+    }
+    50% {
+        top: 60px;
+    }
+    100% {
+        top: 30px;
+    }
+}
+.my404-img4{
+    left: 10%;
+    animation: move-up-down-4 3s ease-out 0s infinite normal;
 }
 
 #return-top{
