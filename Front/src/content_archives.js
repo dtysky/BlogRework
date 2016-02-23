@@ -22,6 +22,7 @@ module.exports = React.createClass({
                 name="all"
                 index={this.props.params.index}
                 handleHead={this.props.handleHead}
+                can_content_animate={this.props.can_content_animate}
             />
         );
     }

@@ -18,15 +18,11 @@ button:focus {
     height: 100%;
 }
 
-.home-canbackchange{}
-
-#home-menu-id{}
-
 .home-menu{
 	display: none;
 	position: fixed;
 	width: 160px;
-	height: 320px;
+	height: 270px;
 	bottom: 0px;
 	right: 0px;
 }
@@ -413,6 +409,14 @@ footer a, p {
 	text-align: right;
 }
 
+article{
+    width: 100%;
+}
+
+article .description a{
+    padding: 2px;
+}
+
 @keyframes rotate-full {
     from {
         -webkit-transform: rotate(0deg);
@@ -574,7 +578,7 @@ footer a, p {
 }
 
 #return-top{
-	display: none;
+	display: block;
 	position: fixed;
 	right: 180px;
 	bottom: 10px;
@@ -591,10 +595,8 @@ footer a, p {
 }
 
 .pagination{
-    position: fixed;
 	text-align: center;
-	bottom: 0;
-    width: 50%;
+	margin-top: 20px;
 }
 
 .pagination ul{
@@ -633,16 +635,12 @@ footer a, p {
         display: none;
     }
     #return-top{
-        display: block;
+        right: 170px;
     }
     #home-main{
         width: 50%;
         margin-left: 30%;
         top: 60px;
-    }
-    .pagination{
-        position: fixed;
-        width: 50%;
     }
 }
 
@@ -661,15 +659,11 @@ footer a, p {
         display: block;
     }
     #return-top{
-        display: none;
+        right: 10px;
     }
     #home-main{
         width: 80%;
         margin-left: 10%;
         top: 20px;
-    }
-    .pagination{
-        position: relative;
-        width: 100%;
     }
 }

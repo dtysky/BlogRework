@@ -61,7 +61,6 @@ module.exports = React.createClass({
     },
     render: function(){
         var self = this;
-        console.log(this.theme_now);
         var image_list = [
             {
                 left: this.flag ? "50%" : "0%",

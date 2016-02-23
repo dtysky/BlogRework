@@ -15,6 +15,12 @@ var colorNextEffect = require('./utils').colorNextEffect;
 require('./theme/css/sky.css');
 
 module.exports = React.createClass({
+    componentDidMount: function(){
+        if(this.props.theme_default !== "home"){
+            this.props.setDefaultTheme("home");
+            this.props.changeTheme("home", true);
+        }
+    },
     render: function(){
         return (
             <div>
@@ -35,6 +41,7 @@ module.exports = React.createClass({
                     description="欢迎来到我的博客，这里是我在旅程中设立的一些路标，希望大家能够从我的一些经验中有所收获，可以是喜悦，也可以是悲伤，亦或是愤怒、讽刺与同情。"
                     handleHead={this.props.handleHead}
                     title={config.site_title}
+                    can_content_animate={this.props.can_content_animate}
                 />
             </div>
         );

@@ -40,31 +40,33 @@ var App = React.createClass({
                 author: ""
             },
             theme_default: "home",
-            theme_info: "home"
+            theme_info: "home",
+            can_content_animate: true
         };
     },
     handleHead: function(head){
         this.setState({
-            head: head
+            head: head,
+            can_content_animate: false
         });
+        console.log("handleHead");
     },
     setDefaultTheme: function(info){
         if(this.state.theme_default !== info){
             this.setState({
-                theme_default: info
+                theme_default: info,
+                can_content_animate: true
             });
         }
     },
     changeTheme: function(info, enter){
         var self = this;
         function update(){
-            console.log("update");
             self.setState({
                 theme_info: info
             });
         }
         function fun(){
-            console.log("fun");
             clearTimeout(self.timeout_id);
             self.timeout_id = setTimeout(
                 update,
@@ -78,6 +80,9 @@ var App = React.createClass({
             clearTimeout(self.timeout_id);
             update();
         }
+    },
+    returnTop: function(){
+        $('html,body').animate({scrollTop: 0}, 0);
     },
     render: function(){
         var self = this;
@@ -129,7 +134,8 @@ var App = React.createClass({
                                     setDefaultTheme: this.setDefaultTheme,
                                     changeTheme: this.changeTheme,
                                     theme_info: this.state.theme_info,
-                                    theme_default: this.state.theme_default
+                                    theme_default: this.state.theme_default,
+                                    can_content_animate: this.state.can_content_animate
                         }
                             )
                         }
@@ -139,6 +145,9 @@ var App = React.createClass({
                     theme_info={this.state.theme_info}
                     theme_default={this.state.theme_default}
                 />
+                <div id="return-top">
+                    <button onClick={this.returnTop}/>
+                </div>
             </div>
         );
     }
