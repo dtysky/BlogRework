@@ -183,6 +183,7 @@ button:focus {
 #title-list li{
 	display: inline-block;
 	width: 25%;
+    padding-top: 20px;
 }
 
 #title-list a{
@@ -410,10 +411,10 @@ footer a, p {
 }
 
 .duration-1s{
-    -webkit-transition: background-color 1s ease-in;
-    -moz-transition: background-color 1s ease-in;
-    -o-transition: background-color 1s ease-in;
-    transition: background-color 1s ease-in;
+    -webkit-transition: opacity .5s ease-in,background-color 1s ease-in;
+    -moz-transition: opacity .5s ease-in,background-color 1s ease-in;
+    -o-transition: opacity .5s ease-in,background-color 1s ease-in;
+    transition: opacity .5s ease-in,background-color 1s ease-in;
 }
 
 article{
@@ -697,6 +698,8 @@ article .description a{
         position: relative;
         margin-bottom: 20px;
         width: 80%;
+        padding-top: 5px;
+        padding-bottom: 5px;
         padding-left: 10%;
         padding-right: 10%;
         min-height: 64px;

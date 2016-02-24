@@ -18,7 +18,7 @@ module.exports = React.createClass({
     },
     render: function(){
         return (
-            <footer>
+            <footer className="duration-1s">
                 <p>Links</p>
                 <div id="home-links-phone">
                     {

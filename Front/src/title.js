@@ -97,13 +97,15 @@ module.exports = React.createClass({
                 <div id="title-list">
                     {
                         this.cp_list.map(function (item) {
-                            return (<li id={item.id}
+                            return (
+                                <li id={item.id}
                                        onMouseEnter={function(e){self.changeThemeRequire(item.theme);}}
                                        onMouseLeave={function(e){self.changeThemeToDefault();}}
                                        onClick={function(e){self.setDefaultTheme(item.theme);}}
-                            >
-                                <Link to={"/category/" + item.theme}><span>{item.theme}</span></Link>
-                            </li>);
+                                >
+                                    <Link to={"/category/" + item.theme}><span>{item.theme}</span></Link>
+                                </li>
+                            );
                         })
                     }
                 </div>

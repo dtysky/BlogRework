@@ -122,6 +122,7 @@ module.exports = React.createClass({
             this.getAll(name);
             var timeoutId = 0;
             var fun = function() {
+                console.log("check!");
                 if (cache.has(name)) {
                     clearTimeout(timeoutId);
                     self.getInfo(name, props.index);
@@ -149,7 +150,6 @@ module.exports = React.createClass({
         ){
             this.updateData(nextProps);
         }
-        console.log(this.props.can_content_animate);
         return this.props.can_content_animate;
     },
     articleShowEffect: function(duration, i){

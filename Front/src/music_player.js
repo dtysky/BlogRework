@@ -24,7 +24,6 @@ module.exports = React.createClass({
             data = config.default_music.info;
         }else{
             data = config.default_music.info.filter(function(e){
-                console.log(list, e, list.indexOf(e.slug));
                 return list.indexOf(e.slug) === -1 ? null : e;
             });
         }

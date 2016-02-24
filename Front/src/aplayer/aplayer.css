@@ -372,7 +372,7 @@
 
 .aplayer .aplayer-list {
     max-height: 70px;
-    overflow: scroll;
+    overflow: auto;
     margin-top: 20px;
     -webkit-transition: all .5s ease;
     transition: all .5s ease
