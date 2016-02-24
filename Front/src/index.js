@@ -52,7 +52,6 @@ var App = React.createClass({
             head: head,
             can_content_animate: false
         });
-        console.log("handleHead");
     },
     setDefaultTheme: function(info){
         if(this.state.theme_default !== info){

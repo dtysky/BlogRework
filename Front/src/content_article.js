@@ -4,12 +4,7 @@
  */
 
 
-require('velocity-animate');
-require('velocity-animate/velocity.ui');
-require('velocity-animate/velocity');
-
 var React = require('react/addons');
-var VelocityComponent = require('velocity-react').VelocityComponent;
 var Link = require('react-router').Link;
 var format = require('util').format;
 
@@ -22,7 +17,7 @@ var redirect = require('./utils').redirect;
 var config = require('./utils').config;
 var site_title = config.site_title;
 var server_url = config.server_url;
-var colorNextEffect = require('./utils').colorNextEffect;
+var theme_color = config.theme_color;
 
 require('./theme/css/sky.css');
 require('./theme/css/article.css');
@@ -136,8 +131,14 @@ module.exports = React.createClass({
         return true;
     },
     componentDidUpdate: function(){
-        //console.log($('blockquote'), $('blockquote').Velocity);
-        //Velocity($('blockquote'), {'background-color': theme_color[this.props.theme_info]}, 800);
+        var elements = document.getElementsByTagName("blockquote");
+        for(var i=0; i<elements.length; i++){
+            elements[i].style.backgroundColor = theme_color[this.props.theme_info];
+        }
+        elements = document.getElementsByClassName("home-article-sphr");
+        for(i=0; i<elements.length; i++){
+            elements[i].style.backgroundColor = theme_color[this.props.theme_info];
+        }
     },
     showArticle: function(){
         return <article className="home-article">
@@ -177,9 +178,7 @@ module.exports = React.createClass({
                         })
                     }
                 </p>
-                <VelocityComponent animation={colorNextEffect(this.props.theme_info)}>
-                    <div className="home-article-sphr"></div>
-                </VelocityComponent>
+                <div className="home-article-sphr duration-1s"></div>
             </div>
             <div className="home-article-middle" dangerouslySetInnerHTML={{__html: this.state.content}}>
             </div>

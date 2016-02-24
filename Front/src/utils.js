@@ -54,25 +54,8 @@ var redirect = function(){
     window.location.href = "/#/404";
 };
 
-var colorNextEffect = function(color_info){
-    return velocityHelpers.registerEffect({
-        defaultDuration: config.animation_default_duration,
-        calls:[
-            [{
-                backgroundColor: config.theme_color[color_info]
-            },
-                1,
-                {
-                    delay: 0,
-                    easing: "ease-in"
-                }]
-        ]
-    });
-};
-
 module.exports = {
     config: config,
     getLocalUrl: getLocalUrl,
-    redirect: redirect,
-    colorNextEffect: colorNextEffect
+    redirect: redirect
 };

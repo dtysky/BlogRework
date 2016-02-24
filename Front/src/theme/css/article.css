@@ -240,3 +240,10 @@ td{
 	padding: 10px;
 	text-align: center;
 }
+
+blockquote{
+    -webkit-transition: background-color 1s ease-in;
+    -moz-transition: background-color 1s ease-in;
+    -o-transition: background-color 1s ease-in;
+    transition: background-color 1s ease-in;
+}

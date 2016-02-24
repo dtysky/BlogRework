@@ -2,14 +2,11 @@
 /**
  * Created by dtysky on 16/2/3.
  */
-require('velocity-animate');
-require('velocity-animate/velocity.ui');
 
 var React = require('react/addons');
-var VelocityComponent = require('velocity-react').VelocityComponent;
 var APlayer = require('./aplayer/aplayer');
 var config = require('./utils').config;
-var colorNextEffect = require('./utils').colorNextEffect;
+var theme_color = config.theme_color;
 
 require('./aplayer/aplayer.css');
 require('./theme/css/sky.css');
@@ -44,7 +41,8 @@ module.exports = React.createClass({
         if(this.isMobile){
             this.player.init(false);
         }else{
-            this.player.init(true);
+            //this.player.init(true);
+            this.player.init(false);
         }
     },
     componentDidMount: function(){
@@ -59,7 +57,6 @@ module.exports = React.createClass({
         this.initPlayer();
     },
     shouldComponentUpdate: function(nextProps, nextState){
-        console.log(nextProps, this.props);
         if(nextProps.music_list.toString() !== this.props.music_list.toString()){
             this.player.pause();
             this.player.option.music =
@@ -70,17 +67,18 @@ module.exports = React.createClass({
         }
         return true;
     },
+    componentDidUpdate: function(){
+        document.getElementById("player1").style.backgroundColor = theme_color[this.props.theme_info];
+    },
     render: function() {
         return (
             <div id="music-player">
                 <div id="player-hr"></div>
-                <VelocityComponent animation={colorNextEffect(this.props.theme_info)}>
-                    <div
-                        id="player1"
-                        className="aplayer"
-                    >
-                    </div>
-                </VelocityComponent>
+                <div
+                    id="player1"
+                    className="aplayer duration-1s"
+                >
+                </div>
             </div>
         );
     }
