@@ -4,7 +4,7 @@
  */
 
 var velocityHelpers = require('velocity-react').velocityHelpers;
-
+var fs = require('fs');
 
 var config = {
     "site_title": "dtysky|一个行者的轨迹",
@@ -42,41 +42,7 @@ var config = {
         "authors": "theme/image/authors.jpg",
         "404": "theme/image/404.jpg"
     },
-    "default_music": {
-        "url": "http://src.dtysky.moe/music",
-        "info": [
-            {
-                "title": "パーフェクトヴァニティ",
-                "author": "茶太",
-                "format": ".mp3"
-            },
-            {
-                "title": "Ordinary World",
-                "author": "仲村芽衣子",
-                "format": ".ogg"
-            },
-            {
-                "title": "パーフェクトヴァニティ",
-                "author": "茶太",
-                "format": ".mp3"
-            },
-            {
-                "title": "Ordinary World",
-                "author": "仲村芽衣子",
-                "format": ".ogg"
-            },
-            {
-                "title": "パーフェクトヴァニティ",
-                "author": "茶太",
-                "format": ".mp3"
-            },
-            {
-                "title": "Ordinary World",
-                "author": "仲村芽衣子",
-                "format": ".ogg"
-            }
-        ]
-    }
+    "default_music": require('./default_music')
 };
 
 var getLocalUrl = function(type, name, index){

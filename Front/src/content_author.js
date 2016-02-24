@@ -13,6 +13,7 @@ module.exports = React.createClass({
         if(this.props.theme_default !== "authors"){
             this.props.setDefaultTheme("authors");
             this.props.changeTheme("authors", true);
+            this.props.setMusicList([]);
         }
     },
     render: function(){

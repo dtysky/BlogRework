@@ -43,7 +43,8 @@ var App = React.createClass({
             },
             theme_default: "home",
             theme_info: "home",
-            can_content_animate: true
+            can_content_animate: true,
+            music_list: []
         };
     },
     handleHead: function(head){
@@ -83,6 +84,11 @@ var App = React.createClass({
             update();
         }
     },
+    setMusicList: function(list){
+        this.setState({
+            music_list: list
+        });
+    },
     returnTop: function(){
         $('html,body').animate({scrollTop: 0}, 0);
     },
@@ -119,6 +125,7 @@ var App = React.createClass({
                 />
                 <MusicPlayer
                     theme_info={this.state.theme_info}
+                    music_list={this.state.music_list}
                 />
                 <div id="home-main">
                     <Title
@@ -139,7 +146,8 @@ var App = React.createClass({
                                     changeTheme: this.changeTheme,
                                     theme_info: this.state.theme_info,
                                     theme_default: this.state.theme_default,
-                                    can_content_animate: this.state.can_content_animate
+                                    can_content_animate: this.state.can_content_animate,
+                                    setMusicList: this.setMusicList
                         }
                             )
                         }

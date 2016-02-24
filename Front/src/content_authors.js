@@ -95,6 +95,7 @@ module.exports = React.createClass({
             this.props.setDefaultTheme("authors");
             this.props.changeTheme("authors", true);
         }
+        this.props.setMusicList([]);
     },
     render: function(){
         if (this.state.state === "error"){

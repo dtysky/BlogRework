@@ -415,7 +415,7 @@
     width: 4px;
     height: 16px;
     position: absolute;
-    left: 0;
+    left: 2px;
     top: 5px;
     cursor: pointer
 }

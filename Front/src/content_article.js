@@ -94,6 +94,9 @@ module.exports = React.createClass({
         });
         this.props.setDefaultTheme(data.content.category.view);
         this.props.changeTheme(this.props.theme_default, true);
+        this.props.setMusicList(
+            data.content.music === undefined ? [] : data.content.music
+        );
     },
     updateData: function(props){
         var self = this;

@@ -20,6 +20,7 @@ module.exports = React.createClass({
             this.props.setDefaultTheme("home");
             this.props.changeTheme("home", true);
         }
+        this.props.setMusicList([]);
     },
     render: function(){
         return (

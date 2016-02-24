@@ -15,6 +15,7 @@ module.exports = React.createClass({
             this.props.setDefaultTheme(this.props.params.name);
             this.props.changeTheme(this.props.params.name, true);
         }
+        this.props.setMusicList([]);
     },
     render: function(){
         return (

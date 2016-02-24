@@ -111,6 +111,7 @@ module.exports = React.createClass({
             this.props.setDefaultTheme("tags");
             this.props.changeTheme("tags", true);
         }
+        this.props.setMusicList([]);
     },
     render: function(){
         if (this.state.state === "error"){

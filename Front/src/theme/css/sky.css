@@ -620,6 +620,16 @@ article .description a{
 	color: #888888;
 }
 
+#player1{
+    -moz-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+}
+
+#player1:hover{
+    opacity: 0.8;
+}
+
 #player-hr{
     border: 1px solid #ffffff;
 }
@@ -688,8 +698,9 @@ article .description a{
         opacity: 0.8;
         position: relative;
         margin-bottom: 20px;
-        left: 10%;
         width: 80%;
+        padding-left: 10%;
+        padding-right: 10%;
         min-height: 64px;
     }
     #player-hr{

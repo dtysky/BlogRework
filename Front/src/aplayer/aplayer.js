@@ -38,9 +38,10 @@ function APlayer(option) {
 /**
  * AutoLink initialization function
  */
-APlayer.prototype.init = function () {
+APlayer.prototype.init = function (auto_play) {
     this.element = this.option.element;
     this.music = this.playIndex > -1 ? this.option.music[this.playIndex] : this.option.music;
+    this.option.autoplay = auto_play;
 
     var i;
     // parser lrc
@@ -221,7 +222,7 @@ APlayer.prototype.init = function () {
     // control volume
     this.volumeBar = this.element.getElementsByClassName('aplayer-volume')[0];
     var volumeBarWrap = this.element.getElementsByClassName('aplayer-volume-bar')[0];
-    var volumeicon = _self.element.getElementsByClassName('aplayer-time')[0].getElementsByTagName('i')[0];
+    var volumeicon = _self.element.getElementsByClassName('aplayer-time')[0].getElementsByTagName('i')[2];
     var barWidthV = 35;
     this.element.getElementsByClassName('aplayer-volume-bar-wrap')[0].addEventListener('click', function (event) {
         var e = event || window.event;
