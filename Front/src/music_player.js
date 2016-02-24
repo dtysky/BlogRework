@@ -60,7 +60,7 @@ module.exports = React.createClass({
     },
     shouldComponentUpdate: function(nextProps, nextState){
         console.log(nextProps, this.props);
-        if(nextProps.music_list !== this.props.music_list){
+        if(nextProps.music_list.toString() !== this.props.music_list.toString()){
             this.player.pause();
             this.player.option.music =
                 this.getMusicInfo(
