@@ -620,8 +620,12 @@ article .description a{
 	color: #888888;
 }
 
+#player-hr{
+    border: 1px solid #ffffff;
+}
+
 /*For PC*/
-@media (min-width: 800px) {
+@media (min-width: 960px) {
     #home-left{
         display: block;
     }
@@ -642,10 +646,23 @@ article .description a{
         margin-left: 30%;
         top: 60px;
     }
+    #player1{
+        background-color: #ffffff;
+        opacity: 0.6;
+        position: fixed;
+        top: 20px;
+        left: 10px;
+        width: 23%;
+        min-height: 64px;
+        max-width: 280px;
+    }
+    #player-hr{
+        display: none;
+    }
 }
 
 /*For Phone*/
-@media (max-width: 800px) {
+@media (max-width: 960px) {
     #home-left{
         display: none;
     }
@@ -665,5 +682,17 @@ article .description a{
         width: 80%;
         margin-left: 10%;
         top: 20px;
+    }
+    #player1{
+        background-color: #ffffff;
+        opacity: 0.8;
+        position: relative;
+        margin-bottom: 20px;
+        left: 10%;
+        width: 80%;
+        min-height: 64px;
+    }
+    #player-hr{
+        display: block;
     }
 }

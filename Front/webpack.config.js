@@ -58,27 +58,11 @@ module.exports = {
             },
             {
                 test: /\.(png|jpg|gif|woff|woff2)$/,
-                loader: 'url-loader?limit=10'
+                loader: 'url?limit=10'
             },
             {
-                test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-                loader: "url?limit=10000&minetype=application/font-woff"
-            },
-            {
-                test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-                loader: "url?limit=10000&minetype=application/octet-stream"
-            },
-            {
-                test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-                loader: "file"
-            },
-            {
-                test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-                loader: "url?limit=10000&minetype=image/svg+xml"
-            },
-            {
-                test: /\.node$/,
-                loader: "node-loader"
+                test   : /\.woff|\.woff2|\.svg|.eot|\.ttf/,
+                loader : 'url?prefix=font/&limit=10000'
             },
             {
                 test: /\.json$/,

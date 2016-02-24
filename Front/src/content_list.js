@@ -149,6 +149,7 @@ module.exports = React.createClass({
         ){
             this.updateData(nextProps);
         }
+        console.log(this.props.can_content_animate);
         return this.props.can_content_animate;
     },
     articleShowEffect: function(duration, i){
@@ -204,7 +205,7 @@ module.exports = React.createClass({
                     >
                         {item.date}
                     </p>
-                    <p>,</p>
+                    <p>，</p>
                     <p>路标：</p>
                     {
                         item.tags.map(function(tag){

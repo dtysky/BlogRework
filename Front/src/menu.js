@@ -30,7 +30,6 @@ module.exports = React.createClass({
             <VelocityComponent animation={colorNextEffect(this.props.theme_info)}>
                 <div className="home-menu">
                     <Link to="/articles/wo-de-jian-li.html" id="home-menu-name">dtysky</Link>
-                    <div id="player1" className="aplayer"></div>
                     <div className="home-menu-icons">
                         <a href="/feeds/skill.rss.xml" className="home-menu-icon" target="_blank">
                             <img src="/theme/image/rss.png" alt="RSS"/>

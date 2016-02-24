@@ -26,6 +26,8 @@ var ContentTags = require('./content_tags');
 var ContentAuthors = require('./content_authors');
 var ContentArticle = require('./content_article');
 var NotFound = require('./not_found');
+var MusicPlayer = require('./music_player');
+
 
 require('./theme/css/sky.css');
 
@@ -85,7 +87,6 @@ var App = React.createClass({
         $('html,body').animate({scrollTop: 0}, 0);
     },
     render: function(){
-        var self = this;
         return (
             <div
                 className="full"
@@ -115,6 +116,9 @@ var App = React.createClass({
                     theme_default={this.state.theme_default}
                     changeTheme={this.changeTheme}
                     setDefaultTheme={this.setDefaultTheme}
+                />
+                <MusicPlayer
+                    theme_info={this.state.theme_info}
                 />
                 <div id="home-main">
                     <Title

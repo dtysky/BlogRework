@@ -8,10 +8,6 @@ var React = require('react/addons');
 require('./theme/css/sky.css');
 
 module.exports = React.createClass({
-    getInitialState: function(){
-        return {};
-    },
-
     render: function() {
         return (
             <div className="content-wait">
