@@ -127,7 +127,7 @@ module.exports = React.createClass({
                     clearTimeout(timeoutId);
                     self.getInfo(name, props.index);
                 }
-                else {
+                else if(self.state.state === "wait") {
                     timeoutId = setTimeout(fun, 200);
                 }
             };

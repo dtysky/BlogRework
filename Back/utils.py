@@ -49,6 +49,9 @@ def clear_database(database):
 
 
 def is_markdown_file(file_path):
+    """
+    Judging file is markdown file.
+    """
     return splitext(file_path)[1] == ".md"
 
 
