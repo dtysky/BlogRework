@@ -10,6 +10,7 @@ var format = require('util').format;
 
 var Loading = require('./loading');
 var NormalError = require('./normal_error');
+var Share = require('./share');
 
 var cache = require('./cache');
 var getLocalUrl = require('./utils').getLocalUrl;
@@ -36,7 +37,6 @@ module.exports = React.createClass({
         };
     },
     getAll: function(name){
-        var self = this;
         this.setState({
             state: "wait"
         });
@@ -108,7 +108,7 @@ module.exports = React.createClass({
                     clearTimeout(timeoutId);
                     self.getInfo(name);
                 }
-                else {
+                else if (self.state.state === "wait"){
                     timeoutId = setTimeout(fun, 200);
                 }
             };
@@ -142,6 +142,7 @@ module.exports = React.createClass({
     },
     showArticle: function(){
         return <article className="home-article">
+            <Share/>
             <div className="home-article-top description">
                 <h1>{this.state.title}</h1>
                 <p>

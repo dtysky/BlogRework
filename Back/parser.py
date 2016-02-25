@@ -36,7 +36,7 @@ class Parser(object):
     def _split_meta_and_content(self, text):
         tmp = re.match(
             r"([\s\S]*?)\n\n([\s\S]*)",
-            text
+            text.replace("\r\n", "\n")
         )
         if not tmp:
             return False

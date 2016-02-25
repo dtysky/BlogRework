@@ -36,7 +36,6 @@ module.exports = React.createClass({
         };
     },
     getAll: function(name){
-        var self = this;
         this.setState({
             state: "wait"
         });
@@ -59,7 +58,7 @@ module.exports = React.createClass({
                     redirect();
                 }
                 else{
-                    self.setState({
+                    this.setState({
                         state: "error"
                     });
                 }

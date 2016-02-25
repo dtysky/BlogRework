@@ -19,6 +19,7 @@ React-router
 Veloctiy-react  
 Express.js   
 Jquery  
+Social-share.js
 
 ### Finish
 

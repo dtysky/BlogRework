@@ -32,6 +32,7 @@ module.exports = React.createClass({
     componentDidMount: function(){
         this.props.setDefaultTheme("404");
         this.props.changeTheme("404", true);
+        this.props.setMusicList(["パーフェクトヴァニティ"]);
     },
     render: function() {
         return (

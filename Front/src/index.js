@@ -89,7 +89,7 @@ var App = React.createClass({
         });
     },
     returnTop: function(){
-        $('html,body').animate({scrollTop: 0}, 0);
+        window.scrollTo(0, 0);
     },
     render: function(){
         return (
