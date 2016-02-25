@@ -33,6 +33,7 @@ module.exports = React.createClass({
             authors: [],
             tags: [],
             category: "",
+            summary: [],
             content: ""
         };
     },
@@ -73,6 +74,7 @@ module.exports = React.createClass({
             tags: data.content.tags,
             category: data.content.category,
             date: data.content.date,
+            summary: data.content.summary,
             content: data.content.content
         });
         var authors = data.content.authors.map(function(item){
@@ -142,7 +144,18 @@ module.exports = React.createClass({
     },
     showArticle: function(){
         return <article className="home-article">
-            <Share/>
+            <Share
+                info={{
+                    url: format("%s/%s", config.site_url, this.state.slug),
+                    title: format("%s - %s", this.state.title, site_title),
+                    description: this.state.summary,
+                    summary: this.state.summary,
+                    image: (document.images[0] || 0).src || '',
+                    site: site_title,
+                    site_url: format("%s/%s", config.site_url, this.state.slug),
+                    source: format("%s/%s", config.site_url, this.state.slug)
+                }}
+            />
             <div className="home-article-top description">
                 <h1>{this.state.title}</h1>
                 <p>

@@ -11,7 +11,12 @@ require('./theme/css/share.css');
 
 module.exports = React.createClass({
     format_template: function(t_url){
-        return t_url;
+        var data = this.props.info;
+        return t_url.replace(/\{\{(\w)(\w*)\}\}/g, function(m, fix, key){
+            key = (fix + key).toLowerCase();
+            console.log(key, data[key]);
+            return encodeURIComponent(data[key] || '');
+        });
     },
     onClick: function(){
 

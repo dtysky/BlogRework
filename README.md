@@ -19,7 +19,10 @@ React-router
 Veloctiy-react  
 Express.js   
 Jquery  
-Social-share.js
+
+### Adaptation
+
+APlayer
 
 ### Finish
 
@@ -27,6 +30,7 @@ View
 Cache  
 Router  
 In-site router  
+Share  
 Animations with js and css3
 
 ## Back
