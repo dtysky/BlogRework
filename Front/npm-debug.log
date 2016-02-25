@@ -1,0 +1,76 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/dtysky/.nvm/v0.10.37/bin/node',
+1 verbose cli   '/Users/dtysky/.nvm/v0.10.37/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   'sociel-share.js',
+1 verbose cli   '--save' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.37
+4 warn package.json jsxhint-loader@0.2.0 No repository field.
+5 warn package.json path@0.12.7 path is also the name of a node core module.
+6 verbose readDependencies using package.json deps
+7 verbose cache add [ 'sociel-share.js', null ]
+8 verbose cache add name=undefined spec="sociel-share.js" args=["sociel-share.js",null]
+9 verbose parsed url { protocol: null,
+9 verbose parsed url   slashes: null,
+9 verbose parsed url   auth: null,
+9 verbose parsed url   host: null,
+9 verbose parsed url   port: null,
+9 verbose parsed url   hostname: null,
+9 verbose parsed url   hash: null,
+9 verbose parsed url   search: null,
+9 verbose parsed url   query: null,
+9 verbose parsed url   pathname: 'sociel-share.js',
+9 verbose parsed url   path: 'sociel-share.js',
+9 verbose parsed url   href: 'sociel-share.js' }
+10 silly lockFile e71120a9-sociel-share-js sociel-share.js
+11 verbose lock sociel-share.js /Users/dtysky/.npm/e71120a9-sociel-share-js.lock
+12 silly lockFile e71120a9-sociel-share-js sociel-share.js
+13 silly lockFile e71120a9-sociel-share-js sociel-share.js
+14 verbose addNamed [ 'sociel-share.js', '' ]
+15 verbose addNamed [ null, '*' ]
+16 silly lockFile 4b77a56c-sociel-share-js sociel-share.js@
+17 verbose lock sociel-share.js@ /Users/dtysky/.npm/4b77a56c-sociel-share-js.lock
+18 silly addNameRange { name: 'sociel-share.js', range: '*', hasData: false }
+19 verbose request where is /sociel-share.js
+20 verbose request registry https://registry.npmjs.org/
+21 verbose request id faa8540a6f94e6df
+22 verbose url raw /sociel-share.js
+23 verbose url resolving [ 'https://registry.npmjs.org/', './sociel-share.js' ]
+24 verbose url resolved https://registry.npmjs.org/sociel-share.js
+25 verbose request where is https://registry.npmjs.org/sociel-share.js
+26 info trying registry request attempt 1 at 14:42:20
+27 http GET https://registry.npmjs.org/sociel-share.js
+28 http 404 https://registry.npmjs.org/sociel-share.js
+29 silly registry.get cb [ 404,
+29 silly registry.get   { 'content-type': 'application/json',
+29 silly registry.get     'cache-control': 'max-age=0',
+29 silly registry.get     'content-length': '2',
+29 silly registry.get     'accept-ranges': 'bytes',
+29 silly registry.get     date: 'Thu, 25 Feb 2016 06:42:22 GMT',
+29 silly registry.get     via: '1.1 varnish',
+29 silly registry.get     age: '0',
+29 silly registry.get     connection: 'keep-alive',
+29 silly registry.get     'x-served-by': 'cache-nrt6121-NRT',
+29 silly registry.get     'x-cache': 'MISS',
+29 silly registry.get     'x-cache-hits': '0',
+29 silly registry.get     'x-timer': 'S1456382541.745105,VS0,VE493' } ]
+30 silly lockFile 4b77a56c-sociel-share-js sociel-share.js@
+31 silly lockFile 4b77a56c-sociel-share-js sociel-share.js@
+32 error 404 Not Found
+32 error 404
+32 error 404 'sociel-share.js' is not in the npm registry.
+32 error 404 You should bug the author to publish it
+32 error 404 It was specified as a dependency of 'BlogRework'
+32 error 404
+32 error 404 Maybe try 'npm search sociel share'
+32 error 404
+32 error 404 Note that you can also install from a
+32 error 404 tarball, folder, or http url, or git url.
+33 error System Darwin 14.5.0
+34 error command "/Users/dtysky/.nvm/v0.10.37/bin/node" "/Users/dtysky/.nvm/v0.10.37/bin/npm" "install" "sociel-share.js" "--save"
+35 error cwd /Users/dtysky/Complex_Mind/BlogRework/Front
+36 error node -v v0.10.37
+37 error npm -v 1.4.28
+38 error code E404
+39 verbose exit [ 1, true ]

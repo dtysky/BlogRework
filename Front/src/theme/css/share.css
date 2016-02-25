@@ -1,0 +1,84 @@
+@font-face {
+    font-family: socialshare;
+    src: url(../font/iconfont.eot); /* IE9*/
+    src: url(../font/iconfont.eot?#iefix) format("embedded-opentype"), /* IE6-IE8 */
+    url(../font/iconfont.woff) format("woff"), /* chrome, firefox */
+    url(../font/iconfont.ttf) format("truetype"), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+    url(../font/iconfont.svg#iconfont) format("svg"); /* iOS 4.1- */
+}
+
+.share-icon {
+    font-family: "socialshare" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-stroke-width: 0.2px;
+    -moz-osx-font-smoothing: grayscale;
+    position: relative;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    border-radius: 50%;
+    line-height: 32px;
+    border: 1px solid #666;
+    color: #666;
+    text-align: center;
+    vertical-align: middle;
+    transition: background 0.6s ease-out 0s;
+}
+
+.share-icon:hover{
+     background: #666;
+     color: #fff;
+ }
+
+.icon-tencent:before { content: "\f07a"; }
+.icon-qq:before { content: "\f11a"; }
+.icon-weibo:before { content: "\f12a"; }
+.icon-wechat:before { content: "\f09a"; }
+.icon-douban:before { content: "\f10a"; }
+.icon-heart:before { content: "\f20a"; }
+.icon-like:before { content: "\f00a"; }
+.icon-qzone:before { content: "\f08a"; }
+.icon-linkedin:before { content: "\f01a"; }
+.icon-diandian:before { content: "\f05a"; }
+.icon-facebook:before { content: "\f03a"; }
+.icon-google:before { content: "\f04a"; }
+.icon-twitter:before { content: "\f06a"; }
+
+.icon-weibo {
+    color: #ff763b;
+    border-color: #ff763b;
+}
+
+.icon-tencent{
+    color:#56b6e7;border-color:#56b6e7;
+}
+
+.icon-qq{
+    color:#56b6e7;border-color:#56b6e7;
+}
+.icon-qzone{
+    color:#FDBE3D;border-color:#FDBE3D;
+}
+
+.icon-douban{
+    color:#33b045;border-color:#33b045;
+}
+
+.icon-linkedin{
+    color:#0077B5;border-color:#0077B5;
+}
+
+.icon-facebook {
+    color:#44619D;border-color:#44619D;
+}
+
+.icon-google {
+    color:#db4437;border-color:#db4437;
+}
+
+.icon-twitter {
+    color:#55acee;border-color:#55acee;
+}
