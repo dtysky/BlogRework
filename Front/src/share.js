@@ -4,51 +4,99 @@
  */
 
 var React = require('react/addons');
+var Modal = require('react-modal');
+var QrCode = require('qrcode.react');
 var config = require('./utils').config;
 var templates = config.share_templates;
+var theme_color = config.theme_color;
 
 require('./theme/css/share.css');
 
 module.exports = React.createClass({
+    getInitialState: function(){
+        return {
+            showModal: false
+        };
+    },
+    openModal: function() {
+        this.setState({
+            showModal: true
+        });
+    },
+
+    closeModal: function() {
+        this.setState({
+            showModal: false
+        });
+    },
     format_template: function(t_url){
         var data = this.props.info;
         return t_url.replace(/\{\{(\w)(\w*)\}\}/g, function(m, fix, key){
             key = (fix + key).toLowerCase();
-            console.log(key, data[key]);
-            return encodeURIComponent(data[key] || '');
+            return (data[key] || '');
         });
-    },
-    onClick: function(){
-
-    },
-    componentDidUpdate: function(){
     },
     render: function() {
         var self = this;
+        var modal_style = {
+            overlay : {
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.75)',
+                overflow: "auto"
+            },
+            content : {
+                width: 180,
+                height: 360,
+                margin: "auto",
+                backgroundColor: theme_color[this.props.theme],
+                opacity: 0.9,
+                overflow: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                borderRadius: '20px',
+                transition: "all 150ms ease-in"
+            }
+        };
         return (
-            <div>
-                <div
+            <div
+                className="share"
+            >
+                <button
                     className="share-button"
-                    onClick={this.onClick}
+                    onClick={this.openModal}
+                />
+                <Modal
+                    className="share-window"
+                    isOpen={this.state.showModal}
+                    onRequestClose={this.closeModal}
+                    style={modal_style}
+
                 >
-                </div>
-                <div className="share-window">
+                    <div
+                        style={{
+                            marginLeft: 5,
+                            border: "5px solid #eee"
+                        }}
+                    >
+                        <QrCode
+                            value={this.props.info.url}
+                            size={160}
+                            fgColor={theme_color[this.props.theme]}
+                            level="M"
+                        />
+                    </div>
                     {
                         templates.map(function(t){
                             return (
                                 <a
                                     href={self.format_template(t[1])}
                                     className={"share-icon icon-" + t[0]}
-                                >
-                                </a>
+                                />
                             );
                         })
                     }
-                    {
-                        //wechat
-                    }
-                    <img src=""/>
-                </div>
+                </Modal>
             </div>
         );
     }

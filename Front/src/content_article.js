@@ -143,18 +143,25 @@ module.exports = React.createClass({
         }
     },
     showArticle: function(){
+        var url = format(
+            "%s/%s/%s",
+            config.site_url,
+            "article",
+            encodeURIComponent(this.state.slug)
+        );
         return <article className="home-article">
             <Share
                 info={{
-                    url: format("%s/%s", config.site_url, this.state.slug),
+                    url: url,
                     title: format("%s - %s", this.state.title, site_title),
                     description: this.state.summary,
                     summary: this.state.summary,
-                    image: (document.images[0] || 0).src || '',
+                    image: (document.images[document.images.length] || 0).src || '',
                     site: site_title,
-                    site_url: format("%s/%s", config.site_url, this.state.slug),
-                    source: format("%s/%s", config.site_url, this.state.slug)
+                    site_url: config.site_url,
+                    source: url
                 }}
+                theme={this.props.theme_info}
             />
             <div className="home-article-top description">
                 <h1>{this.state.title}</h1>

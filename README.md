@@ -17,6 +17,8 @@ Node.js
 React.js  
 React-router  
 Veloctiy-react  
+React-modal  
+Rrcode.react  
 Express.js   
 Jquery  
 

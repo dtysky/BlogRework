@@ -1,3 +1,20 @@
+.share{
+    position: absolute;
+    margin-top: -40px;
+    right: 0px;
+    height: 20px;
+}
+
+.share-button {
+    height: 50px;
+    border: none;
+    cursor: pointer;
+    background: transparent url(../image/share.png) no-repeat;
+    text-align: center;
+    width: 50px;
+    color: black;
+}
+
 @font-face {
     font-family: socialshare;
     src: url(../font/iconfont.eot); /* IE9*/
@@ -9,6 +26,7 @@
 
 .share-icon {
     font-family: "socialshare" !important;
+    word-break: normal;
     font-size: 30px;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
@@ -16,13 +34,11 @@
     -moz-osx-font-smoothing: grayscale;
     position: relative;
     display: inline-block;
-    width: 32px;
-    height: 32px;
-    font-size: 20px;
-    border-radius: 50%;
-    line-height: 32px;
-    border: 1px solid #666;
-    color: #666;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    padding-left: 10px;
+    padding-top: 10px;
     text-align: center;
     vertical-align: middle;
     transition: background 0.6s ease-out 0s;
