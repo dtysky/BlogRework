@@ -42,7 +42,7 @@ module.exports = React.createClass({
                         ["1", "2", "3", "4"].map(function(e){
                             return <img
                                 className={"my404-img" + e}
-                                src={"theme/image/404-" + e + ".png"}
+                                src={"/theme/image/404-" + e + ".png"}
                                 alt={"404-image-" + e}
                             />;
                         })

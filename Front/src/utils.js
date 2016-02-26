@@ -3,14 +3,12 @@
  * Created by dtysky on 16/2/3.
  */
 
-var velocityHelpers = require('velocity-react').velocityHelpers;
-var fs = require('fs');
-
 var config = {
     "site_title": "dtysky|一个行者的轨迹",
     //"site_url": "http://dtysky.moe",
     "site_url": "http://localhost:8000",
     "server_url": "http://localhost:4444",
+    "disqus_short_name": 'dtysky',
     "tag_cloud_step": 4,
     "articles_per_page": 10,
     "animation_default_duration": 800,
@@ -31,14 +29,14 @@ var config = {
         "404": "#666666"
     },
     "theme_background": {
-        "Create": "theme/image/create.jpg",
-        "Skill": "theme/image/skill.jpg",
-        "Art": "theme/image/art.jpg",
-        "Life": "theme/image/life.jpg",
-        "home": "theme/image/home.jpg",
-        "tags": "theme/image/tags.jpg",
-        "authors": "theme/image/authors.jpg",
-        "404": "theme/image/404.jpg"
+        "Create": "/theme/image/create.jpg",
+        "Skill": "/theme/image/skill.jpg",
+        "Art": "/theme/image/art.jpg",
+        "Life": "/theme/image/life.jpg",
+        "home": "/theme/image/home.jpg",
+        "tags": "/theme/image/tags.jpg",
+        "authors": "/theme/image/authors.jpg",
+        "404": "/theme/image/404.jpg"
     },
     "default_music": require('./default_music'),
     "share_templates": [

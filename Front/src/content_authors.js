@@ -82,7 +82,7 @@ module.exports = React.createClass({
                     clearTimeout(timeoutId);
                     self.getInfo(name);
                 }
-                else {
+                else if (self.state.state !== "error"){
                     timeoutId = setTimeout(fun, 500);
                 }
             };

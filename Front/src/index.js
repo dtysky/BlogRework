@@ -99,7 +99,7 @@ var App = React.createClass({
                 <Helmet
                     title={this.state.head.title}
                     titleTemplate= {"%s"}
-                    base={{"target": "_blank", "href": Config.site_url}}
+                    //base={{"href": Config.site_url}}
                     meta={[
                             {name: "keywords", "content": this.state.head.keywords},
                             {name: "author", "content": this.state.head.author},
@@ -147,7 +147,7 @@ var App = React.createClass({
                                     theme_default: this.state.theme_default,
                                     can_content_animate: this.state.can_content_animate,
                                     setMusicList: this.setMusicList
-                        }
+                                }
                             )
                         }
                     </div>
@@ -167,7 +167,7 @@ var App = React.createClass({
 //name = slug
 var router = (
     <Router
-        history={ReactRouter.hashHistory}
+        history={ReactRouter.browserHistory}
         id="home-main-content"
     >
         <Route path="/" component={App}>

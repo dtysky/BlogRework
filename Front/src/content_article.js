@@ -110,12 +110,19 @@ module.exports = React.createClass({
                     clearTimeout(timeoutId);
                     self.getInfo(name);
                 }
-                else if (self.state.state === "wait"){
+                else if (self.state.state  !== "error"){
                     timeoutId = setTimeout(fun, 200);
                 }
             };
             fun();
         }
+    },
+    openDisqus: function(){
+        document.getElementById("disqus_thread").removeChild(document.getElementById("disqus_button"));
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + config.disqus_short_name + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     },
     componentDidMount: function(){
         this.updateData(this.props);
@@ -204,8 +211,14 @@ module.exports = React.createClass({
             <div className="home-article-middle" dangerouslySetInnerHTML={{__html: this.state.content}}>
             </div>
             <div id="disqus_container">
-                <a href="#" className="disqus_button" onclick="return false;">点击查看评论</a>
-                <div id="disqus_thread"></div>
+                <div id="disqus_thread">
+                    <button
+                        id="disqus_button"
+                        onClick={this.openDisqus}
+                    >
+                        点击查看评论
+                    </button>
+                </div>
             </div>
             <div className="home-article-bottom">
                 <div className="home-article-sphr"></div>

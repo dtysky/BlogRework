@@ -15,7 +15,7 @@ module.exports = React.createClass({
     render: function() {
         return (
             <div className="content-error">
-                <img src="theme/image/logo.png" alt="error-image"/>
+                <img src="/theme/image/logo.png" alt="error-image"/>
                 <br/>
                 <p>
                     少女没有收到神明的回应——

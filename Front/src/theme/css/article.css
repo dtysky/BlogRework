@@ -134,20 +134,15 @@ pre{
 	word-wrap: break-word;
 }
 
-.plugin-share{
-	position: absolute;
-	margin-top: -40px;
-	right: 0px;
-	height: 20px;
-}
-
 #disqus_container {
 	margin-top: 30px;
 }
 
-#disqus_container a.disqus_button{
+#disqus_container #disqus_button{
+    border: none;
+    cursor: pointer;
 	font-size:16px;
-	background: url(../image/discuss.png) no-repeat left 0px;
+	background: url(../image/discuss.png) no-repeat left 0;
 	padding-left: 24px;
 }
 

@@ -2,7 +2,7 @@
 
 Rework my blog:  
 
-## ToDo
+## To(Never www)Do list
 
 ### Adding cache on server
 
@@ -19,6 +19,7 @@ React-router
 Veloctiy-react  
 React-modal  
 Rrcode.react  
+React-helmet  
 Express.js   
 Jquery  
 

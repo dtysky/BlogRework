@@ -121,12 +121,11 @@ module.exports = React.createClass({
             this.getAll(name);
             var timeoutId = 0;
             var fun = function() {
-                console.log("check!");
                 if (cache.has(name)) {
                     clearTimeout(timeoutId);
                     self.getInfo(name, props.index);
                 }
-                else if(self.state.state === "wait") {
+                else if(self.state.state !== "error") {
                     timeoutId = setTimeout(fun, 200);
                 }
             };

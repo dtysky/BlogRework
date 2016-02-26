@@ -327,110 +327,104 @@ Parameters: Art-花
 Web, Data found: article
 Parameters: Art-花
 2016-02-25 18:33:06: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 18:33:06: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 18:39:57: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 18:39:57: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 18:42:32: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 18:42:32: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 19:04:57: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 19:04:57: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 19:05:33: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 19:05:33: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 19:06:46: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 19:06:46: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 19:07:01: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 19:07:01: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 19:07:18: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 19:07:18: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 19:28:19: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 19:28:19: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 19:28:27: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 19:28:27: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 19:30:21: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 19:30:21: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 19:31:58: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 19:31:58: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 19:36:26: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 19:36:26: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 19:49:36: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 19:49:36: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 19:56:35: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 19:56:35: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 20:04:48: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 20:04:48: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 20:06:46: Info:
-Web, Request: article
-Parameters: Art-花
-2016-02-25 20:06:46: Info:
-Web, Data found: article
-Parameters: Art-花
-2016-02-25 20:30:31: Info:
-Web, Request: article
-Parameters: Art-花
+Web, Req6:26:58: Info:
+Feeds: Writing dtysky...
+2016-02-25 16:26:58: Info:
+Feeds: Writing Create...
+2016-02-25 16:26:58: Info:
+Feeds: Writing all...
+2016-02-25 16:26:58: Info:
+Feeds: Writing Life...
+2016-02-25 16:26:58: Info:
+Feeds: Writing Skill...
+2016-02-25 16:26:58: Info:
+Feeds: Writing Art...
+2016-02-25 16:26:58: Info:
+Feeds: Done all...
+2016-02-25 16:26:58: Info:
+Feeds: Done Art...
+2016-02-25 16:26:58: Info:
+Feeds: Done Create...
+2016-02-25 16:26:58: Info:
+Feeds: Done Life...
+2016-02-25 16:26:58: Info:
+Feeds: Done Skill...
+2016-02-25 16:26:58: Info:
+Feeds: Done dtysky...
+2016-02-25 16:26:58: Info:
+Feeds: Writing done...
+2016-02-25 16:26:58: Info:
+Create: ./pages/Art/花.md
+2016-02-25 16:26:58: Info:
+Parsing start: Art/花.md
+2016-02-25 16:26:58: Error:
+Article does not have meta and content !
+File: Art/花.md
+2016-02-25 16:26:58: Error:
+Parsing error !
+File: Art/花.md
+2016-02-25 16:35:16: Info:
+Delete: ./pages/Art/花.md
+2016-02-25 16:35:16: Info:
+Writing start: Art/花.md
+2016-02-25 16:35:16: Info:
+Sitemap: Writing start...
+2016-02-25 16:35:16: Info:
+Sitemap: Writing tag...
+2016-02-25 16:35:16: Info:
+Sitemap: Writing author...
+2016-02-25 16:35:16: Info:
+Sitemap: Writing category...
+2016-02-25 16:35:16: Info:
+Sitemap: Writing article...
+2016-02-25 16:35:16: Info:
+Sitemap: Writing done...
+2016-02-25 16:35:16: Info:
+Feeds: Writing start...
+2016-02-25 16:35:16: Info:
+Feeds: Writing dtysky...
+2016-02-25 16:35:16: Info:
+Feeds: Writing Create...
+2016-02-25 16:35:16: Info:
+Feeds: Writing all...
+2016-02-25 16:35:16: Info:
+Feeds: Writing Life...
+2016-02-25 16:35:16: Info:
+Feeds: Writing Skill...
+2016-02-25 16:35:16: Info:
+Feeds: Writing Art...
+2016-02-25 16:35:16: Info:
+Feeds: Done all...
+2016-02-25 16:35:16: Info:
+Feeds: Done Art...
+2016-02-25 16:35:16: Info:
+Feeds: Done Create...
+2016-02-25 16:35:16: Info:
+Feeds: Done Life...
+2016-02-25 16:35:16: Info:
+Feeds: Done Skill...
+2016-02-25 16:35:16: Info:
+Feeds: Done dtysky...
+2016-02-25 16:35:16: Info:
+Feeds: Writing done...
+2016-02-25 16:35:16: Info:
+Create: ./pages/Art/花.md
+2016-02-25 16:35:16: Info:
+Parsing start: Art/花.md
+2016-02-25 16:35:16: Error:
+Article does not have meta and content !
+File: Art/花.md
+2016-02-25 16:35:16: Error:
+Parsing error !
+File: Art/花.md
+2016-02-25 16:35:24: Info:
+Delete: ./pages/Art/花.md
+2016-02-25 16:35:24: Info:
+Writing start: Art/花.md
+2016-02-25 16:35:24: Error:
+Writing error !
+File: Art/花.md
+rs: Art-花
 2016-02-25 20:30:31: Info:
 Web, Data found: article
 Parameters: Art-花
@@ -674,4 +668,57 @@ Parameters: Art-花
 2016-02-25 23:24:57: Info:
 Web, Data found: article
 Parameters: Art-花
-2016-02-25 23:35:29
+2016-02-25 23:35:29: Info:
+Web, Request: category
+Parameters: Art
+2016-02-25 23:35:29: Info:
+Web, Data found: category
+Parameters: Art
+2016-02-25 23:35:32: Info:
+Web, Request: article
+Parameters: Art-花
+2016-02-25 23:35:32: Info:
+Web, Data found: article
+Parameters: Art-花
+2016-02-25 23:37:48: Info:
+Web, Request: article
+Parameters: Art-花
+2016-02-25 23:37:48: Info:
+Web, Data found: article
+Parameters: Art-花
+2016-02-25 23:45:11: Info:
+Web, Request: article
+Parameters: Art-花
+2016-02-25 23:45:11: Info:
+Web, Data found: article
+Parameters: Art-花
+2016-02-25 23:45:11: Info:
+Web, Request: category
+Parameters: Life
+2016-02-25 23:45:11: Info:
+Web, Data found: category
+Parameters: Life
+2016-02-25 23:45:11: Info:
+Web, Request: category
+Parameters: Art
+2016-02-25 23:45:11: Info:
+Web, Data found: category
+Parameters: Art
+2016-02-25 23:45:11: Info:
+Web, Request: archives
+Parameters: all
+2016-02-25 23:45:11: Info:
+Web, Data found: archives
+Parameters: all
+2016-02-25 23:45:34: Info:
+Web, Request: archives
+Parameters: all
+2016-02-25 23:45:34: Info:
+Web, Data found: archives
+Parameters: all
+2016-02-25 23:45:39: Info:
+Web, Request: article
+Parameters: Life-test
+2016-02-25 23:45:39: Info:
+Web, Data found: article
+Parameters: Life-test
