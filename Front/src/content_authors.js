@@ -109,11 +109,11 @@ module.exports = React.createClass({
                 {
                     this.state.content.map(function(author){
                         return (
-                            <Link
+                            <li><Link
                                 to={getLocalUrl("authors", author.slug, null)}
                             >
                                 {author.view}
-                            </Link>
+                            </Link></li>
                         );
                     })
                 }

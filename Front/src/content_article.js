@@ -116,6 +116,9 @@ module.exports = React.createClass({
             };
             fun();
         }
+        else{
+            self.getInfo(name, props.index);
+        }
     },
     openDisqus: function(){
         document.getElementById("disqus_thread").removeChild(document.getElementById("disqus_button"));

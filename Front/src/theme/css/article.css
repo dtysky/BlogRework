@@ -114,11 +114,15 @@ ol{
 	margin-top: 100px;
 	width: 100%;
 	text-align: center;
+    list-style: none;
+}
+
+.authors-list li{
+    margin-bottom: 40px;
 }
 
 .authors-list a{
 	width: 100%;
-	margin-bottom: 40px;
 	font-size: 40px;
 	color: #444444;
 }

@@ -48,15 +48,13 @@ var App = React.createClass({
     },
     handleHead: function(head){
         this.setState({
-            head: head,
-            can_content_animate: false
+            head: head
         });
     },
     setDefaultTheme: function(info){
         if(this.state.theme_default !== info){
             this.setState({
-                theme_default: info,
-                can_content_animate: true
+                theme_default: info
             });
         }
     },
@@ -85,6 +83,16 @@ var App = React.createClass({
     setMusicList: function(list){
         this.setState({
             music_list: list
+        });
+    },
+    enableContentAnimation: function(){
+        this.setState({
+            can_content_animate: true
+        });
+    },
+    disableContentAnimation: function(){
+        this.setState({
+            can_content_animate: false
         });
     },
     returnTop: function(){
@@ -145,7 +153,9 @@ var App = React.createClass({
                                     theme_info: this.state.theme_info,
                                     theme_default: this.state.theme_default,
                                     can_content_animate: this.state.can_content_animate,
-                                    setMusicList: this.setMusicList
+                                    setMusicList: this.setMusicList,
+                                    enableContentAnimation: this.enableContentAnimation,
+                                    disableContentAnimation: this.disableContentAnimation
                                 }
                             )
                         }

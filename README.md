@@ -34,7 +34,8 @@ Cache
 Router  
 In-site router  
 Share  
-Animations with js and css3
+Animations with js and css3  
+Music player(the music list can be defined in markdown)
 
 ## Back
 

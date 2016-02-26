@@ -9,22 +9,10 @@ var ContentList = require('./content_list');
 require('./theme/css/sky.css');
 
 module.exports = React.createClass({
-    componentDidUpdate: function(){
-        if(this.props.theme_default !== "home"){
-            this.props.setDefaultTheme("home");
-            this.props.changeTheme("home", true);
-        }
-        this.props.setMusicList([]);
-    },
+    mixins: [ContentList],
+    type: "archives",
+    theme: "home",
     render: function(){
-        return (
-            <ContentList
-                type="archives"
-                name="all"
-                index={this.props.params.index}
-                handleHead={this.props.handleHead}
-                can_content_animate={this.props.can_content_animate}
-            />
-        );
+        return this.topRender();
     }
 });

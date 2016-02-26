@@ -11,6 +11,10 @@ Cache.prototype.add = function(name, content){
     this.pages[name] = content;
 };
 
+Cache.prototype.remove = function(name){
+    delete this.pages[name];
+};
+
 Cache.prototype.has = function(name){
     return this.pages[name] !== undefined;
 };

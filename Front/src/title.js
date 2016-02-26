@@ -46,6 +46,13 @@ module.exports = React.createClass({
     },
     componentDidUpdate: function(){
         this.theme_now = this.props.theme_info;
+        //Hack!!!!!(reason: Homepage mixins with content_list...)
+        console.log("did update");
+        var elements = document.getElementsByClassName("home-article-sphr");
+        for(var i=0; i<elements.length; i++){
+            console.log(this.props.theme_info);
+            elements[i].style.backgroundColor = theme_color[this.props.theme_info];
+        }
     },
     onWindowResize: function(){
         this.setState({

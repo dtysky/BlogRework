@@ -26,7 +26,7 @@ var articles_per_page = config.articles_per_page;
 
 require('./theme/css/sky.css');
 
-module.exports = React.createClass({
+module.exports = {
     getInitialState: function(){
         return {
             state: "wait",
@@ -36,9 +36,6 @@ module.exports = React.createClass({
         };
     },
     getAll: function(name){
-        this.setState({
-            state: "wait"
-        });
         $.ajax({
             url: format(
                 "%s/%s",
@@ -69,8 +66,8 @@ module.exports = React.createClass({
         var view = data.view;
         this.props.handleHead({
             title: (
-                this.props.title ?
-                    this.props.title :
+                this.title ?
+                    this.title :
                     format(
                         "%s-%d - %s",
                         view,
@@ -83,8 +80,8 @@ module.exports = React.createClass({
                 view
             ),
             description: (
-                this.props.description ?
-                    this.props.description :
+                this.description ?
+                    this.description :
                     format(
                         "这是有关%s的所有文章",
                         view
@@ -97,33 +94,44 @@ module.exports = React.createClass({
         var data = cache.get(name);
         var totle_count = data.content.length;
         var max_index = parseInt(totle_count / articles_per_page) + 1;
-        var left = index === undefined ? 0 : parseInt(this.props.index);
+        var left = index === undefined ? 0 : parseInt(this.props.params.index);
         if(left > max_index){
             redirect();
         }
         var right = left + articles_per_page < max_index ? left + articles_per_page : left + 10;
-        this.setState({
-            state: "ok",
-            now_index: left,
-            max_index: max_index,
-            content: data.content.slice(left, right)
-        });
-        this.formatHead(data);
+        //I don't know why but it works...
+        var self = this;
+        function fun(){
+            self.setState({
+                state: "ok",
+                now_index: left,
+                max_index: max_index,
+                content: data.content.slice(left, right)
+            });
+            self.formatHead(data);
+            self.props.disableContentAnimation();
+        }
+        setTimeout(fun, 20);
     },
     updateData: function(props){
+        this.props.enableContentAnimation();
+        this.setState({
+            state: "wait"
+        });
         var self = this;
         var name = format(
             "%s/%s",
-            props.type,
-            props.name
+            this.type,
+            props.params.name === undefined ? "all" : props.params.name
         );
         if(!cache.has(name)){
             this.getAll(name);
             var timeoutId = 0;
             var fun = function() {
                 if (cache.has(name)) {
+                    console.log("check");
                     clearTimeout(timeoutId);
-                    self.getInfo(name, props.index);
+                    self.getInfo(name, props.params.index);
                 }
                 else if(self.state.state !== "error") {
                     timeoutId = setTimeout(fun, 200);
@@ -132,17 +140,22 @@ module.exports = React.createClass({
             fun();
         }
         else{
-            self.getInfo(name, props.index);
+            self.getInfo(name, props.params.index);
         }
     },
     componentDidMount: function(){
+        if(this.props.theme_default !== this.theme){
+            this.props.setDefaultTheme(this.theme);
+            this.props.changeTheme(this.theme, true);
+        }
+        this.props.setMusicList([]);
         this.updateData(this.props);
     },
     shouldComponentUpdate: function(nextProps, nextState){
         if(
             (
-                this.props.name !== nextProps.name ||
-                this.props.index !== nextProps.index
+                this.props.params.name !== nextProps.params.name ||
+                this.props.params.index !== nextProps.params.index
             ) &&
             this.state.state === nextState.state
         ){
@@ -220,9 +233,7 @@ module.exports = React.createClass({
             </article>
         );
     },
-    render: function(){
-        //this.state.state = "error";
-        //redirect();
+    topRender: function(){
         var self = this;
         if (this.state.state === "error"){
             return <NormalError/>;
@@ -246,12 +257,12 @@ module.exports = React.createClass({
                     }
                 </ul>
                 <Pagination
-                    type={this.props.type}
-                    name={this.props.name}
+                    type={this.props.params.type}
+                    name={this.props.params.name}
                     now_index={this.state.now_index}
                     max_index={this.state.max_index}
                 />
             </div>
         );
     }
-});
+};

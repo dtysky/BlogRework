@@ -26,6 +26,8 @@ var config = {
         "home": "#6ca82b",
         "tags": "#12678e",
         "authors": "#72944e",
+        "tag": "#12678e",
+        "author": "#72944e",
         "404": "#666666"
     },
     "theme_background": {
@@ -36,6 +38,8 @@ var config = {
         "home": "/theme/image/home.jpg",
         "tags": "/theme/image/tags.jpg",
         "authors": "/theme/image/authors.jpg",
+        "tag": "/theme/image/tags.jpg",
+        "author": "/theme/image/authors.jpg",
         "404": "/theme/image/404.jpg"
     },
     "default_music": require('./default_music'),
