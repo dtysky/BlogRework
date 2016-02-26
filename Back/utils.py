@@ -8,6 +8,7 @@ __email__ = "dtysky@outlook.com"
 __name__ = "Utils"
 
 
+import os
 from os.path import splitext
 from datetime import datetime
 from setting import setting
@@ -24,12 +25,40 @@ def convert_to_underline(name):
     return tmp[1:]
 
 
+def get_all_classes(files, parent_class):
+    """
+    Return a list contents all classes
+    """
+    def is_class(d):
+        return type(d) == type(parent_class)
+    def is_sub_of_parent(d):
+        return issubclass(d, parent_class) and d != parent_class
+
+    modules = []
+    classes = []
+
+    #Import all modules from TagSorce dir
+    for f in files:
+        n, e = os.path.splitext(f)
+        if e == '.py':
+            modules.append(__import__(n))
+
+    #Get all classes which are children of Path
+    for m in modules:
+        for d in dir(m):
+            d = getattr(m, d)
+            if is_class(d) and is_sub_of_parent(d):
+                classes.append(d)
+    return classes
+
+
 def print_database(database):
     """
     Print all items in database.
     """
     collection_names = database.collection_names()
     collection_names.remove("system.indexes")
+    collection_names.remove("article")
     for name in collection_names:
         collection = database.get_collection(name)
         print name, ":"

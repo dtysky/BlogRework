@@ -24,7 +24,13 @@ module.exports = React.createClass({
                     {
                         links.map(function(item){
                             return (
-                                <Link to={item.url} className="thank">{item.name}</Link>
+                                <a
+                                    target="_blank"
+                                    href={item.url}
+                                    className="thank"
+                                >
+                                    {item.name}
+                                </a>
                             );
                         })
                     }

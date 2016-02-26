@@ -3,7 +3,7 @@
 <channel>
 <title>dtysky|一个行者的轨迹</title>
 <link>http://dtysky.moe</link><description>自由地看待世界，真诚地走向死亡</description><atom:link href="http://dtysky.moe/feeds/feeds/Life.rss.xml" rel="self"></atom:link>
-<lastBuildDate>Thursday, 25 Feb 2016 16:35:25 -00:00</lastBuildDate>
+<lastBuildDate>Friday, 26 Feb 2016 13:49:29 -00:00</lastBuildDate>
 
 <item>
 <title>【FPGA/图像处理】几何变换-旋转</title>
@@ -11,6 +11,7 @@
 <description><p>旋转同样是仿射变换的一种特例，它接受一个角度，将图像绕着某个中心进行转动，适合逆向映射。旋转的实现有多种，比如两次错切的旋转<sup>[26]</sup>、直接坐标变换<sup>[27]</sup>等，中心点的选取方式也有许多，但对于FPGA采用图像的几何中心较为合适。。本节将会说明如何用FPGA实现旋转的模块。
 这个IP核的资源在这里：
 <a href="https://github.com/dtysky/FPGA-Imaging-Library/tree/Publish/Geometry/Rotate">Rotate</a></p>
+<p>xxx</p>
 <hr />
 <h1>3 算法实现</h1>
 <p>明确了设计和架构，便可以进行算法的实现。本章将会说明如何实现图像处理的算法，以及如何运用它们。</p>

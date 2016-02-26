@@ -13,7 +13,7 @@ import re
 from utils import convert_to_underline
 from markdown_parser import MarkdownParser
 from meta_parsers import MetaDataParser
-from get_sub_classes import get_all_classes
+from utils import get_all_classes
 from utils import logger
 from setting import setting
 

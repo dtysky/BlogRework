@@ -16,7 +16,6 @@ var Menu = require('./menu');
 var MenuPhone = require('./menu_phone');
 var LeftImage = require('./left_image');
 var Footer = require('./footer');
-var Config = require('./utils').config;
 var ContentHome = require('./content_home');
 var ContentTag = require('./content_tag');
 var ContentCategory = require('./content_category');

@@ -11,7 +11,7 @@ __name__ = "Wrapper"
 
 from copy import deepcopy as copy
 from slug_wrappers import SlugWrapper
-from get_sub_classes import get_all_classes
+from utils import get_all_classes
 from utils import logger
 
 

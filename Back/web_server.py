@@ -12,7 +12,7 @@ __name__ = "WebServer"
 from flask import Flask
 from flask_compress import Compress
 from web_handlers import WebHandler
-from get_sub_classes import get_all_classes
+from utils import get_all_classes
 from utils import logger
 
 

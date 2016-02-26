@@ -376,7 +376,6 @@ footer a, p {
 }
 
 #home-links{
-	display: none;
 	position: fixed;
 	right: 0px;
 	top: -400px;
@@ -384,13 +383,18 @@ footer a, p {
 	padding-bottom: 20px;
 	width: 160px;
 	background-color: rgb(137,255,154);
-	opacity: 0.6;
+    transition: top .8s ease-in, background-color .8s ease-in;
 }
 
 #home-links ul{
+    list-style: none;
 	text-align: center;
-	margin: 0px;
+	margin: 0;
 	padding: 5px;
+}
+
+#home-links li{
+    margin-bottom: 10px;
 }
 
 #home-links a{
@@ -661,6 +665,9 @@ article .description a{
         min-height: 64px;
         max-width: 280px;
     }
+    #home-links {
+        display: block;
+    }
     #player1:hover{
         opacity: 0.8;
     }
@@ -690,6 +697,9 @@ article .description a{
         width: 80%;
         margin-left: 10%;
         top: 20px;
+    }
+    #home-links {
+        display: none;
     }
     #player1{
         opacity: 1;

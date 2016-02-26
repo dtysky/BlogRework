@@ -3,768 +3,54 @@
 <channel>
 <title>dtysky|一个行者的轨迹</title>
 <link>http://dtysky.moe</link><description>自由地看待世界，真诚地走向死亡</description><atom:link href="http://dtysky.moe/feeds/feeds/all.rss.xml" rel="self"></atom:link>
-<lastBuildDate>Thursday, 25 Feb 2016 16:35:25 -00:00</lastBuildDate>
+<lastBuildDate>Friday, 26 Feb 2016 13:49:29 -00:00</lastBuildDate>
 
 <item>
-<title>【FPGA/图像处理】几何变换-旋转</title>
-<link>http://dtysky.moe/article/Create-test</link>
-<description><p>旋转同样是仿射变换的一种特例，它接受一个角度，将图像绕着某个中心进行转动，适合逆向映射。旋转的实现有多种，比如两次错切的旋转<sup>[26]</sup>、直接坐标变换<sup>[27]</sup>等，中心点的选取方式也有许多，但对于FPGA采用图像的几何中心较为合适。。本节将会说明如何用FPGA实现旋转的模块。
-这个IP核的资源在这里：
-<a href="https://github.com/dtysky/FPGA-Imaging-Library/tree/Publish/Geometry/Rotate">Rotate</a></p>
+<title>【小说】花</title>
+<link>http://dtysky.moe/article/Art-花</link>
+<description><hr />
+<p><strong>本篇走意识流中二二次元风格，不设大纲，仅仅用作文字实验，风格跨越近三年的演化<br />
+不合口味者慎入<br />
+或期待正在架构的另一篇完整结构的正剧——花.Re。</strong></p>
 <hr />
-<h1>3 算法实现</h1>
-<p>明确了设计和架构，便可以进行算法的实现。本章将会说明如何实现图像处理的算法，以及如何运用它们。</p>
-<h2>3.21 几何变换-旋转</h2>
-<p>旋转同样是仿射变换的一种特例，它接受一个角度，将图像绕着某个中心进行转动，适合逆向映射。旋转的实现有多种，比如两次错切的旋转<sup>[26]</sup>、直接坐标变换<sup>[27]</sup>等，中心点的选取方式也有许多，但对于FPGA采用图像的几何中心较为合适。。本节将会说明如何用FPGA实现旋转的模块。</p>
-<h3>3.21.1 原理</h3>
-<p>此设计中旋转的前向映射基本原理如式3-21-1，其中angle为旋转角度,$x_c$和$y_c$分别为图像中心横纵坐标。对于逆向映射应该对此式进行调整，变换为3-21-2的形式，可见旋转操作比较复杂，不仅涉及多次符号乘法、符号加法，还涉及到三角函数的计算。</p>
-<p>$$\begin{cases}Q[x_t,y_t] = I[x,y]  \\x_t = xc + (x - xc) * cos(a) - (y - yc)*sin(a)\\ y_t = yc + (x - xc) * sin(a) + (y - yc)*cos(a)\\x \in[0, w) ,y \in[0, h)\ \end{cases}.\ \ \ \ \ \ \ \ (3-21-1)$$</p>
-
-<p>$$\begin{cases}I[x,y] = Q[x_t,y_t]  \\x = (x_t - xc) * cos(a) + (y_t - yc) * sin(a) + xc\\ y = (-x_t + xc) * sin(a) + (y_t - yc) * cos(a) + yc\\x_t \in[0, w) ,y_t \in[0, h)\ \end{cases}.\ \ \ \ \ \ \ \ (3-21-2)$$</p>
-
-<p>首先要考虑三角函数的计算，如3.1中所述，FPGA中的特殊函数计算需要用查找表来实现，所以需要编写一个脚本来生成查找表，同时由于三角函数的值可能为负数，并且verilog中符号系统是补码系统，所以需要生成的是角度和此角度下三角函数值的补码。由于正弦和余弦的值域为[-1, 1]，同时一般用于变换的角度为[0,359]，所以综合考虑，最终选择将角度划分为360个点，使用1位符号位、1位整数位和18位的小数位的数据来表示函数值，这其中的难点在于如何将一个浮点数转换为20位的定点数补码，实现函数如下。</p>
-<div class="highlight"><pre>  <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
-    <span class="n">r</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">format</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s">&#39;f&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="s">&#39;0&#39;</span> <span class="o">+</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s">&#39;1&#39;</span> <span class="o">+</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;0.&#39;</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">18</span><span class="p">):</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="mi">2</span>
-        <span class="n">res</span> <span class="o">+=</span> <span class="s">&#39;1&#39;</span> <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="s">&#39;0&#39;</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">d</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span>
-    <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;1&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;0&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="nb">bin</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">19</span> <span class="o">-</span> <span class="nb">eval</span><span class="p">(</span><span class="s">&#39;0b&#39;</span> <span class="o">+</span> <span class="n">res</span><span class="p">))[</span><span class="mi">2</span><span class="p">:]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">19</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)):</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;0&#39;</span> <span class="o">+</span> <span class="n">res</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span>
-    <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="s">&#39;10000000000000000000&#39;</span><span class="p">:</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;00000000000000000000&#39;</span>
-    <span class="k">return</span> <span class="n">res</span>
-</pre></div>
-
-
-<p>旋转变换同样需要符号舍入，但整数位只有1位，所以没有溢出风险，可以将其简化，仅仅裁剪输出即可。</p>
-<h3>3.21.2 设计</h3>
-<p>根据原理可知，Rotate核(以下简称RTT核)需要四次符号乘法、四次符号舍入操作和四次符号加法，并且需要和基于行列计数的帧控制器进行合作。故其需要的配置参数与端口如表3-21-1和表3-21-2。</p>
-<p><center>
-<table border="1" cellspacing="0">
-<tr>
-<th>名字</th>
-<th>类型</th>
-<th>范围</th>
-<th>默认值</th>
-<th>说明</th>
-</tr>
-<td>work_mode</td>
-<td>无符号</td>
-<td>0为流水线模式，1为请求响应模式</td>
-<td>0</td>
-<td>模块的工作模式。</td>
-</tr>
-<tr>
-<tr>
-<td>data_width</td>
-<td>无符号</td>
-<td>1 - 12</td>
-<td>8</td>
-<td>数据位宽。</td>
-</tr>
-<tr>
-<td>im_width</td>
-<td>无符号</td>
-<td>1 - 4096</td>
-<td>320</td>
-<td>图像宽度。</td>
-</tr>
-<tr>
-<td>im_height</td>
-<td>无符号</td>
-<td>1 - 4096</td>
-<td>240</td>
-<td>图像高度。</td>
-</tr>
-<tr>
-<td>im_width_bits</td>
-<td>无符号</td>
-<td>取决于图像宽度</td>
-<td>9</td>
-<td>图像宽度的位宽。</td>
-</tr>
-<tr>
-<td>mul_delay</td>
-<td>无符号</td>
-<td>取决于乘法器配置，1-14</td>
-<td>3</td>
-<td>乘法器延迟。</td>
-</tr>
-<tr>
-<td>ram_RL</td>
-<td>无符号</td>
-<td>取决于帧控制器</td>
-<td>7</td>
-<td>帧控制器输出延迟。</td>
-</tr>
-</table>
-表3-21-1 配置参数
-</center>
+<p>另一个写完的剧本的平行世界<br />
+主角不变，妹子基本都是那个剧本里的路人<br />
+不过也是完全的“平行”世界了  </p>
+<p>情景一到六是第一人称视角，属于写剧本的残留<br />
+情景七开始是第三人称视角为主<br />
 <br>
-<center>
-<table border="1" cellspacing="0">
-<tr>
-<th>名字</th>
-<th>端口</th>
-<th>类型</th>
-<th>范围</th>
-<th>默认值</th>
-<th>说明</th>
-</tr>
-<td>clk</td>
-<td>输入</td>
-<td>无符号</td>
-<td>无</td>
-<td>无</td>
-<td>Clock.</td>
-</tr>
-<tr>
-<td>rst_n</td>
-<td>输入</td>
-<td>无符号</td>
-<td>无</td>
-<td>无</td>
-<td>复位，低有效。</td>
-</tr>
-<tr>
-<td>angle</td>
-<td>input</td>
-<td>无符号</td>
-<td>0 - 359</td>
-<td>无</td>
-<td>旋转角度。</td>
-</tr>
-<tr>
-<td>in_enable</td>
-<td>输入</td>
-<td>无符号</td>
-<td>无</td>
-<td>无</td>
-<td>输入数据使能，在流水线模式下，它是另一个复位信号，在请求响应模式下，只有在它有效的时候in_data才会被真正地改变。</td>
-</tr>
-<tr>
-<td>frame_in_ready</td>
-<td>输入</td>
-<td>无符号</td>
-<td>无</td>
-<td>无</td>
-<td>连接到帧控制器的out_ready。</td>
-</tr>
-<tr>
-<td>frame_in_data</td>
-<td>输入</td>
-<td>无符号</td>
-<td>data_width - 1 : 0</td>
-<td>无</td>
-<td>连接到帧控制器的out_data。</td>
-</tr>
-<tr>
-<td>frame_enable</td>
-<td>output</td>
-<td>无符号</td>
-<td>无</td>
-<td>无</td>
-<td>连接到帧控制器的in_enable。</td>
-</tr>
-<tr>
-<td>frame_out_count_x</td>
-<td>output</td>
-<td>无符号</td>
-<td>im_width_bits - 1 : 0</td>
-<td>无</td>
-<td>连接到帧控制器的in_count_x。</td>
-</tr>
-<tr>
-<td>out_count_y</td>
-<td>output</td>
-<td>无符号</td>
-<td>im_width_bits - 1 : 0</td>
-<td>无</td>
-<td>连接到帧控制器的in_count_y。</td>
-</tr>
-<tr>
-<td>out_ready</td>
-<td>output</td>
-<td>无符号</td>
-<td>无</td>
-<td>无</td>
-<td>输出数据有效，在两种模式下，这个信号都会在out_data可以被读取的时候有效。</td>
-</tr>
-<tr>
-<td>out_data</td>
-<td>output</td>
-<td>无符号</td>
-<td>color_width - 1 : 0</td>
-<td>无</td>
-<td>输出数据，将会和out_ready同步输出。</td>
-</tr>
-</table>
-表3-21-2 端口
-</center>
-</center>
-<br>
-<center>
-<table border="1" cellspacing="0">
-<tr>
-<th>名字</th>
-<th>类型</th>
-<th>说明</th>
-</tr>
-<tr>
-<td>Sin</td>
-<td>SinLUT</td>
-<td>获取角度的正弦。</td>
-</tr>
-<tr>
-<td>Cos</td>
-<td>CosLUT</td>
-<td>获取角度的余弦。</td>
-</tr>
-<tr>
-<td>MulX1</td>
-<td>Multiplier13Sx20SRTT</td>
-<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
-</tr>
-<tr>
-<td>MulX2</td>
-<td>Multiplier13Sx20SRTT</td>
-<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
-</tr>
-<tr>
-<td>MulY1</td>
-<td>Multiplier13Sx20SRTT</td>
-<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
-</tr>
-<tr>
-<td>MulY2</td>
-<td>Multiplier13Sx20SRTT</td>
-<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
-</tr>
-<tr>
-<td>FRSX1</td>
-<td>FixedRoundSigned</td>
-<td>用于有符号浮点数的舍入。</td>
-</tr>
-<tr>
-<td>FRSX2</td>
-<td>FixedRoundSigned</td>
-<td>用于有符号浮点数的舍入。</td>
-</tr>
-<tr>
-<td>FRSY1</td>
-<td>FixedRoundSigned</td>
-<td>用于有符号浮点数的舍入。</td>
-</tr>
-<tr>
-<td>FRSY2</td>
-<td>FixedRoundSigned</td>
-<td>用于有符号浮点数的舍入。</td>
-</tr>
-</table>
-表3-3-3 子模块
-</center></p>
-<h3>3.21.3 实现</h3>
-<p>根据3.21.2的设计便可以实现一个RTT核，流水线模式和请求响应模式实现如下。</p>
-<h4>3.21.3.1 流水线模式</h4>
-<p>在帧控制器的输出使能后1个周期第一个结果被输出，开始流水化工作，波形如图3-21-1。
-<center>
-<img alt="图3-21-1 流水线模式时序" src="http://src.dtysky.moe/image/f-i-l/3/21/1.png" />
-图3-21-1 流水线模式时序
-</center></p>
-<h4>3.21.3.2 请求响应模式读取</h4>
-<p>基本同3.21.3.1，但只有在in_enable上升沿时计数器才会加1才会被改变，波形如图3-21-2。
-<center>
-<img alt="图3-21-1 流水线模式时序" src="http://src.dtysky.moe/image/f-i-l/3/21/2.png" />
-图3-21-1 流水线模式时序
-</center></p>
-<h4>3.21.3.3 IP核GUI</h4>
-<p>完成功能后对RTT核进行了封装，封装如图3-21-3。
-<center>
-<img alt="图3-21-3 RTT核的GUI" src="http://src.dtysky.moe/image/f-i-l/3/21/3.png" />
-图3-21-3 RTT核的GUI
-</center></p>
-<h3>3.21.4 仿真</h3>
-<p>只对RGB图像和灰度图像进行测试，考虑到仿真设计模块比较多，出于仿真压力，我选择了一张图像的灰度模式进行三套参数的测试，原始图像如图3-21-4。</p>
-<p><center>
-<img alt="图3-21-4 仿真原始图像" src="http://src.dtysky.moe/image/f-i-l/3/21/4.jpg" />
-图3-21-4 仿真原始图像
-</center></p>
-<p>仿真参数如表3-16-4所示，选择原则是可以被二进制表示和不可以被表示的值都包含。</p>
-<p><center>
-<table border="1" cellspacing="0">
-<tr>
-<th>angle</th>
-</tr>
-<tr>
-<td>45</td>
-</tr>
-<tr>
-<td>131</td>
-</tr>
-<tr>
-<td>270</td>
-</tr>
-</table>
-表3-16-4 仿真参数
-</center></p>
-<p>仿真并进行PSNR测试，仿真结果如图3-21-5所示。
-<center>
-<img alt="图3-21-5 仿真结果" src="http://src.dtysky.moe/image/f-i-l/3/21/5.png" />
-图3-21-5 仿真结果，左侧为流水线模式下的HDL功能仿真结果，中间为请求响应模式下的HDL功能仿真结果，右侧为软件仿真结果
-</center></p>
-<h3>3.21.5 资源和时序</h3>
-<p>最终实现与图像大小和数据位宽有关，这里只分析大小为512x512和数据位宽为8时的状况，根据Vivado生成的报表，主要资源耗费如表3-21-5。</p>
-<p><center>
-<table border="1" cellspacing="0">
-<tr>
-<th>Slice LUTs*</th>
-<th>Slice Registers</th>
-<th>DSP</th>
-</tr>
-<tr>
-<td>543</td>
-<td>245</td>
-<td>4</td>
-</tr>
-</table>
-表3-21-5 主要资源耗费
-</center></p>
-<p>同时根据时序报告，最大的Data Path Delay(数据路径延迟)为4.414ns，即：</p>
-<blockquote>
-<p>FMax = 226.55MHz</p>
-</blockquote>
-<p>即说明，Rotate核在流水线模式下，理论上在处理1080p全高清图像时可以达到109帧。
-与3.20相同，此FMax低于期望值，也来自于舍入核的加法，考虑时间此处暂时不做优化。
-由于数据路径延迟和应用的最终约束设置强相关，所以仅供参考。</p>
-<h3>3.21.6 分析与结论</h3>
-<p>PSNR如表3-21-6。</p>
-<p><center>
-<table border="1" cellspacing="0">
-<tr>
-<th>1-131</th>
-<th>1-270</th>
-<th>1-45</th>
-<th>Total</th>
-</tr>
-<tr>
-<td>1000000.00</td>
-<td>54.89</td>
-<td>1000000.00</td>
-<td>666684.96</td>
-</tr>
-</table>
-表3-21-6 PSNR
-</center></p>
-<p>PSNR对于某些参数为最大值，对于一些不是，最终误差来自于符号乘法和查找表自身的误差，但PSNR均为50以上，可见在测试范围内，RTT核可以满足处理需求，设计成功。</p>
-<hr />
-<h1>参考文献</h1>
-<p>[26] 陈芳.一种基于错切原理的图像旋转方法[J].淮阴师范学院学报（自然科学版）,2004,3(4):319-322.DOI:10.3969/j.issn.1671-6876.2004.04.016.
-[27] 王金辉.实时图像旋转系统的研究与FPGA实现[D].华中科技大学,2012.</p>
-<hr />
-<h1>感谢</h1>
-<p>仿真图像来源：
-<a href="http://www.pixiv.net/member_illust.php?mode=medium&amp;illust_id=49603329">041-マツムシソウ</a></p>
-<script type="text/javascript" src="http://src.dtysky.moe/MathJax/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></description>
-<dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">dtysky</dc:creator>
-<pubDate>Saturday, 30 May 2015 00:30:00 -00:00</pubDate>
-<guid>tag:http://dtysky.moe,2015.05.30 00:30:article/Create-test</guid>
-<category>FPGA</category>
-<category>FPGA-Imaging-Library</category>
-<category>图像处理</category>
-<category>几何变换</category>
-<category>旋转</category>
-</item>
+<a href="#1">情景一</a><br />
+<a href="#2">情景二</a><br />
+<a href="#3">情景三</a><br />
+<a href="#4">情景四</a><br />
+<a href="#5">情景五</a><br />
+<a href="#6">情景六</a><br />
+<a href="#7">情景七</a><br />
+<a href="#8">情景八</a><br />
+<a href="#9">情景九</a><br />
+<a href="#10">情景十</a><br />
+<a href="#11">情景十一</a><br />
+<a href="#12">情景十二</a><br />
+<a href="#13">情景十三</a><br />
+<a href="#14">情景十四</a><br />
+<a href="#15">情景十五</a><br />
+<a href="#16">情景十六</a><br />
+<a href="#17">情景十七</a><br />
+<a href="#18">情景十八</a></p>
+<div id="1"></div>
 
-<item>
-<title>【FPGA/图像处理】几何变换-旋转</title>
-<link>http://dtysky.moe/article/Life-test</link>
-<description><p>旋转同样是仿射变换的一种特例，它接受一个角度，将图像绕着某个中心进行转动，适合逆向映射。旋转的实现有多种，比如两次错切的旋转<sup>[26]</sup>、直接坐标变换<sup>[27]</sup>等，中心点的选取方式也有许多，但对于FPGA采用图像的几何中心较为合适。。本节将会说明如何用FPGA实现旋转的模块。
-这个IP核的资源在这里：
-<a href="https://github.com/dtysky/FPGA-Imaging-Library/tree/Publish/Geometry/Rotate">Rotate</a></p>
 <hr />
-<h1>3 算法实现</h1>
-<p>明确了设计和架构，便可以进行算法的实现。本章将会说明如何实现图像处理的算法，以及如何运用它们。</p>
-<h2>3.21 几何变换-旋转</h2>
-<p>旋转同样是仿射变换的一种特例，它接受一个角度，将图像绕着某个中心进行转动，适合逆向映射。旋转的实现有多种，比如两次错切的旋转<sup>[26]</sup>、直接坐标变换<sup>[27]</sup>等，中心点的选取方式也有许多，但对于FPGA采用图像的几何中心较为合适。。本节将会说明如何用FPGA实现旋转的模块。</p>
-<h3>3.21.1 原理</h3>
-<p>此设计中旋转的前向映射基本原理如式3-21-1，其中angle为旋转角度,$x_c$和$y_c$分别为图像中心横纵坐标。对于逆向映射应该对此式进行调整，变换为3-21-2的形式，可见旋转操作比较复杂，不仅涉及多次符号乘法、符号加法，还涉及到三角函数的计算。</p>
-<p>$$\begin{cases}Q[x_t,y_t] = I[x,y]  \\x_t = xc + (x - xc) * cos(a) - (y - yc)*sin(a)\\ y_t = yc + (x - xc) * sin(a) + (y - yc)*cos(a)\\x \in[0, w) ,y \in[0, h)\ \end{cases}.\ \ \ \ \ \ \ \ (3-21-1)$$</p>
-
-<p>$$\begin{cases}I[x,y] = Q[x_t,y_t]  \\x = (x_t - xc) * cos(a) + (y_t - yc) * sin(a) + xc\\ y = (-x_t + xc) * sin(a) + (y_t - yc) * cos(a) + yc\\x_t \in[0, w) ,y_t \in[0, h)\ \end{cases}.\ \ \ \ \ \ \ \ (3-21-2)$$</p>
-
-<p>首先要考虑三角函数的计算，如3.1中所述，FPGA中的特殊函数计算需要用查找表来实现，所以需要编写一个脚本来生成查找表，同时由于三角函数的值可能为负数，并且verilog中符号系统是补码系统，所以需要生成的是角度和此角度下三角函数值的补码。由于正弦和余弦的值域为[-1, 1]，同时一般用于变换的角度为[0,359]，所以综合考虑，最终选择将角度划分为360个点，使用1位符号位、1位整数位和18位的小数位的数据来表示函数值，这其中的难点在于如何将一个浮点数转换为20位的定点数补码，实现函数如下。</p>
-<div class="highlight"><pre>  <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
-    <span class="n">r</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">format</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s">&#39;f&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="s">&#39;0&#39;</span> <span class="o">+</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s">&#39;1&#39;</span> <span class="o">+</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;0.&#39;</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">18</span><span class="p">):</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="mi">2</span>
-        <span class="n">res</span> <span class="o">+=</span> <span class="s">&#39;1&#39;</span> <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="s">&#39;0&#39;</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">d</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span>
-    <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;1&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;0&#39;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="nb">bin</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">19</span> <span class="o">-</span> <span class="nb">eval</span><span class="p">(</span><span class="s">&#39;0b&#39;</span> <span class="o">+</span> <span class="n">res</span><span class="p">))[</span><span class="mi">2</span><span class="p">:]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">19</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)):</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;0&#39;</span> <span class="o">+</span> <span class="n">res</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span>
-    <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="s">&#39;10000000000000000000&#39;</span><span class="p">:</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;00000000000000000000&#39;</span>
-    <span class="k">return</span> <span class="n">res</span>
-</pre></div>
-
-
-<p>旋转变换同样需要符号舍入，但整数位只有1位，所以没有溢出风险，可以将其简化，仅仅裁剪输出即可。</p>
-<h3>3.21.2 设计</h3>
-<p>根据原理可知，Rotate核(以下简称RTT核)需要四次符号乘法、四次符号舍入操作和四次符号加法，并且需要和基于行列计数的帧控制器进行合作。故其需要的配置参数与端口如表3-21-1和表3-21-2。</p>
-<p><center>
-<table border="1" cellspacing="0">
-<tr>
-<th>名字</th>
-<th>类型</th>
-<th>范围</th>
-<th>默认值</th>
-<th>说明</th>
-</tr>
-<td>work_mode</td>
-<td>无符号</td>
-<td>0为流水线模式，1为请求响应模式</td>
-<td>0</td>
-<td>模块的工作模式。</td>
-</tr>
-<tr>
-<tr>
-<td>data_width</td>
-<td>无符号</td>
-<td>1 - 12</td>
-<td>8</td>
-<td>数据位宽。</td>
-</tr>
-<tr>
-<td>im_width</td>
-<td>无符号</td>
-<td>1 - 4096</td>
-<td>320</td>
-<td>图像宽度。</td>
-</tr>
-<tr>
-<td>im_height</td>
-<td>无符号</td>
-<td>1 - 4096</td>
-<td>240</td>
-<td>图像高度。</td>
-</tr>
-<tr>
-<td>im_width_bits</td>
-<td>无符号</td>
-<td>取决于图像宽度</td>
-<td>9</td>
-<td>图像宽度的位宽。</td>
-</tr>
-<tr>
-<td>mul_delay</td>
-<td>无符号</td>
-<td>取决于乘法器配置，1-14</td>
-<td>3</td>
-<td>乘法器延迟。</td>
-</tr>
-<tr>
-<td>ram_RL</td>
-<td>无符号</td>
-<td>取决于帧控制器</td>
-<td>7</td>
-<td>帧控制器输出延迟。</td>
-</tr>
-</table>
-表3-21-1 配置参数
-</center>
-<br>
-<center>
-<table border="1" cellspacing="0">
-<tr>
-<th>名字</th>
-<th>端口</th>
-<th>类型</th>
-<th>范围</th>
-<th>默认值</th>
-<th>说明</th>
-</tr>
-<td>clk</td>
-<td>输入</td>
-<td>无符号</td>
-<td>无</td>
-<td>无</td>
-<td>Clock.</td>
-</tr>
-<tr>
-<td>rst_n</td>
-<td>输入</td>
-<td>无符号</td>
-<td>无</td>
-<td>无</td>
-<td>复位，低有效。</td>
-</tr>
-<tr>
-<td>angle</td>
-<td>input</td>
-<td>无符号</td>
-<td>0 - 359</td>
-<td>无</td>
-<td>旋转角度。</td>
-</tr>
-<tr>
-<td>in_enable</td>
-<td>输入</td>
-<td>无符号</td>
-<td>无</td>
-<td>无</td>
-<td>输入数据使能，在流水线模式下，它是另一个复位信号，在请求响应模式下，只有在它有效的时候in_data才会被真正地改变。</td>
-</tr>
-<tr>
-<td>frame_in_ready</td>
-<td>输入</td>
-<td>无符号</td>
-<td>无</td>
-<td>无</td>
-<td>连接到帧控制器的out_ready。</td>
-</tr>
-<tr>
-<td>frame_in_data</td>
-<td>输入</td>
-<td>无符号</td>
-<td>data_width - 1 : 0</td>
-<td>无</td>
-<td>连接到帧控制器的out_data。</td>
-</tr>
-<tr>
-<td>frame_enable</td>
-<td>output</td>
-<td>无符号</td>
-<td>无</td>
-<td>无</td>
-<td>连接到帧控制器的in_enable。</td>
-</tr>
-<tr>
-<td>frame_out_count_x</td>
-<td>output</td>
-<td>无符号</td>
-<td>im_width_bits - 1 : 0</td>
-<td>无</td>
-<td>连接到帧控制器的in_count_x。</td>
-</tr>
-<tr>
-<td>out_count_y</td>
-<td>output</td>
-<td>无符号</td>
-<td>im_width_bits - 1 : 0</td>
-<td>无</td>
-<td>连接到帧控制器的in_count_y。</td>
-</tr>
-<tr>
-<td>out_ready</td>
-<td>output</td>
-<td>无符号</td>
-<td>无</td>
-<td>无</td>
-<td>输出数据有效，在两种模式下，这个信号都会在out_data可以被读取的时候有效。</td>
-</tr>
-<tr>
-<td>out_data</td>
-<td>output</td>
-<td>无符号</td>
-<td>color_width - 1 : 0</td>
-<td>无</td>
-<td>输出数据，将会和out_ready同步输出。</td>
-</tr>
-</table>
-表3-21-2 端口
-</center>
-</center>
-<br>
-<center>
-<table border="1" cellspacing="0">
-<tr>
-<th>名字</th>
-<th>类型</th>
-<th>说明</th>
-</tr>
-<tr>
-<td>Sin</td>
-<td>SinLUT</td>
-<td>获取角度的正弦。</td>
-</tr>
-<tr>
-<td>Cos</td>
-<td>CosLUT</td>
-<td>获取角度的余弦。</td>
-</tr>
-<tr>
-<td>MulX1</td>
-<td>Multiplier13Sx20SRTT</td>
-<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
-</tr>
-<tr>
-<td>MulX2</td>
-<td>Multiplier13Sx20SRTT</td>
-<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
-</tr>
-<tr>
-<td>MulY1</td>
-<td>Multiplier13Sx20SRTT</td>
-<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
-</tr>
-<tr>
-<td>MulY2</td>
-<td>Multiplier13Sx20SRTT</td>
-<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
-</tr>
-<tr>
-<td>FRSX1</td>
-<td>FixedRoundSigned</td>
-<td>用于有符号浮点数的舍入。</td>
-</tr>
-<tr>
-<td>FRSX2</td>
-<td>FixedRoundSigned</td>
-<td>用于有符号浮点数的舍入。</td>
-</tr>
-<tr>
-<td>FRSY1</td>
-<td>FixedRoundSigned</td>
-<td>用于有符号浮点数的舍入。</td>
-</tr>
-<tr>
-<td>FRSY2</td>
-<td>FixedRoundSigned</td>
-<td>用于有符号浮点数的舍入。</td>
-</tr>
-</table>
-表3-3-3 子模块
-</center></p>
-<h3>3.21.3 实现</h3>
-<p>根据3.21.2的设计便可以实现一个RTT核，流水线模式和请求响应模式实现如下。</p>
-<h4>3.21.3.1 流水线模式</h4>
-<p>在帧控制器的输出使能后1个周期第一个结果被输出，开始流水化工作，波形如图3-21-1。
-<center>
-<img alt="图3-21-1 流水线模式时序" src="http://src.dtysky.moe/image/f-i-l/3/21/1.png" />
-图3-21-1 流水线模式时序
-</center></p>
-<h4>3.21.3.2 请求响应模式读取</h4>
-<p>基本同3.21.3.1，但只有在in_enable上升沿时计数器才会加1才会被改变，波形如图3-21-2。
-<center>
-<img alt="图3-21-1 流水线模式时序" src="http://src.dtysky.moe/image/f-i-l/3/21/2.png" />
-图3-21-1 流水线模式时序
-</center></p>
-<h4>3.21.3.3 IP核GUI</h4>
-<p>完成功能后对RTT核进行了封装，封装如图3-21-3。
-<center>
-<img alt="图3-21-3 RTT核的GUI" src="http://src.dtysky.moe/image/f-i-l/3/21/3.png" />
-图3-21-3 RTT核的GUI
-</center></p>
-<h3>3.21.4 仿真</h3>
-<p>只对RGB图像和灰度图像进行测试，考虑到仿真设计模块比较多，出于仿真压力，我选择了一张图像的灰度模式进行三套参数的测试，原始图像如图3-21-4。</p>
-<p><center>
-<img alt="图3-21-4 仿真原始图像" src="http://src.dtysky.moe/image/f-i-l/3/21/4.jpg" />
-图3-21-4 仿真原始图像
-</center></p>
-<p>仿真参数如表3-16-4所示，选择原则是可以被二进制表示和不可以被表示的值都包含。</p>
-<p><center>
-<table border="1" cellspacing="0">
-<tr>
-<th>angle</th>
-</tr>
-<tr>
-<td>45</td>
-</tr>
-<tr>
-<td>131</td>
-</tr>
-<tr>
-<td>270</td>
-</tr>
-</table>
-表3-16-4 仿真参数
-</center></p>
-<p>仿真并进行PSNR测试，仿真结果如图3-21-5所示。
-<center>
-<img alt="图3-21-5 仿真结果" src="http://src.dtysky.moe/image/f-i-l/3/21/5.png" />
-图3-21-5 仿真结果，左侧为流水线模式下的HDL功能仿真结果，中间为请求响应模式下的HDL功能仿真结果，右侧为软件仿真结果
-</center></p>
-<h3>3.21.5 资源和时序</h3>
-<p>最终实现与图像大小和数据位宽有关，这里只分析大小为512x512和数据位宽为8时的状况，根据Vivado生成的报表，主要资源耗费如表3-21-5。</p>
-<p><center>
-<table border="1" cellspacing="0">
-<tr>
-<th>Slice LUTs*</th>
-<th>Slice Registers</th>
-<th>DSP</th>
-</tr>
-<tr>
-<td>543</td>
-<td>245</td>
-<td>4</td>
-</tr>
-</table>
-表3-21-5 主要资源耗费
-</center></p>
-<p>同时根据时序报告，最大的Data Path Delay(数据路径延迟)为4.414ns，即：</p>
-<blockquote>
-<p>FMax = 226.55MHz</p>
-</blockquote>
-<p>即说明，Rotate核在流水线模式下，理论上在处理1080p全高清图像时可以达到109帧。
-与3.20相同，此FMax低于期望值，也来自于舍入核的加法，考虑时间此处暂时不做优化。
-由于数据路径延迟和应用的最终约束设置强相关，所以仅供参考。</p>
-<h3>3.21.6 分析与结论</h3>
-<p>PSNR如表3-21-6。</p>
-<p><center>
-<table border="1" cellspacing="0">
-<tr>
-<th>1-131</th>
-<th>1-270</th>
-<th>1-45</th>
-<th>Total</th>
-</tr>
-<tr>
-<td>1000000.00</td>
-<td>54.89</td>
-<td>1000000.00</td>
-<td>666684.96</td>
-</tr>
-</table>
-表3-21-6 PSNR
-</center></p>
-<p>PSNR对于某些参数为最大值，对于一些不是，最终误差来自于符号乘法和查找表自身的误差，但PSNR均为50以上，可见在测试范围内，RTT核可以满足处理需求，设计成功。</p>
-<hr />
-<h1>参考文献</h1>
-<p>[26] 陈芳.一种基于错切原理的图像旋转方法[J].淮阴师范学院学报（自然科学版）,2004,3(4):319-322.DOI:10.3969/j.issn.1671-6876.2004.04.016.
-[27] 王金辉.实时图像旋转系统的研究与FPGA实现[D].华中科技大学,2012.</p>
-<hr />
-<h1>感谢</h1>
-<p>仿真图像来源：
-<a href="http://www.pixiv.net/member_illust.php?mode=medium&amp;illust_id=49603329">041-マツムシソウ</a></p>
-<script type="text/javascript" src="http://src.dtysky.moe/MathJax/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></description>
-<dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">dtysky</dc:creator>
-<pubDate>Saturday, 30 May 2015 00:30:00 -00:00</pubDate>
-<guid>tag:http://dtysky.moe,2015.05.30 00:30:article/Life-test</guid>
-<category>FPGA</category>
-<category>FPGA-Imaging-Library</category>
-<category>图像处理</category>
-<category>几何变换</category>
-<category>旋转</category>
+<p><strong>﻿情景一</strong>  </p>
+<p>盛夏。<br />
+蝉鸣不断，滋扰着懵懂的少年少女之心。<br />
+酷暑带来的味道充斥着整间教室。<br />
+体香？  </p></description>
+<dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">命月天宇</dc:creator>
+<pubDate>Saturday, 17 Oct 2015 23:00:00 -00:00</pubDate>
+<guid>tag:http://dtysky.moe,2015.10.17 23:00:article/Art-花</guid>
+<category>小说</category>
+<category>原创</category>
+<category>花</category>
 </item>
 
 <item>
@@ -1156,7 +442,8 @@
 <a href="https://github.com/dtysky/FPGA-Imaging-Library/tree/Publish/Geometry/Rotate">Rotate</a></p>
 <blockquote>
 <blockquote>
-<p>test quote</p>
+<p>test quote
+q</p>
 </blockquote>
 </blockquote>
 <hr />
@@ -1535,2572 +822,766 @@
 </item>
 
 <item>
-<title>【小说】花</title>
-<link>http://dtysky.moe/article/Art-花</link>
-<description><hr />
-<p><strong>本篇走意识流中二二次元风格，不设大纲，仅仅用作文字实验，风格跨越近三年的演化<br />
-不合口味者慎入<br />
-或期待正在架构的另一篇完整结构的正剧——花.Re。</strong></p>
+<title>【FPGA/图像处理】几何变换-旋转</title>
+<link>http://dtysky.moe/article/Create-test</link>
+<description><p>旋转同样是仿射变换的一种特例，它接受一个角度，将图像绕着某个中心进行转动，适合逆向映射。旋转的实现有多种，比如两次错切的旋转<sup>[26]</sup>、直接坐标变换<sup>[27]</sup>等，中心点的选取方式也有许多，但对于FPGA采用图像的几何中心较为合适。。本节将会说明如何用FPGA实现旋转的模块。
+这个IP核的资源在这里：
+<a href="https://github.com/dtysky/FPGA-Imaging-Library/tree/Publish/Geometry/Rotate">Rotate</a></p>
 <hr />
-<p>另一个写完的剧本的平行世界<br />
-主角不变，妹子基本都是那个剧本里的路人<br />
-不过也是完全的“平行”世界了  </p>
-<p>情景一到六是第一人称视角，属于写剧本的残留<br />
-情景七开始是第三人称视角为主<br />
+<h1>3 算法实现</h1>
+<p>明确了设计和架构，便可以进行算法的实现。本章将会说明如何实现图像处理的算法，以及如何运用它们。</p>
+<h2>3.21 几何变换-旋转</h2>
+<p>旋转同样是仿射变换的一种特例，它接受一个角度，将图像绕着某个中心进行转动，适合逆向映射。旋转的实现有多种，比如两次错切的旋转<sup>[26]</sup>、直接坐标变换<sup>[27]</sup>等，中心点的选取方式也有许多，但对于FPGA采用图像的几何中心较为合适。。本节将会说明如何用FPGA实现旋转的模块。</p>
+<h3>3.21.1 原理</h3>
+<p>此设计中旋转的前向映射基本原理如式3-21-1，其中angle为旋转角度,$x_c$和$y_c$分别为图像中心横纵坐标。对于逆向映射应该对此式进行调整，变换为3-21-2的形式，可见旋转操作比较复杂，不仅涉及多次符号乘法、符号加法，还涉及到三角函数的计算。</p>
+<p>$$\begin{cases}Q[x_t,y_t] = I[x,y]  \\x_t = xc + (x - xc) * cos(a) - (y - yc)*sin(a)\\ y_t = yc + (x - xc) * sin(a) + (y - yc)*cos(a)\\x \in[0, w) ,y \in[0, h)\ \end{cases}.\ \ \ \ \ \ \ \ (3-21-1)$$</p>
+
+<p>$$\begin{cases}I[x,y] = Q[x_t,y_t]  \\x = (x_t - xc) * cos(a) + (y_t - yc) * sin(a) + xc\\ y = (-x_t + xc) * sin(a) + (y_t - yc) * cos(a) + yc\\x_t \in[0, w) ,y_t \in[0, h)\ \end{cases}.\ \ \ \ \ \ \ \ (3-21-2)$$</p>
+
+<p>首先要考虑三角函数的计算，如3.1中所述，FPGA中的特殊函数计算需要用查找表来实现，所以需要编写一个脚本来生成查找表，同时由于三角函数的值可能为负数，并且verilog中符号系统是补码系统，所以需要生成的是角度和此角度下三角函数值的补码。由于正弦和余弦的值域为[-1, 1]，同时一般用于变换的角度为[0,359]，所以综合考虑，最终选择将角度划分为360个点，使用1位符号位、1位整数位和18位的小数位的数据来表示函数值，这其中的难点在于如何将一个浮点数转换为20位的定点数补码，实现函数如下。</p>
+<div class="highlight"><pre>  <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">format</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s">&#39;f&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="s">&#39;0&#39;</span> <span class="o">+</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s">&#39;1&#39;</span> <span class="o">+</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;0.&#39;</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">18</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="s">&#39;1&#39;</span> <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="s">&#39;0&#39;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">d</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span>
+    <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;1&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;0&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="nb">bin</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">19</span> <span class="o">-</span> <span class="nb">eval</span><span class="p">(</span><span class="s">&#39;0b&#39;</span> <span class="o">+</span> <span class="n">res</span><span class="p">))[</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">19</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;0&#39;</span> <span class="o">+</span> <span class="n">res</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span>
+    <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="s">&#39;10000000000000000000&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;00000000000000000000&#39;</span>
+    <span class="k">return</span> <span class="n">res</span>
+</pre></div>
+
+
+<p>旋转变换同样需要符号舍入，但整数位只有1位，所以没有溢出风险，可以将其简化，仅仅裁剪输出即可。</p>
+<h3>3.21.2 设计</h3>
+<p>根据原理可知，Rotate核(以下简称RTT核)需要四次符号乘法、四次符号舍入操作和四次符号加法，并且需要和基于行列计数的帧控制器进行合作。故其需要的配置参数与端口如表3-21-1和表3-21-2。</p>
+<p><center>
+<table border="1" cellspacing="0">
+<tr>
+<th>名字</th>
+<th>类型</th>
+<th>范围</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+<td>work_mode</td>
+<td>无符号</td>
+<td>0为流水线模式，1为请求响应模式</td>
+<td>0</td>
+<td>模块的工作模式。</td>
+</tr>
+<tr>
+<tr>
+<td>data_width</td>
+<td>无符号</td>
+<td>1 - 12</td>
+<td>8</td>
+<td>数据位宽。</td>
+</tr>
+<tr>
+<td>im_width</td>
+<td>无符号</td>
+<td>1 - 4096</td>
+<td>320</td>
+<td>图像宽度。</td>
+</tr>
+<tr>
+<td>im_height</td>
+<td>无符号</td>
+<td>1 - 4096</td>
+<td>240</td>
+<td>图像高度。</td>
+</tr>
+<tr>
+<td>im_width_bits</td>
+<td>无符号</td>
+<td>取决于图像宽度</td>
+<td>9</td>
+<td>图像宽度的位宽。</td>
+</tr>
+<tr>
+<td>mul_delay</td>
+<td>无符号</td>
+<td>取决于乘法器配置，1-14</td>
+<td>3</td>
+<td>乘法器延迟。</td>
+</tr>
+<tr>
+<td>ram_RL</td>
+<td>无符号</td>
+<td>取决于帧控制器</td>
+<td>7</td>
+<td>帧控制器输出延迟。</td>
+</tr>
+</table>
+表3-21-1 配置参数
+</center>
 <br>
-<a href="#1">情景一</a><br />
-<a href="#2">情景二</a><br />
-<a href="#3">情景三</a><br />
-<a href="#4">情景四</a><br />
-<a href="#5">情景五</a><br />
-<a href="#6">情景六</a><br />
-<a href="#7">情景七</a><br />
-<a href="#8">情景八</a><br />
-<a href="#9">情景九</a><br />
-<a href="#10">情景十</a><br />
-<a href="#11">情景十一</a><br />
-<a href="#12">情景十二</a><br />
-<a href="#13">情景十三</a><br />
-<a href="#14">情景十四</a><br />
-<a href="#15">情景十五</a><br />
-<a href="#16">情景十六</a><br />
-<a href="#17">情景十七</a><br />
-<a href="#18">情景十八</a></p>
-<div id="1"></div>
-
+<center>
+<table border="1" cellspacing="0">
+<tr>
+<th>名字</th>
+<th>端口</th>
+<th>类型</th>
+<th>范围</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+<td>clk</td>
+<td>输入</td>
+<td>无符号</td>
+<td>无</td>
+<td>无</td>
+<td>Clock.</td>
+</tr>
+<tr>
+<td>rst_n</td>
+<td>输入</td>
+<td>无符号</td>
+<td>无</td>
+<td>无</td>
+<td>复位，低有效。</td>
+</tr>
+<tr>
+<td>angle</td>
+<td>input</td>
+<td>无符号</td>
+<td>0 - 359</td>
+<td>无</td>
+<td>旋转角度。</td>
+</tr>
+<tr>
+<td>in_enable</td>
+<td>输入</td>
+<td>无符号</td>
+<td>无</td>
+<td>无</td>
+<td>输入数据使能，在流水线模式下，它是另一个复位信号，在请求响应模式下，只有在它有效的时候in_data才会被真正地改变。</td>
+</tr>
+<tr>
+<td>frame_in_ready</td>
+<td>输入</td>
+<td>无符号</td>
+<td>无</td>
+<td>无</td>
+<td>连接到帧控制器的out_ready。</td>
+</tr>
+<tr>
+<td>frame_in_data</td>
+<td>输入</td>
+<td>无符号</td>
+<td>data_width - 1 : 0</td>
+<td>无</td>
+<td>连接到帧控制器的out_data。</td>
+</tr>
+<tr>
+<td>frame_enable</td>
+<td>output</td>
+<td>无符号</td>
+<td>无</td>
+<td>无</td>
+<td>连接到帧控制器的in_enable。</td>
+</tr>
+<tr>
+<td>frame_out_count_x</td>
+<td>output</td>
+<td>无符号</td>
+<td>im_width_bits - 1 : 0</td>
+<td>无</td>
+<td>连接到帧控制器的in_count_x。</td>
+</tr>
+<tr>
+<td>out_count_y</td>
+<td>output</td>
+<td>无符号</td>
+<td>im_width_bits - 1 : 0</td>
+<td>无</td>
+<td>连接到帧控制器的in_count_y。</td>
+</tr>
+<tr>
+<td>out_ready</td>
+<td>output</td>
+<td>无符号</td>
+<td>无</td>
+<td>无</td>
+<td>输出数据有效，在两种模式下，这个信号都会在out_data可以被读取的时候有效。</td>
+</tr>
+<tr>
+<td>out_data</td>
+<td>output</td>
+<td>无符号</td>
+<td>color_width - 1 : 0</td>
+<td>无</td>
+<td>输出数据，将会和out_ready同步输出。</td>
+</tr>
+</table>
+表3-21-2 端口
+</center>
+</center>
+<br>
+<center>
+<table border="1" cellspacing="0">
+<tr>
+<th>名字</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+<tr>
+<td>Sin</td>
+<td>SinLUT</td>
+<td>获取角度的正弦。</td>
+</tr>
+<tr>
+<td>Cos</td>
+<td>CosLUT</td>
+<td>获取角度的余弦。</td>
+</tr>
+<tr>
+<td>MulX1</td>
+<td>Multiplier13Sx20SRTT</td>
+<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
+</tr>
+<tr>
+<td>MulX2</td>
+<td>Multiplier13Sx20SRTT</td>
+<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
+</tr>
+<tr>
+<td>MulY1</td>
+<td>Multiplier13Sx20SRTT</td>
+<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
+</tr>
+<tr>
+<td>MulY2</td>
+<td>Multiplier13Sx20SRTT</td>
+<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
+</tr>
+<tr>
+<td>FRSX1</td>
+<td>FixedRoundSigned</td>
+<td>用于有符号浮点数的舍入。</td>
+</tr>
+<tr>
+<td>FRSX2</td>
+<td>FixedRoundSigned</td>
+<td>用于有符号浮点数的舍入。</td>
+</tr>
+<tr>
+<td>FRSY1</td>
+<td>FixedRoundSigned</td>
+<td>用于有符号浮点数的舍入。</td>
+</tr>
+<tr>
+<td>FRSY2</td>
+<td>FixedRoundSigned</td>
+<td>用于有符号浮点数的舍入。</td>
+</tr>
+</table>
+表3-3-3 子模块
+</center></p>
+<h3>3.21.3 实现</h3>
+<p>根据3.21.2的设计便可以实现一个RTT核，流水线模式和请求响应模式实现如下。</p>
+<h4>3.21.3.1 流水线模式</h4>
+<p>在帧控制器的输出使能后1个周期第一个结果被输出，开始流水化工作，波形如图3-21-1。
+<center>
+<img alt="图3-21-1 流水线模式时序" src="http://src.dtysky.moe/image/f-i-l/3/21/1.png" />
+图3-21-1 流水线模式时序
+</center></p>
+<h4>3.21.3.2 请求响应模式读取</h4>
+<p>基本同3.21.3.1，但只有在in_enable上升沿时计数器才会加1才会被改变，波形如图3-21-2。
+<center>
+<img alt="图3-21-1 流水线模式时序" src="http://src.dtysky.moe/image/f-i-l/3/21/2.png" />
+图3-21-1 流水线模式时序
+</center></p>
+<h4>3.21.3.3 IP核GUI</h4>
+<p>完成功能后对RTT核进行了封装，封装如图3-21-3。
+<center>
+<img alt="图3-21-3 RTT核的GUI" src="http://src.dtysky.moe/image/f-i-l/3/21/3.png" />
+图3-21-3 RTT核的GUI
+</center></p>
+<h3>3.21.4 仿真</h3>
+<p>只对RGB图像和灰度图像进行测试，考虑到仿真设计模块比较多，出于仿真压力，我选择了一张图像的灰度模式进行三套参数的测试，原始图像如图3-21-4。</p>
+<p><center>
+<img alt="图3-21-4 仿真原始图像" src="http://src.dtysky.moe/image/f-i-l/3/21/4.jpg" />
+图3-21-4 仿真原始图像
+</center></p>
+<p>仿真参数如表3-16-4所示，选择原则是可以被二进制表示和不可以被表示的值都包含。</p>
+<p><center>
+<table border="1" cellspacing="0">
+<tr>
+<th>angle</th>
+</tr>
+<tr>
+<td>45</td>
+</tr>
+<tr>
+<td>131</td>
+</tr>
+<tr>
+<td>270</td>
+</tr>
+</table>
+表3-16-4 仿真参数
+</center></p>
+<p>仿真并进行PSNR测试，仿真结果如图3-21-5所示。
+<center>
+<img alt="图3-21-5 仿真结果" src="http://src.dtysky.moe/image/f-i-l/3/21/5.png" />
+图3-21-5 仿真结果，左侧为流水线模式下的HDL功能仿真结果，中间为请求响应模式下的HDL功能仿真结果，右侧为软件仿真结果
+</center></p>
+<h3>3.21.5 资源和时序</h3>
+<p>最终实现与图像大小和数据位宽有关，这里只分析大小为512x512和数据位宽为8时的状况，根据Vivado生成的报表，主要资源耗费如表3-21-5。</p>
+<p><center>
+<table border="1" cellspacing="0">
+<tr>
+<th>Slice LUTs*</th>
+<th>Slice Registers</th>
+<th>DSP</th>
+</tr>
+<tr>
+<td>543</td>
+<td>245</td>
+<td>4</td>
+</tr>
+</table>
+表3-21-5 主要资源耗费
+</center></p>
+<p>同时根据时序报告，最大的Data Path Delay(数据路径延迟)为4.414ns，即：</p>
+<blockquote>
+<p>FMax = 226.55MHz</p>
+</blockquote>
+<p>即说明，Rotate核在流水线模式下，理论上在处理1080p全高清图像时可以达到109帧。
+与3.20相同，此FMax低于期望值，也来自于舍入核的加法，考虑时间此处暂时不做优化。
+由于数据路径延迟和应用的最终约束设置强相关，所以仅供参考。</p>
+<h3>3.21.6 分析与结论</h3>
+<p>PSNR如表3-21-6。</p>
+<p><center>
+<table border="1" cellspacing="0">
+<tr>
+<th>1-131</th>
+<th>1-270</th>
+<th>1-45</th>
+<th>Total</th>
+</tr>
+<tr>
+<td>1000000.00</td>
+<td>54.89</td>
+<td>1000000.00</td>
+<td>666684.96</td>
+</tr>
+</table>
+表3-21-6 PSNR
+</center></p>
+<p>PSNR对于某些参数为最大值，对于一些不是，最终误差来自于符号乘法和查找表自身的误差，但PSNR均为50以上，可见在测试范围内，RTT核可以满足处理需求，设计成功。</p>
 <hr />
-<p><strong>﻿情景一</strong>  </p>
-<p>盛夏。<br />
-蝉鸣不断，滋扰着懵懂的少年少女之心。<br />
-酷暑带来的味道充斥着整间教室。<br />
-体香？<br />
-不，那俗称香水的东西也无法遮盖住人类自然躯体在高温下溢出的气味。<br />
-【虽然有人好这口，但肯定不是我。】<br />
-虽然久居“芝兰”之室不觉其“香”就是了。<br />
-【噢，对了。】<br />
-自我介绍一下，我叫戴寒苍。<br />
-啥？<br />
-你说为啥这个时代起这种名字，而且不是日式的？<br />
-“我哪知道，问我爸妈去啊！”<br />
-“呀啊！”<br />
-“？”<br />
-“你忽然叫什么！”<br />
-“叫的是你吧。”<br />
-“也是…”<br />
-这边这个胡乱叫的是我的同桌。<br />
-名字虽然叫做叶若蕾但本人和名字…<br />
-“你好像在想什么很失礼的事情喂！”<br />
-“哪有…”<br />
-我一直怀疑这家伙有超能力，否则怎么可能做到这种程度。<br />
-当然了，说是和我心有灵犀也是一种解释。<br />
-【虽说不太可能啊。】<br />
-当然也没什么不可能，我又不是她也没法知道她的想法。<br />
-不，其实还是可以知道的，比如…<br />
-（不，不要摸那里啊…）<br />
-（嗯…不要这样啦❤）<br />
-（在这样下去，人家会…唔…怀孕的啦❤）<br />
-啪。<br />
-“好痛啊，你做什么！”<br />
-头上忽然莫名其妙挨了一掌。<br />
-“……”<br />
-【不是吧…】<br />
-看着她的脸，有些绯红。<br />
-好吧，或许这个世界也是什么都有可能的。<br />
-当然并不排除是我妄想的时候露出了什么奇怪的表情。<br />
-【无所谓了。】<br />
-一天到晚想着是否被别人读心了烦不烦啊，真是。<br />
-不过还真是热啊，汗水都出来了。<br />
-当然不只是我，全班都是，尤其是在我这个前后左右都是妹子的位置显得尤其那啥。<br />
-不知道是不是为了彰显校风之自由，这学校的校服相当的，具有一定湿度下的良好半透性。<br />
-【嘛，毕竟校长是某学社的头，叫韩…啥？】<br />
-算了，反正也记不清。<br />
-不过说起来，我自己可是完全不想变成这样啊。<br />
-一个月前，拼死拼活考到校前五就是为了可以自选位置然后选到这个四周清净的主角专用座位享受侧面的清风（虽然现在只剩日晒）。<br />
-谁知道老师忽然抽风给这个清静之地忽然添加了这么多扰乱神绪的存在。<br />
-【男孩子还真是各种不便啊。】<br />
-哪天割掉算了。<br />
-【……】<br />
-当然，只是玩笑而已。<br />
-其实倒也不是对女孩子没有兴趣啦，而且貌似也不是没有人气？<br />
-毕竟这又不是某些故意营造那种环境的作品，正常情况下学习好的男孩子还是有些人气的，只是我自己没什么自信而已。<br />
-或者说只是自己懒得去找这方面的自信。<br />
-“喂！”<br />
-“干嘛…”<br />
-“你从刚才就在想什么，乱七八糟的。”<br />
-“你不是读到了么。”<br />
-“……”<br />
-“就是因为不明白才问你啊！”<br />
-叶姓少女嘟着嘴，本来就很可爱加上这么一招真是…<br />
-没啥感想。<br />
-经常见到也就习惯了吧，人的应激体制就是这样。<br />
-“不否认能读到啊！”<br />
-“呃…暴露了。”<br />
-“等等，那是啥？”<br />
-看到她的耳边挂着什么…耳机？但又不太像。<br />
-“诶？这个是…”<br />
-“拿来…看看！”<br />
-不顾阻拦，强行抢了过来。<br />
-随后，仔细端详，然后，将其解剖。<br />
-“喂，怎么就给我拆了！”<br />
-“因为根本停不下来。”<br />
-在打着混的同时，大概看了下构造。<br />
-脑电波…<br />
-AD…<br />
-DSP…<br />
-还有不知所以的某看起来像是核心的芯片。<br />
-“谁给你的？”<br />
-“我爸爸…”<br />
-“原来如此。”<br />
-她的爸爸是世界著名的某神经学家加上某黑科技公司的高级电子工程师。<br />
-“你爸真…牛！”<br />
-称赞的同时，将手中的这个“微型读心仪（暂定）”完全粉碎。<br />
-当然粉碎什么的只是夸张手法而已。<br />
-“你干什么啊，这可是爸爸的心血！”<br />
-若蕾直直的盯着我，眼中泛起了泪花。<br />
-“……”<br />
-举起了手，摸了摸少女的头。<br />
-“它的牺牲，是为了人类的自由。”<br />
-我感受到了我眼中传递出的那份矢志不渝的坚定。<br />
-“……”<br />
-若蕾接受了我的热情，停止了哭泣。<br />
-“抱歉…”<br />
-仿佛是在为方才的那一切道着歉。<br />
-“没事的…我们不是一起守住了人类的自由么？”<br />
-嘴角浮现出的微笑，恐怕比任何时候都要纯真吧。<br />
-“嗯！”<br />
-啊，我们完成了多么伟大的一件事。<br />
-叮铃铃。<br />
-然后，上课铃声响起了。  </p>
-<div id="2"></div>
-
+<h1>参考文献</h1>
+<p>[26] 陈芳.一种基于错切原理的图像旋转方法[J].淮阴师范学院学报（自然科学版）,2004,3(4):319-322.DOI:10.3969/j.issn.1671-6876.2004.04.016.
+[27] 王金辉.实时图像旋转系统的研究与FPGA实现[D].华中科技大学,2012.</p>
 <hr />
-<p><strong>情景二</strong>  </p>
-<p>“请大家迅速到操场集合，准备作广播体操。”<br />
-广播中，传来了某个中年男子的声音。<br />
-“这个家伙还真是有精神。”<br />
-提一下广播中的声音每天都一样又不一样，因为这个作为我们校长的男人每天都会尝试用不同的语气去念这句话。<br />
-为什么？<br />
-【我也想问啊。】<br />
-虽然在心中做过无数次解析，但果然还是无法得出一个令我感到信服的答案。<br />
-不过答案还是有的，比如最为有趣的答案之类的。<br />
-“因为他是某学社的头啊，叫韩…啥？”<br />
-想不起来。<br />
-【…无所谓了。】<br />
-“喂。”<br />
-“啥？”<br />
-若蕾叫了我一声。<br />
-“大家都走了，脑洞开小点。”<br />
-“哦…”<br />
-忘了下四周，还真是，不过。<br />
-“你居然知道脑洞这个词，还真是让我惊讶。”<br />
-非常赞赏的语气。<br />
-“你又把人家当笨蛋！”<br />
-但对方却毫不在意我的赞赏。<br />
-“哪有…”<br />
-其实是有一点，嗯真的只是一点点而已。<br />
-“而且这个时候不应该感谢我等你到现在么？”<br />
-招牌的嘟脸，可惜我早已明确了人类这麻烦的应激机制…<br />
-“不是一直都是如此么。”<br />
-本来而言，习惯就是这样的东西，所以长期的好意最后也会被作为理所当然的东西。<br />
-【所以才说半糖主义什么的还是有一点道理的啊。】<br />
-在若蕾的不满中，走向教室的大门。<br />
-然后，在门口处，邂逅了<br />
-——她。<br />
-“变态。”<br />
-浅浅的一句后，她迅速取回了遗落在课桌内的什么，先我们离开了。<br />
-“变态呢。”<br />
-身旁的若蕾笑了起来。<br />
-“被你说我又不会有快感。”<br />
-将其无视，然后牵起了她的手。<br />
-【这可不是什么酸臭的爱情喜剧，仅仅是想拉一下而已，而且正好这个“时间不够”的时机比较好。】<br />
-嗯，我是绝对正义的。<br />
-“爱情喜剧也没什么…”<br />
-“啥？”<br />
-“没什么你个变态，快走！”<br />
-【…一瞬间仿佛嗅到了伏笔的味道。】<br />
-……<br />
-…<br />
-.<br />
-操场。<br />
-按班排列，方队整齐。<br />
-“哈…”<br />
-跟着节奏让手脚做起了一般而言意义不明的动作。<br />
-【明明自称是自由却还搞这种东西，宣称什么“特色自由”。】<br />
-【特色你妹啊，只不过是自己觉得好玩而已吧死老头！】<br />
-当然，这种话我是不会公开说出来的。<br />
-绝对不是因为怕被记恨什么的，只是想维护我们学校的尊严，嗯。<br />
-而且，其实这样也不错。<br />
-盛夏。<br />
-蝉鸣。<br />
-短裙。<br />
-T恤。<br />
-汗水。<br />
-良好的半透性。<br />
-“优雅”的动作。<br />
-少女，就在我的前方。<br />
-由于我并没被割掉，所以男性的机能还算完整，也就是说各种激素分泌都十分的到位。<br />
-而且视角也非常到位。<br />
-直到，我的前方，一阵神风吹过。<br />
-不偏不倚，吹到了少女的裙摆。<br />
-裙摆在风中飘摇，如涟漪一般，使其中包容的所存若隐若现。<br />
-而我的视线，则也如裙摆一般，漂游、漂游，像是感受到了光一样，将内心隐匿的渴望展露无遗。<br />
-“青春，不是也不错么。”<br />
-微笑，身体的摇摆不觉间畅快了起来。<br />
-畅快之时，瞬间的危机感突然袭来。<br />
-不偏不倚，我将其在到达我的瞬间拦截了<br />
-——那，是少女的手。<br />
-手掌打开，并且伴随着一定的力度。<br />
-顺着手臂向上望去，是非常非常红的面颊。<br />
-【出汗出的吧。】<br />
-也是，这天气很正常，毛孔散热毛细血管充血啥的…我猜的。<br />
-“干嘛…”<br />
-“你！”<br />
-对方似乎非常生气。<br />
-“怎么了？我没有招惹你吧…”<br />
-再说这学年第一的完美大小姐我也招惹不起。<br />
-【虽然这种属性也没什么，只要没有脱离人的领域不都一样么。】<br />
-“你你你！”<br />
-“我我我？”<br />
-“你你你你你！”<br />
-“我我我我我？”<br />
-“变态！”<br />
-“你一直变态变态的…为啥？”<br />
-这可是天大的冤枉啊。<br />
-“昨天！”<br />
-“昨天？”<br />
-“哦…那件事啊。”  </p>
-<p>--------------昨天--------------<br />
-课间，无聊之时拿出了我宝贵的自己打工挣来的平板酱，带上了同样是自己攒来的ADKPRM姬。<br />
-“兄さまと一绪に游びましょう❤。”<br />
-“呃…”<br />
-瞬间感觉心脏机能受损。<br />
-“没事吧，你流鼻血了诶…”<br />
-身边，某个不解风情的家伙在叨扰着什么。<br />
-“干啥？”<br />
-依依不舍摘下PRM姬，不耐烦地问了一句。<br />
-“鼻血…”<br />
-下一刻，鼻下多了一张纸巾，以及，握着纸巾的手。<br />
-非常，非常不知道是不是香水的香气透过纸巾传了过来。<br />
-吸。<br />
-不自觉猛吸了一下。<br />
-“呀啊！”<br />
-仿佛被什么刺激到了，若蕾尖叫了一身。<br />
-“这就是敏感带？还有你别这么大声！”<br />
-“敏敏敏…敏感带！？”<br />
-“都说了别这么大声，你这样会被别人觉得奇怪的，女孩子经常一惊一乍还敏感带什么的。”<br />
-“还不是你！”<br />
-“我是男的所以大丈夫！”<br />
-“你…刚才是在闻我的味道吧所以我才会这样的！”<br />
-“哈哈哈。”<br />
-报以微笑，回避了这个愚蠢的问题。<br />
-“还有别以为我不知道你在做什么，当中Hsence什么的你！”<br />
-“有什么，反正也不会影响别人。”<br />
-“影！响！我！了！啊！”<br />
-“原来如此。”<br />
-将平板酱转过了一个合适的角度，保证只有我能够看到上面的画面。<br />
-“顺便，这纸巾我就收下了。”<br />
-“收…下！？”<br />
-“一惊一乍烦不烦啊，收下又怎么了，反正已经擦过我的血了难道你还要留个纪念不成？”<br />
-示意的同时将纸巾递了回去、<br />
-“你肯定是要用这个站着我的味道的纸巾自O吧！”<br />
-对方不但没有接受我的解释，反而倒打一耙。<br />
-“哼。”<br />
-“我告诉你，我就算自O也是不会用什么三次元，弱爆了！”<br />
-“而且就算退而求其次，我也不会找你这种，再怎么也是夜月啊。”<br />
-“什…么！”<br />
-若蕾的怒气越来越大，但对我完全构不成威胁。<br />
-【我可是非常牛X和理智的男人。】<br />
-啪！<br />
-“啊…！”<br />
-右侧脸颊突然传来阵痛。<br />
-“干嘛啊我不是都道歉了么！”<br />
-对着若蕾大吼以重塑我的尊严。<br />
-“你才没有！而且不是我打的！”<br />
-“哈？”<br />
-若蕾指向了一边——那是我的后方。<br />
-转身望去，坐在替补主角位置的那个少女正以一种微妙的神情俯视着我。<br />
-“中午好，花夜月大小姐。”<br />
-“变态。”<br />
-“哈？”<br />
-“变态！”<br />
-名为花月夜的古风美人，就这么跑出了教室。<br />
-“遭报应了吧。”<br />
-身边的这位若蕾则是幸灾乐祸。<br />
-【真是别人的痛苦就是自己最大的止痛剂啊。】<br />
-虽然我也没什么痛苦。<br />
-（记住，肉体上的疼痛永远无法造成内心的创伤。）<br />
-“怎么？”<br />
-“没啥，在YY和夜月那啥的情形。”<br />
-啪——本应如此但却被我的优秀近乎先验的预知能力完美地拦截了。<br />
-“…你不是出去了么。”<br />
-“变态大变态！”<br />
-“用叠词来加重语气么，不愧是学年第一。”<br />
-但这句夸奖并没有传到对方耳中。<br />
-【可惜可惜，我的脸…】<br />
-【唉…】<br />
-还是继续攻略吧。<br />
-------------------昨天结束---------------  </p>
-<p>“你看，我只是把你当做那个又没有实际，这是人类的正常需求。”<br />
-“本来，如果没有这种需求，就没有你我了，也没有昨天的一切。”<br />
-“正是因为有它，我们才能这样度过美好的、充满不同的每一天。”<br />
-“你伤心呢也好，快乐也罢，亦或是愤怒，这都是完整的你的一部分啊。”<br />
-“你所展现的你也好，在我脑中被YY的你也好，都是完美的。”<br />
-“你所展现的各种优秀，我脑中的你的各种姿势，都是这个世界上最美的！”<br />
-“我以戴寒苍之名，向神起誓！”<br />
-自然，作为一个信仰个人化的拥护者，我的神就是只属于“我”的上帝。<br />
-“花家祖传绝技——先祖由先祖友人所得传至今日融汇了友情和命运的见证穿越了历史的洪流无敌的盖世神功——灵犀一指！”<br />
-“哼。”<br />
-“阅三千典籍，览狂士无数。”<br />
-“断续离散，似伊人落寞，奈却红尘！”<br />
-“自修。”<br />
-“琴音，散！”<br />
-“没救了。”<br />
-扶着倒下的我，若蕾叹息道。<br />
-【明日，还会是晴天吧。】  </p>
-<div id="3"></div>
+<h1>感谢</h1>
+<p>仿真图像来源：
+<a href="http://www.pixiv.net/member_illust.php?mode=medium&amp;illust_id=49603329">041-マツムシソウ</a></p>
+<script type="text/javascript" src="http://src.dtysky.moe/MathJax/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></description>
+<dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">dtysky</dc:creator>
+<pubDate>Saturday, 30 May 2015 00:30:00 -00:00</pubDate>
+<guid>tag:http://dtysky.moe,2015.05.30 00:30:article/Create-test</guid>
+<category>FPGA</category>
+<category>FPGA-Imaging-Library</category>
+<category>图像处理</category>
+<category>几何变换</category>
+<category>旋转</category>
+</item>
 
+<item>
+<title>【FPGA/图像处理】几何变换-旋转</title>
+<link>http://dtysky.moe/article/Life-test</link>
+<description><p>旋转同样是仿射变换的一种特例，它接受一个角度，将图像绕着某个中心进行转动，适合逆向映射。旋转的实现有多种，比如两次错切的旋转<sup>[26]</sup>、直接坐标变换<sup>[27]</sup>等，中心点的选取方式也有许多，但对于FPGA采用图像的几何中心较为合适。。本节将会说明如何用FPGA实现旋转的模块。
+这个IP核的资源在这里：
+<a href="https://github.com/dtysky/FPGA-Imaging-Library/tree/Publish/Geometry/Rotate">Rotate</a></p>
+<p>xxx</p>
 <hr />
-<p><strong>情景三</strong>  </p>
-<p>日复一日。<br />
-一切都在改变，被永不回转的时钟所推行，一切都无法维持原样。<br />
-那么，到底我，是否还是原来的“我”呢？<br />
-当所有的材料都被替换之时，那艘船如何被认定为船？<br />
-唯名论。<br />
-【无所谓。】<br />
-只不过是无聊的课上一个小小的插曲联想。<br />
-“戴寒苍。”<br />
-这个老师叫了我的名字。<br />
-所以…<br />
-我站了起来。<br />
-“什么？”<br />
-“求一下这个序列的快速傅里叶变换。”<br />
-老师指着不知何时写在黑白上的一个序列，慈祥地问我。<br />
-“…老师这是高中。”<br />
-“哦，不好意思我忘了，毕竟刚从大学下来不久嘛。”<br />
-一个中年却已头发花白的男人正在以一种让人难以形容的表情微笑着。<br />
-“……”<br />
-坐了下来。<br />
-其实距他下调已经一年了，该说是可怜还是什么，我是没有太大感想。<br />
-毕竟和他不熟，我可没有闲工夫去瞎管别人的事情。<br />
-【真是无妄之灾。】<br />
-“噗。”<br />
-耳边传来了让人不爽的声音，而且想都不用想这个声音的主人是谁。<br />
-“笑你妹啊。”<br />
-对付这种将自己的快乐建立在别人的痛苦之上的人，就是需要毫不留情。<br />
-“我没妹啊，所以你还是笑自己的…”<br />
-忽然沉寂。<br />
-“抱歉…”<br />
-“…没事。”<br />
-反正也是一些无关紧要的事情。<br />
-无关紧要…<br />
-嗯，无关紧要。<br />
-……<br />
-…<br />
-.<br />
-第四节课。<br />
-由于课表非常标准，所以上完这节课就是午休了。<br />
-空空如也的腹部仿佛是在催促老师一样，不自主打起了鼓。<br />
-“戴寒苍。”<br />
-所以，再次从老师口中听到了我的名字。<br />
-“……”<br />
-是主角专用座位的副作用么！<br />
-（注目率up高。）<br />
-【……】<br />
-似乎什么地方传来了奇怪的音效。<br />
-【算了不去在意这些细节。】<br />
-站了起来。<br />
-“世界的真相是什么？”<br />
-“哈？”<br />
-“世界的真相，是什么？”<br />
-“……”<br />
-就算您加个断句和重音我也不知道您想表达什么啊。<br />
-“这。”<br />
-若蕾碰了下我的胳膊，然后手指向标志着书上的某一处。<br />
-【对了，这不是那啥思想啥啥课么。】<br />
-就算是某学社的也不能忤逆我D啊。<br />
-“谢了。”<br />
-“这次真老实。”<br />
-那是，毕竟我是表里如一的正人君子。<br />
-紧接着，看起了若蕾所指的那一行的关键字。<br />
-【物质…】<br />
-真TM标准，标准得让人恶心。<br />
-所以，作为一个从不流俗的男人，我决定给出一个不一样的答案。<br />
-“虚无。”<br />
-“喂！你怎么乱说啊。”<br />
-若蕾的轻声中带着一丝焦急。<br />
-“切。”<br />
-皇上不急太监急。<br />
-“什么？”<br />
-得到了预料之外的答案，自然会是这个反应吧。<br />
-但总之一切都在预料之中。<br />
-“没什么…我不知道。”<br />
-所以这里还是不要持久战比较好。<br />
-“上课耳朵长哪去了！”<br />
-“……”<br />
-大丈夫能屈能伸。<br />
-“记好了，这个世界的真相是——物质。”<br />
-“物质是一切的基础，是不以人的意志为转移的。”<br />
-“那人是不是物质？”<br />
-“当然是。”<br />
-“那么就是说我和我的意志没关系咯。”<br />
-“诡辩！”<br />
-“嗯…我诡辩。”<br />
-再说下去也没什么意思。<br />
-“你！竟然敢这样侮辱真理！”<br />
-但看来对方并不是想要这么结束。<br />
-那就玩玩吧。<br />
-“真理是什么？谁规定的？”<br />
-“真理是万物的法则，是不可动摇的绝对存在。”<br />
-“谁定的？”<br />
-“是自然而然存在的。”<br />
-“好一个自然而然，好一个独断。”<br />
-“但是不预设一个起始，哪来的自然而然？”<br />
-“难道你还以为有神存在？”<br />
-“谁知道呢，或许吧。”<br />
-“如果有的话，我一定会向他复仇。”<br />
-“你在嘀咕什么！？”<br />
-“没啥…”<br />
-“对不起老师，我错了，世界的真相是物质。”<br />
-“没有任何诚意。”<br />
-“……”<br />
-“你丫的…”<br />
-“行了！”<br />
-胳膊被使劲拉了一下。<br />
-同时，后背也被拉了一下。<br />
-“……”<br />
-切，放你一马。<br />
-“给我出去！”<br />
-“了解。”<br />
-体罚么，这悠久的传统即使在这学校也一样，不过无所谓，反正又不会被退学什么的。<br />
-离开座位，走了出去。<br />
-“……”<br />
-背后传来了刺痛和悲悯视线的混合，瞬间感到一种脱力的恶心感。<br />
-反胃。<br />
-【还是快点出去。】<br />
-走出了教室。<br />
-……<br />
-…<br />
-.<br />
-午休。<br />
-午饭后回到了教室的我丝毫没有受到方才氛围的影响，打起了那部禁忌的游戏。<br />
-“喂！”<br />
-结果，烦人的家伙又出现了。<br />
-“干啥啊？”<br />
-“你到哪去了找你都找不到！”<br />
-“我？教室啊。”<br />
-眼睛不是好好长着么。<br />
-“我是说刚才！”<br />
-“食堂。”<br />
-“食堂之前！”<br />
-“天台。”<br />
-哦，是问这个啊。<br />
-“我说怎么找不到，那地方不是不让进么。”<br />
-“不过是你…唉。”<br />
-情绪的瞬间转折委婉地表达了对我的某种感想，当然不是什么好的就是了。<br />
-“干嘛啊那副怜悯的眼神真让人不爽。”<br />
-“你就死在你的游戏里好了！”<br />
-不理我了。<br />
-【麻烦…】<br />
-算了，好好打我的游戏。<br />
-过了少许。<br />
-“喂！”<br />
-“烦不烦啊！”<br />
-摘下了我亲爱的PRM姬，转向了身边，却…<br />
-什么都没有。<br />
-“这边！”<br />
-原来是后边传来的。<br />
-【可是后边不是…】<br />
-带着半分疑惑，转了过去。<br />
-“夜月啊，还有你怎么也在后面？”<br />
-“谁允许你这样叫我了！？”/“我在后面怎么了！？”<br />
-“……”<br />
-女人真是麻烦。<br />
-“所以说干嘛？”<br />
-完全不能够理解谁给我来解释一下比较好不过…<br />
-桌子上放了两个看着像是蛋糕的东西。<br />
-“果然还是甜的好吧？”<br />
-若蕾指向了其中的一个，充满期待地问着我。<br />
-“哈？”<br />
-“咸的好！”<br />
-还没有反应过来，夜月便以同样的方式问我。<br />
-“哦，这样啊。”<br />
-算是理解了情形。<br />
-【不就是战争么。】<br />
-原始战争的根源之一就是分歧，而让其停止的最佳方式就是——<br />
-“你干嘛！”/“你这个…！”<br />
-嗯，正如一句话所言——将分歧的源头毁灭就好了。<br />
-所以，我以极快的速度将两个类似蛋糕的东西吃掉了。<br />
-口里一半甜一半咸，风味还是不错的。<br />
-“这可是一个月才能尝到一次的叶氏鲜奶蛋糕啊…”/“这可是一个月才能尝到一次的花氏咸奶蛋糕…”<br />
-二人正以同样凶恶的目光盯着我。<br />
-“又不是你们自己的分泌物，着什么急啊。”<br />
-“嘿！”/“杀！”<br />
-看，二人现在不是很友好么。<br />
-所以刚才那句话其实只说了一半，后一半是<br />
-——消灭者，会成为二者共同的敌人。<br />
-【当当正义的使者，感觉也不错啊。】<br />
-眼中，是二人裙下完美的纯黑和蓝白。<br />
-耳中，是二人友情证明的欢声笑语。<br />
-随后，我闭上了双眼。  </p>
-<div id="4"></div>
+<h1>3 算法实现</h1>
+<p>明确了设计和架构，便可以进行算法的实现。本章将会说明如何实现图像处理的算法，以及如何运用它们。</p>
+<h2>3.21 几何变换-旋转</h2>
+<p>旋转同样是仿射变换的一种特例，它接受一个角度，将图像绕着某个中心进行转动，适合逆向映射。旋转的实现有多种，比如两次错切的旋转<sup>[26]</sup>、直接坐标变换<sup>[27]</sup>等，中心点的选取方式也有许多，但对于FPGA采用图像的几何中心较为合适。。本节将会说明如何用FPGA实现旋转的模块。</p>
+<h3>3.21.1 原理</h3>
+<p>此设计中旋转的前向映射基本原理如式3-21-1，其中angle为旋转角度,$x_c$和$y_c$分别为图像中心横纵坐标。对于逆向映射应该对此式进行调整，变换为3-21-2的形式，可见旋转操作比较复杂，不仅涉及多次符号乘法、符号加法，还涉及到三角函数的计算。</p>
+<p>$$\begin{cases}Q[x_t,y_t] = I[x,y]  \\x_t = xc + (x - xc) * cos(a) - (y - yc)*sin(a)\\ y_t = yc + (x - xc) * sin(a) + (y - yc)*cos(a)\\x \in[0, w) ,y \in[0, h)\ \end{cases}.\ \ \ \ \ \ \ \ (3-21-1)$$</p>
 
-<hr />
-<p><strong>情景四</strong>  </p>
-<p>放学。<br />
-盛夏的百日总是如此匆忙，所以到达校门时已然是黄昏。<br />
-黄昏下的色彩，非常非常特别。<br />
-“晚霞映照的街道，是茜色的，也是妹妹的颜色。”<br />
-这是经过科学证明的，具有良好的可证伪性。<br />
-“你能不能正经点。”<br />
-她的声音在耳边响起，熟悉的方式，陌生的感觉。<br />
-“你管啊，明明自己非得跟在我身边。”<br />
-“谁跟你了，我是和若蕾一起回家！”<br />
-对方仿佛受到了什么侮辱一样急忙辩解。<br />
-“哦。”<br />
-无视了正在气头上愤怒得宣扬自己高贵的花大小姐。<br />
-“你啊，就不能对我们温柔点吗。”<br />
-若蕾的语气中有些无奈。<br />
-“哼。”<br />
-温柔？能吃么？能拯救世界么？<br />
-【显然不能。】<br />
-所以为啥要去这么做？<br />
-【显然不用。】<br />
-看，多么牛的逻辑。<br />
-“你这个人真是！”<br />
-“在这么气急败坏下去您的形象可就全毁了。”<br />
-用眼神示意她旁边还有别的学生在看着我们。<br />
-“呜…”<br />
-小猫咪被遗弃一般的放弃效果音从她的口中发出，让我…<br />
-不，是让她——<br />
-“好可爱！”<br />
-“诶？”<br />
-二人抱在，不，只是单方面的进攻与防守崩坏的景象。<br />
-【呀嘞呀嘞。】<br />
-女孩子的过家家还真是厉害。<br />
-“啊…”<br />
-伸出双臂，面向前方。<br />
-“你在干嘛？”<br />
-“拥抱晚霞，拥抱茜色的街道，拥抱美好的人生。”<br />
-“果然是个变态。”<br />
-“切。”<br />
-不解风情的女人。<br />
-“我告诉你，我们就是要这样证明自己的存在。”<br />
-“如果什么都不做，是会被这个世界遗忘的~”<br />
-这可是我十几年人生的精华。<br />
-“神经病啊。”<br />
-“……”<br />
-无所谓了。<br />
-……<br />
-…<br />
-.<br />
-途中，与夜月分开，和若蕾一起来到了我家门口。<br />
-毕竟我们住在隔壁。<br />
-“周围没人了呢。”<br />
-她张望了一下四周，确定着什么。<br />
-“嗯。”<br />
-当然我完全不知道她要做什么。<br />
-“寒苍…”<br />
-语气切换，完全不像是平时的她能够发出的。<br />
-“干啥啊像是发情了一样。”<br />
-“够了！”<br />
-“？”<br />
-没有理解状况，吓了一跳。<br />
-“都在这种时候了，还不能对我敞开你的真心么？”<br />
-她的眼睛发出的视线试图侵入我的双眼。<br />
-但我的躲闪也是一流的但…还是没有办法避免和她的视线相交<br />
-“啥啊，人格突变？”<br />
-“所以说够了！”<br />
-“变的是你啊！”<br />
-【…这和平常不一样啊。】<br />
-思考着怎么将形势控制下去。<br />
-“！”<br />
-但思考在一半就打结了，因为——<br />
-“……”<br />
-她突然抱了上来，或者说，是试图将我完全包容。<br />
-“我喜欢你啊！”<br />
-“我知道…”<br />
-“求求你，只在这个时候，不要再伪装了好吗？”<br />
-“……”<br />
-伪装？<br />
-那是什么？<br />
-违背本性？<br />
-本性？那东西？<br />
-【呵。】<br />
-“抱歉。”<br />
-推开了她。<br />
-“我无法承受两个人的重量。”<br />
-这句话，或许算是发自真心的吧？<br />
-“……”<br />
-她带着尚未消去的泪腺分泌物离开了。<br />
-【我还真是罪大恶极。】<br />
-打开了门 ，走了进去。<br />
-……<br />
-…<br />
-.<br />
-房内。<br />
-客厅空空如也，甚至连一丝生者的气息都没有。<br />
-理所当然，父母和若蕾的父母都在同一家公司，恐怕是在研究什么吧。<br />
-反正作为一介常人的我是不懂就是了，什么神经科学仿真大脑。<br />
-“我回来了。”<br />
-这句话没有在进家的瞬间，而是在打开了我卧室的房门、并且见到了她的时候说出。<br />
-也只会对她说出。<br />
-“嗯，欢迎回来。”<br />
-“哥哥。”<br />
-我的妹妹——戴子沐用最温暖的笑容迎接着我。<br />
-摆放这温暖笑容的，是清秀的脸庞，以及——近乎完美的双马尾。<br />
-这样的她，正坐在某个东西上，在我的书桌上看着书。<br />
-“在看什么？”<br />
-走近，看了看书上的内容。<br />
-“这个啊。”<br />
-某宅男写的惊动哲学史的大作。<br />
-“看得懂么？”<br />
-“嗯，反复读的话还是能理解。”<br />
-“也是。”<br />
-毕竟我的书架上所有的书她基本都有看。<br />
-或者说，我的书架或许就是为她而准备的吧。<br />
-“轻小说”，“漫画”，“神经科学”，“电路”，“编程基础”，“哲学”，“文学”。<br />
-每一本，我都细读过。<br />
-【不过那已经是过去了。】<br />
-现在的我，只是一介普通的学生而已。<br />
-“要出去走走么？”<br />
-“不了。”<br />
-永远都是那么温柔的语气和微笑。<br />
-“要是被爸爸看见了，会给哥哥添麻烦的。”<br />
-“…我无所…”<br />
-“不，我已经不想再让哥哥…”<br />
-“……”<br />
-“对了。”<br />
-她转过了身，直直地盯着我的眼睛。<br />
-“哥哥，和姐姐恋爱吧。”<br />
-“哈？”<br />
-忽然冷不丁的干什么。<br />
-“我看到了哦，刚才在猫眼里。”<br />
-“哦…”<br />
-“而且，还听到了呢。”<br />
-子沐的眼中是不可抗的吸引力，我只能顺从着和她相对。<br />
-“哥哥如果不能承受两个人的重量，就把我的那份丢掉好了。”<br />
-“…不可能。”<br />
-“为什么？难道是迷上了我的身体了~”<br />
-“子沐…”<br />
-“也是呢，我的身体也没什么好迷恋的。”<br />
-她望着自己的双腿，瞬间闪过了一起复杂的情绪。<br />
-“那么，我就继续看书了。”<br />
-“嗯，我去做饭。”<br />
-……<br />
-…<br />
-.<br />
-厨房中，将手边的肉和菜一片一片地分开。<br />
-【狗血，真狗血。】<br />
-我们的生活，子沐的遭遇。<br />
-【偶然，荒诞，虚无？】<br />
-就因为这玩意，让子沐变成了这幅模样。<br />
-这一切的转折，都是在子沐六岁那年。<br />
-游乐园，摩天轮。<br />
-重物坠下。<br />
-非常偶然，非常非常的偶然。<br />
-第二天，子沐睁开了双眼。<br />
-“呐，哥哥。”<br />
-“我的腿…为什么动不了起来？”<br />
-稚嫩的声音，宣告着整个世界的恶意。<br />
-下肢重性瘫痪——这就是那场事故最终的结果。<br />
-从此，轮椅替代了子沐的双腿，并且剥夺了她的自由。<br />
-日复一日。<br />
-一切都在变化。<br />
-同样变化的，还有人的心境。<br />
-我买了许多专业书籍，硬是以一个小学程度的水平一本一本地啃。<br />
-而子沐，则渐渐接受了这一切。<br />
-父母，则是除了报以痛苦的表情什么都做不到。<br />
-不，他们还是做了些什么，比如——禁止子沐出门。<br />
-为了所谓的“保护”。<br />
-当然，这种东西是无法阻止我的，所以我还是有时候偷偷带着子沐出去散步。<br />
-然后换来的是回来时的暴打。<br />
-无所谓，只要能让她开心。<br />
-为啥我要为她付出这么多？<br />
-哼，这种愚蠢的问题。<br />
-不要拿你们自以为是的想法去解构我的做法！<br />
-但果然还是有人解构了，而且正是她本人。<br />
-本以为这样的每一天都是有希望而努力学习的我。<br />
-本以为子沐仍然在健康成长的我，在那一天——<br />
-结束了。  </p>
-<p>------------------子沐，十四岁生日，夜晚-----------------------<br />
-凌晨若干点。<br />
-由于白天生日的操劳，所以陷入了算是熟睡的状态。<br />
-但却仍然由于某些声音和触动而醒来。<br />
-“子沐，你在做什么！”<br />
-睁开稀松的双眼的瞬间，越过思考的速度，反射性地询问着面前所发生的一切。<br />
-“啊，哥哥醒了呢。”<br />
-正跨在我某个部位的她，露出了温馨的笑容。<br />
-“呃…嗯…哥哥的…好大…”<br />
-子沐用双手的重量勉强支撑着自己的身体，做着上下往复的动作。<br />
-“嗯…哥哥的OO，在子沐的小O中…”<br />
-“好舒服…哥哥…哥哥的子沐…正在发情呢…”<br />
-一边反复继续着动作，一边用着和平常风格完全不同的语气。<br />
-“你到底在做什么！”<br />
-想要起身将她移开。<br />
-“不要！”<br />
-但却被强硬制止了。<br />
-虽然我的力量足够，但却在气势上被子沐压倒，停下了动作。<br />
-“请让我…做到最后…”<br />
-继续着摩擦，眼神却渐渐变得无神。<br />
-“子沐，你…”<br />
-“哈…哈…果然…很耗体力呢…”<br />
-“本来平日就没有怎么运动的机会，还这样逞强，你到底想做什么？”<br />
-“哈…要高潮了…被哥哥的OO弄高潮了呢…”<br />
-“哥哥…笨蛋呢…子沐…是想成为哥哥的…女人啊…”<br />
-“呃…”<br />
-我也快不行了，至少在这之前，拔出来。<br />
-“……”<br />
-但却被子沐紧紧抱住。<br />
-“呐，哥哥…射在子沐的子O里吧…呐…哥哥…”<br />
-“哥哥…”<br />
-耳边的扰动仿佛媚药一般，催促着我的发射。<br />
-“出来了…啊，哥哥的精O…好热…好热啊…”<br />
-“好舒服啊…好想怀上哥哥的小宝宝…”<br />
-“……”<br />
-沉默，只能拥抱着子沐纤细的身体。<br />
-“可惜，今天是安全期呢…”<br />
-伪装出来的失望的语气，她是计算好了这一切吧。<br />
-“现在…”<br />
-“嗯。”<br />
-“我的第一次，是哥哥的呢。”<br />
-“因为我是哥哥专属的哦。”<br />
-回归了温柔的笑容，但眼神却更加暗淡。<br />
-“能和哥哥做这种事情，我好开心啊。”<br />
-“我，还活着呢。”<br />
-“嗯，我还活着，还是哥哥的妹妹。”<br />
-“嗯，我还活着。”<br />
-耗尽了全身的力量，她闭上了双眼，<br />
-在那一刻前，暗淡的眼中溢出了几滴泪水，为我的胸口所感知。<br />
-我终于明白了<br />
-——一直微笑着的子沐，从某一刻开始，坏掉了。<br />
-而我，也根本不是什么可以拯救她的人。<br />
-我，只是个普通人。<br />
-什么都做不到的普通人。<br />
--------------------------------------------------------------------  </p>
-<div id="5"></div>
+<p>$$\begin{cases}I[x,y] = Q[x_t,y_t]  \\x = (x_t - xc) * cos(a) + (y_t - yc) * sin(a) + xc\\ y = (-x_t + xc) * sin(a) + (y_t - yc) * cos(a) + yc\\x_t \in[0, w) ,y_t \in[0, h)\ \end{cases}.\ \ \ \ \ \ \ \ (3-21-2)$$</p>
 
-<hr />
-<p><strong>情景五</strong>  </p>
-<p>月光从半开的窗帘投入，正落在我的眼上。<br />
-仰望，朦胧的视线越过了屏障，直视着只有一半的月亮。<br />
-“哥哥…”<br />
-身边娇弱的声音打断了我的思考。<br />
-“还没睡么。”<br />
-视线转向，落在了身边子沐的脸庞之上。<br />
-子沐的双眼有些稀松，面容上则带着从未变过的微笑。<br />
-呼吸传来，这个年龄女孩子特有的气息在我的鼻尖环绕，由于没有使用香水，所以只有子沐自身特别的清香，让我十分安心。<br />
-“因为哥哥还没睡呢。”<br />
-从前一直都是这样，只有确认了我安眠后，子沐才会真正睡着。<br />
-“明明是我想要照顾你啊，真是失职。”<br />
-“哥哥做的已经够多了，让哥哥安心入睡，是我为数不多能做的事情。”<br />
-“这样啊。”<br />
-那么，我也没有什么可以担心得了，既然一直都是如此，就让它一直这么下去吧。<br />
-“呐，哥哥。”<br />
-“怎么了？”<br />
-“哥哥，为我付出了很多呢。”<br />
-“从小就那么努力，直到认清现实的现在，还去为了我考取那本来不感兴趣的名次。”<br />
-“……”<br />
-“而我，则什么都做不到。”<br />
-非常轻微的声音透露着子沐现在的心境，而我则只能静静倾听。<br />
-【因为任何回复，都会打破现在的这种安宁吧。】<br />
-“哥哥，觉得我是个包袱吧。”<br />
-“没…”<br />
-“这么可爱的妹妹，怎么可能是包袱呢？”<br />
-“你也看到了，我可是个究极的妹控啊。”<br />
-比如攻略的妹子90%以上都是妹系的。<br />
-“那只是为了自欺欺人。”<br />
-“……”<br />
-无法回答。<br />
-“为了我，才去强行给自己加上这种标签而已，否则是无法忍受这种完全没有自由的生活吧。”<br />
-“我，从那一刻起，就已经化为了哥哥的牢笼。”<br />
-“或许吧。”<br />
-不能否认。<br />
-“那么，为什么…”<br />
-“行了。”<br />
-我知道她想说什么。<br />
-“虽然看了这么多书，但你果然还是学的不到家啊。”<br />
-轻抚着子沐的头。<br />
-“奉献式的自我满足也罢，天真时期遗留的习惯也罢，还是你或许曾经设想过的我要为你的身体负责也罢，这些都不重要。”<br />
-“重要的是，我已然放弃了思考。”<br />
-“因为对于这些，已经不用去思考了，价值体系的崩坏也罢，固执也好，既然我都不去想了，你就这么受着就好。”<br />
-是啊，有些东西根本没有这么复杂，就算自我欺骗也罢。<br />
-生活，信仰，追求，这些东西本来不就是自我欺骗么？<br />
-“真强硬啊。”<br />
-“明明你才是最强硬的好么。”<br />
-“也是呢，毕竟第一次是我主动的呢。”<br />
-“想来第二次么~？”<br />
-子沐露出了不一样的笑容。<br />
-“困了，睡吧。”<br />
-“哼哒！”<br />
-她娇小的身体在我的怀中安眠，显得如此幸福。<br />
-虽然我们都知道到<br />
-——总有一天，我们都会真正长大。<br />
-而那一刻，恐怕不得不面对一些抉择，对于她来说，或许会以最为极端的方式结束这一切吧。<br />
-但恐惧归恐惧，担忧归担忧，时间无法回转，生活仍在继续。<br />
-我们，只有前行。<br />
-漫无目的，走向最终不可避免的死亡。<br />
-……<br />
-…<br />
-.<br />
-次日清晨，在子沐的轻唤中醒了过来。<br />
-“早上好，哥哥。”<br />
-“嗯，早上好。”<br />
-下了床，将她抱了起来。<br />
-她的身体如此轻盈，似乎感受不到任何重量一般的消瘦，这一切都是她自己的选择。<br />
-（太重的话，会给哥哥添麻烦呢。）<br />
-她就是这样，一直以我的感受为基准去要求自己。<br />
-我的感想？<br />
-没感想，即使是这样，这也是她完全自己做出的选择。<br />
-“走吧。”<br />
-将她放到了轮椅上，一同开始了不断重复的早晨。<br />
-……<br />
-…<br />
-.<br />
-早餐。<br />
-围着餐桌的是四个人。<br />
-“最近在学校怎么样？”<br />
-四十来岁的女性这样问着我。<br />
-“还不错。”<br />
-这是非常顺从的语气，非常典型的乖孩子。<br />
-“好好学习，争取进和我们一家的公司工作！”<br />
-四十来岁的男人这样说着。<br />
-“……”<br />
-进你妹啊，那种破地方有什么好的。<br />
-我的愿望可是和子沐在一个风景优美的地方度过余生<br />
-——或许。<br />
-【漫无目的而已，只是不想和你们在一起而已。】<br />
-“哦，你小子有些不服的样子啊？”<br />
-男人注视着我的眼睛，仿佛能够看透一切一般。<br />
-【切。】<br />
-看你妹啊看你，不都看了十几年了么你是变态么。<br />
-虽然心里这么想，却没有表现出任何的情感。<br />
-“给，哥哥~”<br />
-子沐将她碗中一块肉夹了过来。<br />
-“你自己不吃么？”<br />
-“嗯，哥哥的身体重要。”<br />
-“你不也是么，这样的话胸部永远都长不起来啊。”<br />
-“哥哥不是贫乳控么~”<br />
-清秀的脸盘上，子沐用一直眼睛做出了一个魅惑的表情。<br />
-“也是。”<br />
-吃下了那块肉。<br />
-“你们当我们不存在？”<br />
-男人又发话了，而且貌似有些火气。<br />
-“你不说不会再干涉我和子沐的关系了么？”<br />
-这也是我考那个名次的目的。<br />
-“但我也没说你们可以这样不知廉耻！”<br />
-不满我的反驳，对方显得气急败坏。<br />
-【这还真是何必何必。】<br />
-自称经验丰富自豪无比的大人还这么容易动怒。<br />
-“嘛无所谓，反正随便按照你们的喜好改标准也不是第一次了。”<br />
-“毕竟我没有主动权嘛~生活可是都靠你们。”<br />
-说起来，这种明明是在家却有着寄人篱下的错觉是什么时候开始的？<br />
-或许，或者说肯定而言，错的是我吧——按照某种标准的话。<br />
-“你小子！”<br />
-领子被扯了起来。<br />
-“嘁。”<br />
-又是这样，不就是挨揍么，反正我身体牛的很，随你便。<br />
-“爸爸！”<br />
-子沐离开轮椅，扑向了我们中间。<br />
-“子沐！”<br />
-没有丝毫迟疑，反射性地接下了子沐娇小的身体。<br />
-“……”<br />
-男人回到了自己的位置，恢复了沉默。<br />
-而我，也将子沐扶回了轮椅。<br />
-【一天开头就这么麻烦，还真是麻烦。】<br />
-单纯的牢骚而已，反正也不会有人听见。<br />
-所以说距离早餐结束还有一段时间，不如想点什么？<br />
-也好，反正也是由来已久习惯。<br />
-大脑空闲的瞬间，就感觉自己失去了存在价值。<br />
-没有止境的思考，没有止境的循环。<br />
-思考，总是需要一个起始。<br />
-起始？<br />
-想不到。<br />
-【啊哈哈。】<br />
-原来我的想象力已经如此匮乏了。<br />
-或许这种匮乏也是一种起始吧，思考自己的思考不能。<br />
-逻辑混乱的句式往往包藏着巨大的灵感，这句话是谁说的？<br />
-管他呢，或许没有人知道是谁说的，或许有人知道也说不定，但总之现在是不知道的。<br />
-混乱中的思考，是混乱的。<br />
-但倘若是混乱的，思考又是如何延续的？<br />
-就像是一个一个序列一样，总是需要一个因果将其联系？<br />
-无所谓咯，反正只是浪费时间而已。<br />
-反正大脑又不会Debug。<br />
-模糊嘛。<br />
-是啊，本来就是模糊的。<br />
-那么来作个诗？<br />
-来！<br />
-（视线对空，身体在凄冷的寒风中瑟瑟发抖。<br />
-冬日中的十二月，没有一丝怜悯。<br />
-冰霜覆盖脚下的湖面，构造出了一层玻璃帷幕。<br />
-云倒映，似置身世界的缝隙。<br />
-经验边缘，一阵风掠过。<br />
-阳光初现，破碎。<br />
-瞬间，在蓝色中被消融。<br />
-沉没，眼中的景色化为神奇。<br />
-重力消失，身体轻盈。<br />
-鸣笛，列车出行。<br />
-乘客，仅此一人。<br />
-空无一人的街道，是群星的住所。<br />
-张望，渴求。<br />
-欣赏着虚空中的幻像，没有任何目的地漂游。<br />
-列车行进，超越了可预知的速度。<br />
-身体缓缓被撕裂。<br />
-血肉成为了列车的一部分，只有灵魂还在观测。<br />
-铁轨回转，化为一个圆环。<br />
-永无止境地旅程，永无止境的循环。<br />
-“看呐，那个傻子！”<br />
-某一刻，一个侏儒如此向着同伴炫耀自己的聪慧。<br />
-傻子？<br />
-奔驰，前行。<br />
-一次又一次，走向着起点。<br />
-风景一次次在改变<br />
-——那是毁灭的痕迹，也是创造的痕迹。<br />
-呼啸，狂风成为了我的助力。<br />
-啊，是来加速我的毁灭的吧。<br />
-我的友人，试图使我脱离。<br />
-算了吧，算了吧。<br />
-你自身，难道不也是列车么。<br />
-旅程，永不会落幕。<br />
-预设的站点，不过是后设的幻象。<br />
-飘，花身边漂浮。<br />
-过一会，又多出了许多叶子。<br />
-随后，繁星也跟在了我的身后。<br />
-是时候了。<br />
-睡吧。<br />
-十二月的冬日，冰封着某个物体。<br />
-这，就是真正的终点了。<br />
-唯一的终点。）<br />
-【帅！】<br />
-然后，早餐结束了。  </p>
-<div id="6"></div>
+<p>首先要考虑三角函数的计算，如3.1中所述，FPGA中的特殊函数计算需要用查找表来实现，所以需要编写一个脚本来生成查找表，同时由于三角函数的值可能为负数，并且verilog中符号系统是补码系统，所以需要生成的是角度和此角度下三角函数值的补码。由于正弦和余弦的值域为[-1, 1]，同时一般用于变换的角度为[0,359]，所以综合考虑，最终选择将角度划分为360个点，使用1位符号位、1位整数位和18位的小数位的数据来表示函数值，这其中的难点在于如何将一个浮点数转换为20位的定点数补码，实现函数如下。</p>
+<div class="highlight"><pre>  <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">format</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s">&#39;f&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="s">&#39;0&#39;</span> <span class="o">+</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s">&#39;1&#39;</span> <span class="o">+</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;0.&#39;</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">18</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="s">&#39;1&#39;</span> <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="s">&#39;0&#39;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">d</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span>
+    <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;1&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;0&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="nb">bin</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">19</span> <span class="o">-</span> <span class="nb">eval</span><span class="p">(</span><span class="s">&#39;0b&#39;</span> <span class="o">+</span> <span class="n">res</span><span class="p">))[</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">19</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;0&#39;</span> <span class="o">+</span> <span class="n">res</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span>
+    <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="s">&#39;10000000000000000000&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;00000000000000000000&#39;</span>
+    <span class="k">return</span> <span class="n">res</span>
+</pre></div>
 
-<hr />
-<p><strong>情景六</strong>  </p>
-<p>早餐后，家中的二位长者先行离开。<br />
-“哥哥，对不起。”<br />
-子沐低下了小小的头，向我道歉。<br />
-“为啥？”<br />
-“如果没有我，哥哥也不会和爸爸妈妈闹成这样吧…”<br />
-【原来如此。】<br />
-把一切都揽在了自己身上么，不过也很正常，据说一般而言当自身处于弱势而被照顾的时候，也就是说自身并不具备偿还的能力的时候，心中便会出现巨大的自责，也就是所谓的“无力同样侵入对方的权力领域”而产生的心理落差。<br />
-“我都说了没什么，你就别想这些了。”<br />
-我也只能说这个了，虽然不一定有多大的作用就是了。要是所有的问题都能用这么简单的沟通解决，世界早就和平到死了。<br />
-“哥哥这样的话，还要说多久呢？”<br />
-“认为自己是正义的，认清了自己的平凡，认清了自己对我这个枷锁的厌恶，自我欺骗，认清自我欺骗，仍然自我欺骗。”<br />
-“哥哥，就想一直这么下去么？”<br />
-但由于早上事件的影响，今天子沐似乎并不想这么简单接受我的解释，或者说这不是解释，只是拖一天算一天而已。<br />
-“也没什么不好。”<br />
-这句话是发自内心的，如果说世界上真的有什么日常和非日常的区分，或许一直都处于这个日常状态比较好。<br />
-“是么…不是吧。”<br />
-子沐的语气中带上了些许的严肃，击溃了我想要蒙混过去的想法，虽然，这根本就算不上什么蒙混，或许？谁知道呢，本来也没有这之外的答法，所以根本说不上什么蒙混或者不蒙混。<br />
-“哥哥所真正期望的，我都了解呢。”<br />
-这句话的背后，是仿佛能够透彻我内心所有的眼神。当然，也仅仅只是“仿佛”而已，作为某种意义上的科学信徒的我可不相信这种这么不科学的东西。<br />
-“真自大啊。”<br />
-不过我也有我自身的解决方法，被这样询问的时候只要说明对方自身思维的局限性就可以完美避开对方的圈套了。<br />
-“哥哥现在的这种应付式作风，已经把一切都暴露了呢。”<br />
-“无论说什么，都不是想着‘如何继续话题’而是‘如何结束话题’，我没有说错吧。”<br />
-透彻的视线下，伴随的是包容的微笑，像是要将平时与我的立场完全颠倒一样。<br />
-“过了这么久，我果然还是不知道你在想什么。”<br />
- “因为哥哥在害怕啊。”<br />
-“或许吧。”<br />
-是啊，从那一刻开始，我明白了我的界限，同时，也没能再一次理解子沐的想法，或者说只是我自身的恐惧，不错，只是我的恐惧和害怕而已。<br />
-“哥哥，憎恨这个世界么？”<br />
-“？”<br />
-话题忽然转到了某个好像很厉害的地方。<br />
-“这问题没价值。”<br />
-世界这个东西，不管你怎么看他，他都不会在意你。<br />
-“有的哦。”<br />
-但子沐却仿佛并不这么认为，而且并不是在开玩笑——她的眼神非常认真。<br />
-“是么。”<br />
-但我的确没什么想法，憎恨的话，以前是？但现在的确是没什么想法了。<br />
-“反复逃避后的磨平呢。”<br />
-“或许吧。”<br />
-“又想这样结束话题？”<br />
-“…我该去上课了。”<br />
-看起来今天状况不太对，所以还是离开一下比较好。<br />
-“嗯，路上小心。”<br />
-子沐也停下了话题，恢复了平常的表情和语气，目送我离开了家中。<br />
-……  </p>
-<p>目送哥哥离开家中。<br />
-他的背影还是像往常一样，没有任何变化。<br />
-用原本拥有的知识为自己寻找无数的理由和借口，目的仅仅只是为了维持现在的这种状况。<br />
-【他明白的吧。】<br />
-我也明白。<br />
-再向前走出任何一步，或许都会迎来不幸的结果。<br />
-所以，他停止了，伴随着自己强行合理化的逃避，停下了自己的脚步，想要永远停留于和我同样的位置——“精神自残”。<br />
-所以，他从那之后，没有再做出真正按照自己原来意志的选择——当然，这个“真正”也已经被他所舍弃了，完全虚无化了。<br />
-“但是这样果然还是不好呢。”<br />
-早已不存于这个世界的我，有什么资格以这个身份、这幅身姿来囚禁住他的自由？<br />
-【真是讽刺啊。】<br />
-让我真正感受到“生”的那次交合，竟然是“觉醒”的开端，让我明白了我的“真实”的开端。<br />
-“你，在笑吧。”<br />
-无法望见的那个家伙，应该正在某个方位用淫猥的表情期待着我的选择吧。<br />
-那么，就如你所愿<br />
-——为了让哥哥，再次，真正地做出自己的选择。<br />
-“‘花’，会开放的。”  </p>
-<p>“真狼狈…”<br />
-离开家中，关上大门。<br />
-【逃避和磨平么。】<br />
-有什么所谓么，这样也挺好的。至少每天都很充实，从未感到空虚和失望。<br />
-“是吧？”<br />
-没有人回答。<br />
-理所当然，因为我是在对着空气在说话。由于是对着空气说话，所以自然不会有人回答，回答的最多也是空气而已，并且由于一般认识中空气是无生命的混合物，所以自然不会对我有反应，当然我是期待空气美少女什么的突然出现在我的面前，虽然不可能啊哈哈。<br />
-但是明知不能，我又为什么回去妄想？<br />
-【要不还叫个什么妄想啊。】<br />
-不过也难说，毕竟主体和对象不一样的话，一个想象是可以作为妄想又不是妄想的。<br />
-当然，有些东西的区分是人类和非人类，比如人类想一下就是想一下了，神什么的想一下说不定还真有空气美少女什么的。<br />
-所以说回来，果然不会有空气美少女回应我啊。<br />
-“喂！”<br />
-“卧槽！？”<br />
-还真有啊！<br />
-转过身，睁大眼睛试图见证这个奇迹时刻——但结果却让我大为失望。<br />
-对面，正立，眉毛和眼睛保持着一个特定的角度，鼻尖透露出一股凌人的气势，凶猛的视线中危险感非常明显。<br />
-当然，那只是对于一般人而已，这一切对于我来说都不足为道。<br />
-“怎么是你啊，叫住我干啥…”<br />
-用十分绅士的语气向对面的少女问了个好。<br />
-“若蕾呢！？”<br />
-但对方却没有和我一样礼貌地回话，而是更加凶猛。<br />
-【猛你妹啊我又没欠你钱。】<br />
-自然，为了避免不必要的麻烦，我没有说出口。<br />
-“她在哪我哪知道，我又不是她的跟班，不过要当跟班的话我可以把她的家庭住址告诉你，从这开始走…”<br />
-“闭嘴！”<br />
-【你叫我闭嘴我就闭嘴啊…】<br />
-虽然我真的闭嘴了。<br />
-“你怎么走了…停下！”<br />
-哼，谁理你啊作为一个品学兼有的好学生我可不想迟到。<br />
-“！”<br />
-然后，就像一般的发展一样，胳膊边的空气流动出现了些许的异常。<br />
-但由于是我，所以很快就恢复了正常。<br />
-“想抓我，再练个几百年吧。”<br />
-想当年我可是江湖黑幕百晓生兵器谱第零位啊，某耍飞刀的悲剧青年都远不是我对手——我瞎编的，古龙老师我错了请不要找我麻烦。<br />
-“你吐槽的节奏感乱了不少啊。”<br />
-“奇怪…”<br />
-本来以为没有被抓住的胳膊却传来了一个约束力。<br />
-“没什么奇怪的，你的小把戏我早摸清了。”<br />
-“若蕾！？”<br />
-【原来如此。】<br />
-看这状态，笨蛋的回复机制果然是一流的。<br />
-“我不会放弃的。”<br />
-“管你啊。”<br />
-虽然不知道你不放弃的是什么，或许。<br />
-【抱歉。】<br />
-谁，在道歉？  </p>
-<div id="7"></div>
 
+<p>旋转变换同样需要符号舍入，但整数位只有1位，所以没有溢出风险，可以将其简化，仅仅裁剪输出即可。</p>
+<h3>3.21.2 设计</h3>
+<p>根据原理可知，Rotate核(以下简称RTT核)需要四次符号乘法、四次符号舍入操作和四次符号加法，并且需要和基于行列计数的帧控制器进行合作。故其需要的配置参数与端口如表3-21-1和表3-21-2。</p>
+<p><center>
+<table border="1" cellspacing="0">
+<tr>
+<th>名字</th>
+<th>类型</th>
+<th>范围</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+<td>work_mode</td>
+<td>无符号</td>
+<td>0为流水线模式，1为请求响应模式</td>
+<td>0</td>
+<td>模块的工作模式。</td>
+</tr>
+<tr>
+<tr>
+<td>data_width</td>
+<td>无符号</td>
+<td>1 - 12</td>
+<td>8</td>
+<td>数据位宽。</td>
+</tr>
+<tr>
+<td>im_width</td>
+<td>无符号</td>
+<td>1 - 4096</td>
+<td>320</td>
+<td>图像宽度。</td>
+</tr>
+<tr>
+<td>im_height</td>
+<td>无符号</td>
+<td>1 - 4096</td>
+<td>240</td>
+<td>图像高度。</td>
+</tr>
+<tr>
+<td>im_width_bits</td>
+<td>无符号</td>
+<td>取决于图像宽度</td>
+<td>9</td>
+<td>图像宽度的位宽。</td>
+</tr>
+<tr>
+<td>mul_delay</td>
+<td>无符号</td>
+<td>取决于乘法器配置，1-14</td>
+<td>3</td>
+<td>乘法器延迟。</td>
+</tr>
+<tr>
+<td>ram_RL</td>
+<td>无符号</td>
+<td>取决于帧控制器</td>
+<td>7</td>
+<td>帧控制器输出延迟。</td>
+</tr>
+</table>
+表3-21-1 配置参数
+</center>
+<br>
+<center>
+<table border="1" cellspacing="0">
+<tr>
+<th>名字</th>
+<th>端口</th>
+<th>类型</th>
+<th>范围</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+<td>clk</td>
+<td>输入</td>
+<td>无符号</td>
+<td>无</td>
+<td>无</td>
+<td>Clock.</td>
+</tr>
+<tr>
+<td>rst_n</td>
+<td>输入</td>
+<td>无符号</td>
+<td>无</td>
+<td>无</td>
+<td>复位，低有效。</td>
+</tr>
+<tr>
+<td>angle</td>
+<td>input</td>
+<td>无符号</td>
+<td>0 - 359</td>
+<td>无</td>
+<td>旋转角度。</td>
+</tr>
+<tr>
+<td>in_enable</td>
+<td>输入</td>
+<td>无符号</td>
+<td>无</td>
+<td>无</td>
+<td>输入数据使能，在流水线模式下，它是另一个复位信号，在请求响应模式下，只有在它有效的时候in_data才会被真正地改变。</td>
+</tr>
+<tr>
+<td>frame_in_ready</td>
+<td>输入</td>
+<td>无符号</td>
+<td>无</td>
+<td>无</td>
+<td>连接到帧控制器的out_ready。</td>
+</tr>
+<tr>
+<td>frame_in_data</td>
+<td>输入</td>
+<td>无符号</td>
+<td>data_width - 1 : 0</td>
+<td>无</td>
+<td>连接到帧控制器的out_data。</td>
+</tr>
+<tr>
+<td>frame_enable</td>
+<td>output</td>
+<td>无符号</td>
+<td>无</td>
+<td>无</td>
+<td>连接到帧控制器的in_enable。</td>
+</tr>
+<tr>
+<td>frame_out_count_x</td>
+<td>output</td>
+<td>无符号</td>
+<td>im_width_bits - 1 : 0</td>
+<td>无</td>
+<td>连接到帧控制器的in_count_x。</td>
+</tr>
+<tr>
+<td>out_count_y</td>
+<td>output</td>
+<td>无符号</td>
+<td>im_width_bits - 1 : 0</td>
+<td>无</td>
+<td>连接到帧控制器的in_count_y。</td>
+</tr>
+<tr>
+<td>out_ready</td>
+<td>output</td>
+<td>无符号</td>
+<td>无</td>
+<td>无</td>
+<td>输出数据有效，在两种模式下，这个信号都会在out_data可以被读取的时候有效。</td>
+</tr>
+<tr>
+<td>out_data</td>
+<td>output</td>
+<td>无符号</td>
+<td>color_width - 1 : 0</td>
+<td>无</td>
+<td>输出数据，将会和out_ready同步输出。</td>
+</tr>
+</table>
+表3-21-2 端口
+</center>
+</center>
+<br>
+<center>
+<table border="1" cellspacing="0">
+<tr>
+<th>名字</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+<tr>
+<td>Sin</td>
+<td>SinLUT</td>
+<td>获取角度的正弦。</td>
+</tr>
+<tr>
+<td>Cos</td>
+<td>CosLUT</td>
+<td>获取角度的余弦。</td>
+</tr>
+<tr>
+<td>MulX1</td>
+<td>Multiplier13Sx20SRTT</td>
+<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
+</tr>
+<tr>
+<td>MulX2</td>
+<td>Multiplier13Sx20SRTT</td>
+<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
+</tr>
+<tr>
+<td>MulY1</td>
+<td>Multiplier13Sx20SRTT</td>
+<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
+</tr>
+<tr>
+<td>MulY2</td>
+<td>Multiplier13Sx20SRTT</td>
+<td>13位有符号数和20位有符号数的乘法器，被用于定点数的乘法。你可以自己配置这个乘法器，然后更改"mul_delay"，但所有的乘法器必须拥有相同的流水线级数，并且不能更改端口的配置！</td>
+</tr>
+<tr>
+<td>FRSX1</td>
+<td>FixedRoundSigned</td>
+<td>用于有符号浮点数的舍入。</td>
+</tr>
+<tr>
+<td>FRSX2</td>
+<td>FixedRoundSigned</td>
+<td>用于有符号浮点数的舍入。</td>
+</tr>
+<tr>
+<td>FRSY1</td>
+<td>FixedRoundSigned</td>
+<td>用于有符号浮点数的舍入。</td>
+</tr>
+<tr>
+<td>FRSY2</td>
+<td>FixedRoundSigned</td>
+<td>用于有符号浮点数的舍入。</td>
+</tr>
+</table>
+表3-3-3 子模块
+</center></p>
+<h3>3.21.3 实现</h3>
+<p>根据3.21.2的设计便可以实现一个RTT核，流水线模式和请求响应模式实现如下。</p>
+<h4>3.21.3.1 流水线模式</h4>
+<p>在帧控制器的输出使能后1个周期第一个结果被输出，开始流水化工作，波形如图3-21-1。
+<center>
+<img alt="图3-21-1 流水线模式时序" src="http://src.dtysky.moe/image/f-i-l/3/21/1.png" />
+图3-21-1 流水线模式时序
+</center></p>
+<h4>3.21.3.2 请求响应模式读取</h4>
+<p>基本同3.21.3.1，但只有在in_enable上升沿时计数器才会加1才会被改变，波形如图3-21-2。
+<center>
+<img alt="图3-21-1 流水线模式时序" src="http://src.dtysky.moe/image/f-i-l/3/21/2.png" />
+图3-21-1 流水线模式时序
+</center></p>
+<h4>3.21.3.3 IP核GUI</h4>
+<p>完成功能后对RTT核进行了封装，封装如图3-21-3。
+<center>
+<img alt="图3-21-3 RTT核的GUI" src="http://src.dtysky.moe/image/f-i-l/3/21/3.png" />
+图3-21-3 RTT核的GUI
+</center></p>
+<h3>3.21.4 仿真</h3>
+<p>只对RGB图像和灰度图像进行测试，考虑到仿真设计模块比较多，出于仿真压力，我选择了一张图像的灰度模式进行三套参数的测试，原始图像如图3-21-4。</p>
+<p><center>
+<img alt="图3-21-4 仿真原始图像" src="http://src.dtysky.moe/image/f-i-l/3/21/4.jpg" />
+图3-21-4 仿真原始图像
+</center></p>
+<p>仿真参数如表3-16-4所示，选择原则是可以被二进制表示和不可以被表示的值都包含。</p>
+<p><center>
+<table border="1" cellspacing="0">
+<tr>
+<th>angle</th>
+</tr>
+<tr>
+<td>45</td>
+</tr>
+<tr>
+<td>131</td>
+</tr>
+<tr>
+<td>270</td>
+</tr>
+</table>
+表3-16-4 仿真参数
+</center></p>
+<p>仿真并进行PSNR测试，仿真结果如图3-21-5所示。
+<center>
+<img alt="图3-21-5 仿真结果" src="http://src.dtysky.moe/image/f-i-l/3/21/5.png" />
+图3-21-5 仿真结果，左侧为流水线模式下的HDL功能仿真结果，中间为请求响应模式下的HDL功能仿真结果，右侧为软件仿真结果
+</center></p>
+<h3>3.21.5 资源和时序</h3>
+<p>最终实现与图像大小和数据位宽有关，这里只分析大小为512x512和数据位宽为8时的状况，根据Vivado生成的报表，主要资源耗费如表3-21-5。</p>
+<p><center>
+<table border="1" cellspacing="0">
+<tr>
+<th>Slice LUTs*</th>
+<th>Slice Registers</th>
+<th>DSP</th>
+</tr>
+<tr>
+<td>543</td>
+<td>245</td>
+<td>4</td>
+</tr>
+</table>
+表3-21-5 主要资源耗费
+</center></p>
+<p>同时根据时序报告，最大的Data Path Delay(数据路径延迟)为4.414ns，即：</p>
+<blockquote>
+<p>FMax = 226.55MHz</p>
+</blockquote>
+<p>即说明，Rotate核在流水线模式下，理论上在处理1080p全高清图像时可以达到109帧。
+与3.20相同，此FMax低于期望值，也来自于舍入核的加法，考虑时间此处暂时不做优化。
+由于数据路径延迟和应用的最终约束设置强相关，所以仅供参考。</p>
+<h3>3.21.6 分析与结论</h3>
+<p>PSNR如表3-21-6。</p>
+<p><center>
+<table border="1" cellspacing="0">
+<tr>
+<th>1-131</th>
+<th>1-270</th>
+<th>1-45</th>
+<th>Total</th>
+</tr>
+<tr>
+<td>1000000.00</td>
+<td>54.89</td>
+<td>1000000.00</td>
+<td>666684.96</td>
+</tr>
+</table>
+表3-21-6 PSNR
+</center></p>
+<p>PSNR对于某些参数为最大值，对于一些不是，最终误差来自于符号乘法和查找表自身的误差，但PSNR均为50以上，可见在测试范围内，RTT核可以满足处理需求，设计成功。</p>
 <hr />
-<p><strong>情景七</strong>  </p>
-<p>“我，能看到未来。”<br />
-课间，后方的某个少女，仿佛针对着寒苍一般，如此宣言着。<br />
-“哈？”<br />
-寒苍则是摆出了一惯的不明所以的态度。<br />
-不，或许他是明白的吧，但即使如此他也是装作了不明白。<br />
-因为，如此是效率最高的行为——不尝试去辩解，也不尝试去理解，只是习惯性的反问而已。<br />
-如此，倘若对方加以回复，则静静倾听，再依据前面的内容进行判断接下来的行为究竟是认真还是忽略；若对方沉默，则让谈话就此结束。<br />
-“但却看不到…你的未来。”<br />
-少女做出了回复，而且勉强算是能够引起人兴趣的回复，<br />
-对于寒苍而言，现在根本就无所谓什么有意义没意义，妄想或者现实，他仅仅是在随着时间前行而已。<br />
-没有任何的期许，没有任何的意愿，简单地如此过着每一天，他将其名为——“守护平和”。<br />
-“守护”这个词的分量如此之重，虽然仅仅是习惯的残留而已。<br />
-“你，究竟…”<br />
-少女的声音不断传来，试图勾起他似乎遗失的记忆。<br />
-“别中二了行么，花大小姐。”<br />
-但他却并没有这个意愿，或者说，对于他而言这个记忆已经没有了价值——为什么经过那个晚上，他会放弃之前的一切坚持。<br />
-“是啊，我为什么要去管你这个混蛋！”<br />
-看来少女并不认为这是中二什么的，而是认为自己真的拥有这个能力。<br />
-而在寒苍这一侧则是完全无所谓，就算世界有存在超能力的人也没有什么奇怪的——反正也和他没关系。<br />
-【未来视这种东西，就算拥有又有什么意义？】<br />
-【无非就是在品尝他人的不幸于暗淡的同时，消磨了前行的兴趣而已。】<br />
-未来视这种东西，在无法依据前方的“将来”进行改变的时候，是不具备任何积极色彩的。<br />
-在他看来，未来或许并非是既定的，但也并非是完全不定的，而无论是既定亦或不定，对他而言都没有区别。<br />
-毕竟在那一夜之前，他的信仰也并非硬逻辑唯理论。<br />
-不过即使是硬逻辑唯理论，也比完全没有信仰的现在要强——正如花月夜所言，现在的他，是没有未来的。<br />
-对于价值体系崩坏的人而言，或许一切都没有了意义，只是在以双腿的重量自然前行，或许，这也根本算不上前行。<br />
-“哈啊…”<br />
-望着窗外的一声叹息，但他本人或许也并不知道究竟在叹息什么。<br />
-是无法与身侧身后的二位少女展开温馨或者鬼畜的剧情么？<br />
-当然不是。<br />
-本来而言，作为现实中的人类，根本就无法去要求什么鬼畜和温馨，心理病态的家伙永远都只能抱着卑微的妄想，或许连妄想狂都称不上——仅仅只是用这种行为去彰显自己所谓的个性亦或是为自己找一个能够立足的团体而已。<br />
-这一切，他都十分明白，所以即使表露着这样一般评价下垃圾的性格，也仅仅是因为有趣而已。<br />
-以及——不想和他人扯上过度的关系。<br />
-他，从根本上就不相信任何人。  </p>
-<p>另一侧，子沐望着空无的房间。<br />
-这是寒苍的房间，房内早已失去了那之前的所有温馨，书本也仅仅是整齐地摆放在书架之上，与那一夜之前的凌乱完全不同。<br />
-“有序，是变化的终结。”<br />
-子沐口中的言语的真正含义，只有她自己能够清晰的明白。<br />
-这个世界，本就是神的一场实验。<br />
-而她，由于那次事故，成为了“神的使者”，也就是所谓的“天使”。<br />
-“天使”，在人类的记录之中，是负责赋予人类幸福以及和平的，当然也有惩罚之类的功效，不过那也是为了给人类带来和平——人类是如此认为的。<br />
-事实上，不管人类如何去想，神的行为都是没有判断标准的——对他而言，无所谓善恶，他也不需要什么善恶标准。<br />
-有趣，仅此而已。<br />
-神喜欢变化，他认为变化是有趣的。<br />
-但他同时喜欢的，是有“序”的变化，这个“序”，就是他所制定的规则。<br />
-他不喜欢不可控，因为这样会让他惊讶。<br />
-“惊讶”是不好的——那样超出他预计的情形并不能够培育出良好的温床，这个“温床”的目的，就是“花”的盛放。<br />
-这些“花”会释放出一种特殊的物质，让人们感受到名为“幸福”的幻觉，并让他们永远停留在那种时刻，为他所欣赏和更好的实验。<br />
-当然，仅仅是因为“有趣”的话，是不必做到这一步的，促使神做到这一步的理由还有另一个<br />
-——复仇，对他所厌恶的、自由为本并且曾经一度战胜过他的恶魔复仇。<br />
-因为人类并不是神之子，而是——恶魔之子。<br />
-所以只有当死亡之后，人类才能够被他转化为神使。<br />
-这个世界，已经有相当部分的人类被转化为了神使，因为他们的执念，让这个过程非常顺利。<br />
-而戴子沐，则是这些“神使”的终点。<br />
-她的代号为——“花”。<br />
-“差不多，该开始了啊。”<br />
-子沐离开了轮椅，走出了房间。<br />
-随后，她来到了屋外，做出了她身为“花”的第一个选择。<br />
-当然，这个“身为”，是真，亦或是假，只有她自己清楚<br />
-——她所释放的“幸福”，麻痹了神自身。  </p>
-<div id="8"></div>
-
+<h1>参考文献</h1>
+<p>[26] 陈芳.一种基于错切原理的图像旋转方法[J].淮阴师范学院学报（自然科学版）,2004,3(4):319-322.DOI:10.3969/j.issn.1671-6876.2004.04.016.
+[27] 王金辉.实时图像旋转系统的研究与FPGA实现[D].华中科技大学,2012.</p>
 <hr />
-<p><strong>情景八</strong>  </p>
-<p>“大家小心！”<br />
-某节课上，警报声与教师的提醒、以及学生的恐慌在一刻瞬间爆发。<br />
-地面传来了震动。<br />
-就像是被演剧时的失序的一般，人群开始攒动，自保本能完美地盖过了平时的秩序，众人都争先冲出教室——除了两个人。<br />
-寒苍望着窗外，仿佛什么都没有发生过一般凝视着某处——那是夜月在混乱之中冲向的地点。<br />
-“你怎么不走？”<br />
-虽然自身的生死并无所谓，但身边的少女对他的意义却不一样，他不能让她为了自己毁了一生——至少他的大脑中是如此构想的。<br />
-“我不会放弃的。”<br />
-但身边的少女仅仅只是凝视着他的侧面，没有任何想要做出动作的意愿。<br />
-“神经病啊，你爸妈养你这么多年你却为了一个无聊的男人放弃自己存活的可能性。”<br />
-即使如此说着，他的视线也没有移开哪怕一毫米。<br />
-窗外的景象随着混乱的人群而不断变换着，熙熙攘攘的无序人群扩散，一个接一个争抢着避开会威胁到自己生存的障碍。<br />
-这人群中，人们达成了绝对的公平，无论是校长、教师，还是绝对数量优势的学生。<br />
-这是没有任何避让的——近乎完美的公平。<br />
-偶尔见到一两个护着女孩子的男生，但也仅仅是偶尔和一瞬间而已。<br />
-天空，如此湛蓝。<br />
-美丽的自然之下，是无尽的求生本能。<br />
-【酒神？】<br />
-他的思维中冒出了这么一个词，但却带着疑问。<br />
-或许这么描述本就是一种近似而已吧，但虽然是近似，却也能表达出现在的一些状态。<br />
-这，不正是一种人性实验么。<br />
-并未参与逃生的他，正作为绝对中立的观察者，注视着这实验的根本结果。<br />
-【或许，还是有些爱比较好吧。】<br />
-虽然自身也并不清楚，虽然自身也无比疑惑，但他还是拉起了身边那个少女的手，跑了出去。<br />
-让他这样做的，一定是什么东西的残留吧。<br />
-……<br />
-奔跑的道路是空闲的。<br />
-多数人都已然离开的楼道，有一种别样的寂静。<br />
-奔跑是无意义的。<br />
-倘若真的会发生不测，那么应当在方才就已然发生完毕了。<br />
-但他仍然奔跑着，而且越来越快。<br />
-眼角的余光瞥见的景色不断后退，让他的有了一种许久未尝的、熟悉的实感。<br />
-激情<br />
-——捏造出来的对生的渴望，麻痹了他现有对自身的麻痹。<br />
-【逃避…么。】<br />
-虽然是逃避，但却不是磨平。<br />
-或许对于他而言<br />
-——这并不是逃避，而是渴求。<br />
-……<br />
-…<br />
-.<br />
-高楼之顶，一个男人眺望着某处。<br />
-他的头顶是染上了无尽苍色天空。<br />
-天空的侧面，是太阳。<br />
-感受着太阳的炽热，他非常满足。<br />
-轻松，他的心境从未如此轻松。<br />
-“消失吧。”<br />
-这个纯粹的梦，或许已经到了可以实现的时候了<br />
-——让他这样的人延续下来这个事件本身，也只是神的恩赐而已吧。<br />
-但他仍然恐惧，对死的本能自身抑制着他向前方的任何举动。<br />
-即使是荆棘，也难以将刺对向自己，很何况他只是木槿。<br />
-代号已经无太大的意义，他所追求的，仅仅是死亡自身。<br />
-这并非是什么宏大的愿望，而是他自身的简单诉求。<br />
-“神啊，赐予我勇气吧。”<br />
-他渴求着，渴求着神赐予他勇气——回归恶魔之子的勇气。<br />
-随后，他喝下了那瓶圣物<br />
-——某日，送至他的手中的、神之恩赐。<br />
-……<br />
-视线中，是蓝色的天空。<br />
-我是空中的云，在天地之间漂游。<br />
-风在耳边萦绕，不断送来着伟大的祝福<br />
-——那是一首赞歌，引导我走向天堂。<br />
-本已麻痹的肢体仿佛回复了知觉，重新为我所限制。<br />
-恐惧化为了快感，让我的大脑在瞬间升华。<br />
-美妙，从未感受到的美妙。<br />
-但果然，还是在恐惧啊。<br />
-许诺，真的是真实的么？<br />
-即使眼前已是天堂，我却仍在怀疑。<br />
-……<br />
-…<br />
-.<br />
-新闻头条。<br />
-今晨十点三十三分，京东大楼下发现一具男性尸体。<br />
-死因确定为跳楼身亡。<br />
-随后赶来的死者家属描述称——根本没有想到他会去寻死。<br />
-据悉，死者在二十岁的时候遭遇车祸，导致其上下各一肢瘫痪，且患上间歇性的痴呆症。<br />
-但男子在接受治疗后，平日生活态度乐观，为人处世积极，并未发现有任何不良影响。<br />
-补充：<br />
-在死者的身上发现了一张纸条，上面写着<br />
-——当心你身边的“天使”。<br />
-具体意义不明，目前心理学专家正在研究中。<br />
-……<br />
-…<br />
-.<br />
-“开始吧，开始吧。”<br />
-“你所期望的‘有序’的终结。”<br />
-子沐望着哥哥所在的学校，露出了前所未有的、让所有人都感到幸福的微笑。<br />
-慈爱的目光仿佛上帝降临，伪装着爱着所有的人。<br />
-“住手吧。”<br />
-“世界，不仅仅是为了你而存在的。”<br />
-“单纯的混乱，也解决不了任何问题。”<br />
-突然出现在子沐面前的少女，用怜悯的眼神望着子沐。<br />
-这是她非常熟悉、同时也是她的哥哥非常厌恶的——那些所谓的“圣人”所特有、仿佛能够透彻一切的眼神。<br />
-“恶心。”<br />
-没有将视线在对方身上多停留一秒，子沐离开了她的面前。  </p>
-<div id="9"></div>
-
-<hr />
-<p><strong>情景9</strong>  </p>
-<p>“哈哈哈，哈哈哈哈！”<br />
-“纯白无垢的天使在大地上降临，神的荣光与我们同在！”<br />
-地下某个阴暗的角落，数十人高呼着口号，神情高昂。<br />
-这其中，有青年，有少年，有老人，甚至有不满十岁的儿童。<br />
-他们注视着台前——那是名为“加百列”的、引导他们走向幸福的“神的左手”。<br />
-而在他们的脚边，则是一个又一个的小瓶——“加百列”赐予他们的“圣物”。<br />
-“迎接‘花’，迎接‘荣光’！”<br />
-口号再起，这一次，他们的视线是对着墙上那巨幅的画像<br />
-——画像上的少女，与戴子沐的身姿一模一样。<br />
-“不错，为了迎接‘荣光’！”<br />
-“加百列”对台下“天使”们的表现十分满意，嘴角的笑容仿佛如神的恩赐一般摄人心魄。<br />
-“在这个混乱肮脏的世界之中，我们必须将要神的秩序实行到底！”<br />
-“希望的破片尚在耳边痛苦呻吟，拼接它们是我们的使命！”<br />
-“用你们几千度的真言，面对惨淡的现实，将其改变！”<br />
-“一切都不在重要，除了我们的期望和选择！”<br />
-“唯有我们，才能改变现实，改变这个不堪入目的、不公的世界！”<br />
-“神，永远祝福着我们！”<br />
-演讲中，“加百列”眼中的光辉越发明亮——那超越了群星的双眼，赐予了在场的“天使”们无尽的喜悦和力量。<br />
-释放，它们想要释放。<br />
-他们紧盯着屏幕，盯着屏幕上“花”的一举一动，直到，“花”做出了选择。<br />
-“花”虽然没有离开轮椅分毫，但在他们眼中，她已然长出了双翼——幸福的四叶草所编制的、华美的双翼。<br />
-她，是为了带给这个世界祝福。<br />
-“跟随她，跟随幸福！”<br />
-“加百列”一声令下，天使们在同一刻举起了身边的“圣遗物”——神赐予他们的、具有爆破效果的神器，向着“花”期望的方向走去。<br />
-“永生！永生！”<br />
-没有人能够描述他们现在是多么的幸福，因为天国之门已向他们敞开。<br />
-他们，即将离开这苦难的尘世，回归光辉天堂！<br />
-那里有着巨大的圣树，圣树上是取之不竭的果实，再也不用过着饥寒交迫的日子！<br />
-那里有豪华的庄园，无穷无尽，再也不用为房价和赡养所侵扰！<br />
-那里，他们都拥有着两性，可以无尽地交欢，并且永远不会感受到疲倦！<br />
-那里，是幸福的永恒，再也不用遭人白眼，再也不会因为残缺被耻笑！<br />
-“几千亿的星辰啊，凝缩吧！”<br />
-在“加百列”慈祥的微笑之中，他们释放了圣物的魔力。<br />
-“万千的星辰啊，告诉人类。”<br />
-“什么是秩序，什么是尊严，什么是荣光！”<br />
-一次又一次的注视，一次又一次的爆破。<br />
-大地都为他们震颤！<br />
-“哈哈哈哈哈！”<br />
-“神之左手”见证着“天使”们的永恒，自身也感受到了巨大的喜悦。<br />
-他的眼中溢出了绝对无瑕的眼泪，泪珠比鲛人在月下的珍珠还要璀璨、还要明亮。<br />
-破灭，便是最高的起始！<br />
-消亡，便是最善的秩序！<br />
-这，就是世界的真理！ <br />
-……<br />
-…<br />
-.<br />
-“……”<br />
-病房中，一位中年女子望着床上的丈夫。<br />
-不，应该说是前丈夫。<br />
-本已残疾的右腿，加上落石的袭击，被完全粉碎。<br />
-截肢，连神经末端一起消灭。<br />
-完全失去了移植的可能性。<br />
-造成如此的原因，是她绝对不可以透露的事实<br />
-——某处，有数十人惨死。<br />
-尸体散步四周，场面惨不忍睹。<br />
-但虽然如此，每个人的脸上似乎都有着非常愉悦的表情。<br />
-尸检也做过，但并未发现什么异常。<br />
-唯一能够确定的是——死者的身体或者生活状况都不太好。<br />
-而作为唯一的幸存者的他，也至今都处于昏迷之中，无法提供任何的信息。<br />
-安眠着的他，似乎还沉浸在什么幸福之中一样，保持着沁人的微笑。<br />
-自从她离开他后，自从他们离开他后，自从他们所有人离开他后——他，从未如此微笑过。<br />
-……<br />
-…<br />
-.<br />
-操场之上，穿过熙熙攘攘的人群，寒苍和若蕾坐到了某处。<br />
-没有言语，只是望着天空中漂游的云。<br />
-“如此美丽的云，一定实在诉说着什么吧。”<br />
-若蕾凝视着他的侧脸。<br />
-“无病呻吟有意思么。”<br />
-寒苍的语气没有改变分毫，说出的话语也没有任何意义。<br />
-否定，仅仅是否定而已。<br />
-如果人们肯定，他就嘲笑。<br />
-如果人们否定，他就去颠覆三观。<br />
-肯定之否定，否定之否定。<br />
-仅此而已，无他。<br />
-但若蕾是明白的，她明白他所想的一切，至少她自己是如此认为的。<br />
-“即使是无病呻吟，也很美啊。”<br />
-“这么说倒没错。”<br />
-对方现在这句话比起方才那句明显高了一个档次，这是他比较欣赏的——即使是现在的他也一样。<br />
-他的视线从未离开天空、离开云朵，因为这是他曾经的梦想。<br />
-飞向天空。<br />
-在高空之上，与稀薄的空气抗争，换取飞翔的动力。<br />
-星辰伴随在周围，怀中是微笑的子沐，无比幸福的子沐。<br />
-将自身化为天使，永远、永远地守护着她。<br />
-常人价值中畸形的爱情，已然容不下任何的第三者，包括他身边的少女——叶若蕾。<br />
-但现在他却只能隐藏，仅仅是隐藏。<br />
-记忆从未丢失，丢失的，是他，是戴寒苍，是戴子沐的哥哥的——灵魂。  </p>
-<div id="10"></div>
-
-<hr />
-<p><strong>情景十</strong>  </p>
-<p>【天堂，究竟是什么？】<br />
-这个疑问一直存在于寒苍的脑中，从未消去过。<br />
-无法证实和证伪的彼岸，究竟有着多么巨大的魅力，让无数的人为之疯狂和忍耐。<br />
-所谓集体宗教这种东西也就是靠这种许诺才得以保持其权威的，但深究下去，似乎这个根据是非常飘渺的，尤其是在现在这个科学社会。<br />
-但即使如此，仍然有不少的人选择去信仰它们。<br />
-为了习惯，或者是为了摆脱对未知的恐惧。<br />
-【如此而言，只要能够找到一种证实所谓“神迹”的方式，说不定是个人都能创办一个宗教了。】<br />
-思考中，他仿佛发现了什么。<br />
-不错，如果能够应用比较超前的技术，做到这种程度也没什么难度。<br />
-虽然他肯定不会有这个意愿——这恰恰是他最为厌恶的手段。<br />
-也就是，“欺骗”。<br />
-“保持真诚”，这个即使在他自我欺骗的现在仍然在渴求的东西，在每一次行为时都会拷问他的内心。<br />
-不错，他现在就是在“欺骗”。<br />
-并非作为“信仰”的“自我欺骗”，而仅仅是为了麻痹自己的自欺欺人。<br />
-无论是在什么语境之下，他都仅仅只有一个想法——蒙混，蒙混。<br />
-不愿较真，也不需要。<br />
-【这个世界，本就是虚无而已。】<br />
-无论什么都没有任何的意义，对于他而言，甚至连价值都没有。<br />
-即使是对子沐的关心，也仅仅只是一种“情感”——这反理性的“惯性”。<br />
-他也的确想过去“死”，但考虑到他作为“死者”后会观测到的情形，他放弃了这一打算。<br />
-平时偶尔斗斗嘴，吐吐槽，如此就好。<br />
-这是一个虚无主义者，所谓“无所谓”的一生<br />
-——本来，似乎应当是如此。<br />
-但他还是错了。<br />
-人，果然还是不能如此沉默，跟何况从根本上而言，他只是一个高中生而已。<br />
-无论自己再怎么认为自己理解了人类和世界，缺少绝大多数经历的他，对这一切也没有丝毫的实感。<br />
-不错，是“实感”，这种并非“灵魂”，而是“肉体”的感受。<br />
-而今天，他终于感受到了。<br />
-“你眼中的天空，为什么是黑色的？”<br />
-确认安全之后，操场上的学生纷纷回到了教室。<br />
-但他却选择留在了原地，保持着方才的那个动作。<br />
-若蕾也没有离开，而是一直伴随在他的身边。<br />
-“那是世界的颜色。”<br />
-回答非常的简短，但并非是敷衍。<br />
-这，是他眼中的真实。<br />
-人们眼中的色彩，不过是一种映射。<br />
-映射带来了亲和，同时也带来了欺骗。<br />
-欺骗让我们这种拥有了可能，但也遮蔽了这绝对的真实。<br />
-“为什么一定要一直看着那个颜色？”<br />
-若蕾的声音完全没有了以前的那种强硬，而是非常的温柔——不输于子沐的温柔。<br />
-即使是寒苍，也有了一丝的动摇。<br />
-所以，他将这种“认真”坚持了下去。<br />
-“失去了…迷雾。”<br />
-可以遮盖住这种真实所带来绝望的迷雾，早已消失。<br />
-透彻的双眼容不下一点的杂质，将他吸入了无尽的漩涡之中。<br />
-空虚，仅仅是空虚。<br />
-尚未知晓背后真相的他，却早已放弃了知晓真相的意愿。<br />
-“世界上也有这样的人呢。”<br />
-若蕾一直微笑着，即使他的视线并未移动过分毫。<br />
-“是啊，但对社会计量而言，这并不是典型。”<br />
-“仅仅，是无足轻重的特例而已。”<br />
-云在漂游，偶尔脱离云群的小朵，也很快就被吸入其中了。<br />
-“群体，就是最佳的掩盖。”<br />
-“可以掩盖一切的‘无病呻吟’。”<br />
-……<br />
-…<br />
-.<br />
-“等等！”<br />
-子沐离开的道路被夜月挡住了。<br />
-但虽然如此，子沐却没有丝毫的畏惧。<br />
-虽然，夜月并没有伤害她的意思。<br />
-“怎么，姐姐想对一个下半身完全瘫痪的残疾人动手啊~”<br />
-和在哥哥面前善解人意的态度不一样，此时的子沐的语气中带着戏谑，用微笑的口吻阐述着自己的感想。<br />
-当然，究竟哪一个才更加偏向于她的真实，恐怕也只有她自己清楚了。<br />
-“你和他的性格果然很像，该说不愧是兄妹么。”<br />
-夜月想起了他平常的态度和感觉，和面前的少女非常相似。<br />
-“什么啊，你认识哥哥啊。”<br />
-子沐却没有给出任何针对方才夜月发言中心的回应。<br />
-“但是，我和哥哥可是不同的呢。”<br />
-接着，是一次完全的否定。<br />
-“他还拥有着应有的希望，而我，却是这个希望的破坏者。”<br />
-“守护自身破坏者的希望，很讽刺吧。”<br />
-子沐的微笑从未改变，但却已然不是寒苍面前的那个微笑。<br />
-“不…你不是。”<br />
-虽然犹豫了片刻，夜月却仍然有把握说出这句话，这不仅仅是感觉那种飘渺的东西，而是“经验”，她一直观察寒苍所得到的经验。<br />
-“虽然不知道你做出这一切的具体理由，但大概能猜到是和他有关吧。”<br />
-从面前这个少女的情形来看，她唯一重视的也只有寒苍了。<br />
-“谁知道呢，说不定只是‘花’的职责而已~”<br />
-子沐给出了寒苍惯用的模棱两可的答案。<br />
-“别自欺欺人了，你们还要用那套妄想出来的东西伤害多少人！”<br />
-夜月仿佛被刺中要害一般大喊了起来。<br />
-“怎么会是妄想呢~”<br />
-子沐没有因为夜月的行为产生丝毫的动摇。<br />
-“破灭，便是最高的起始。”<br />
-“消亡，便是最善的秩序。”<br />
-“这，就是世界的真理。”<br />
-温柔的语气中，残酷的语句也变得清新了起来。<br />
-“开什么玩笑！”<br />
-“那些人也还是有希望的啊，为什么要成为你们过家家的牺牲品！”<br />
-“……”<br />
-夜月的怒吼终于稍微触动了子沐。<br />
-“不，那是需找幸福。”<br />
-“到达那——光与爱所交织的彼岸。”<br />
-这或许，是她到现在为止唯一的真心话吧。<br />
-“那种东西，根本就没有！”<br />
-仿佛是见到了顽固不化的孩子一般，夜月的语气再次加重。<br />
-“…”<br />
-“米迦勒。”<br />
-下一瞬间，一个男人出现在了二人之间。<br />
-然后，子沐向着家的方向“走”去。<br />
-……<br />
-“请不要打扰主上的休息。”<br />
-男人带着墨镜，表情十分严肃。<br />
-“嘁…偏偏这个时候。”<br />
-夜月有些不甘。<br />
-“你们这些腐臭的野心家究竟要禁锢一个可怜的小女孩多久才罢休！”<br />
-接着，愤怒的对象转化为了男人。<br />
-“…阁下似乎误解了。”<br />
-但男人没有丝毫的动摇。<br />
-“这，是小姐自身的信念。”<br />
-“‘花’，是小姐自立的身份。”<br />
-冷酷的话语中，是夜月难以置信的真相。<br />
-“不可能！她只是一个孩子！”<br />
-“没什么不可能的。”<br />
-男人如此说道。<br />
-“既然拥有了这个条件和能力，将想法付诸实践是常理。”<br />
-“况且她已经拥有了成熟的愿望冲动。”<br />
-男人的语气十分平静，淡淡地望着夜月。<br />
-“怎么可能…”<br />
-不愿意接受这一切的夜月，呆然的接受着男人的视线。<br />
-“相比清醒的绝望而言，迷醉的希望更加有人情味一些。”<br />
-确认夜月没有任何继续的意愿，男人离开了她的面前。  </p>
-<div id="11"></div>
-
-<hr />
-<p><strong>情景十一</strong>  </p>
-<p>“嘿！Yo！那边的少年！”<br />
-“今天的风儿，非常的喧嚣。”<br />
-“对面的你，散发、散发着忧伤。”<br />
-“Yo，Yo，切克闹！”<br />
-“你的存在还在吗，嘿！”<br />
-黄昏下。<br />
-无所事事游荡于小巷之中的寒苍身边，忽然传来了仿佛具有针对性的RAP。<br />
-寒苍的视线微微移了过去，看见了路边的某个家伙<br />
-——身体略胖，戴着嘻哈风格的帽子，眼睛被墨镜遮盖，却同时身着非常整齐的正装。<br />
-男人的这身行头引起了寒苍的兴趣，所以他停了下来，静静注视着。<br />
-而对面的男人则是继续唱了下去。<br />
-“星空的轨迹，是骗子的言语！”<br />
-“从来都不存在，什么友善和幸福！”<br />
-“问问那些人，快乐、快乐吗？”<br />
-“嘿，Boy，只在于你的配曲！”<br />
-“你的期望，是一种本质！”<br />
-“你是谁，又往何处走去？”<br />
-“跟着我，一起唱！”<br />
-男人指向了寒苍，并用透过墨镜的双眼凝视着寒苍。<br />
-而寒苍，不知是否是由于今日所发生的偏离日常的情形，接受了男人的邀请。<br />
-“月下的怒吼，是一种宣告！”<br />
-“嘿，这种宣告，被他们叫做矫情！”<br />
-“没有人知道，对方的理解！”<br />
-“问问他们，存在，存在吗？”<br />
-“末日的轨迹，没有任何意义！”<br />
-“说说笑笑，只是笑笑而已！”<br />
-寒苍停止了言语，沉默地望着对方，仿佛在期望着什么。<br />
-“说说笑笑，多么得聪明！”<br />
-“不用理会，只是随从！”<br />
-“避而不闻，即为不败！”<br />
-“那里的风景，和我无关！”<br />
-“你的芬芳，我来鄙视！”<br />
-“用尽所有嘲笑，换取无知快感！”<br />
-“我便伟大，我便不破！”<br />
-男人的表情有了些许改变，同时将话头交给了寒苍。<br />
-“嘿！Man！”<br />
-“今天的你，有些烦躁！”<br />
-“他们的大不了，并不是大不了！”<br />
-“微小的尘埃，便是大山！”<br />
-“疯言疯语，便是真理！”<br />
-“无病呻吟的苦痛，便是至高的荣耀！”<br />
-“耗散生命，这才是根本！”<br />
-似乎有些被感染，寒苍的理性出现了些许偏移。<br />
-男人，则是继续唱了下去。<br />
-“耗散的终点，是燃尽！”<br />
-“生命的根本，是有限！”<br />
-“浪费的耗散，是乱叫！”<br />
-“无目的地狂跳，被轻视！”<br />
-“不做齿轮，就被抛弃！”<br />
-“不去憎恨，就被憎恨！”<br />
-“嘿！Boy！”<br />
-“你不懂什么叫爱！”<br />
-男人的声音稍微有些颤抖了起来。<br />
-寒苍则是继续跟了下去。<br />
-“Yo，Man！”<br />
-“今天的黄昏，非常温暖！”<br />
-“一种颜色，一种声音！”<br />
-“爱人的话语，早已被扭曲！”<br />
-“异化的边缘，模糊不清！”<br />
-“问一问，问一问！”<br />
-“还在吗？还是人吗？”<br />
-“早已无法得到回答！”<br />
-“欢呼，欢呼！”<br />
-“为了自己的价钱欢呼！”<br />
-“我是自由的！腐朽是我的权力！”<br />
-“堕落！堕落！”<br />
-寒苍语毕，一时沉默。<br />
-忽然，一阵较大的风吹过，将男人手中的某张印有一些东西的纸吹到了一边。<br />
-男人追了过去，但却显得有些不自然。<br />
-这种不自然，非常容易地被寒苍捕获到了。<br />
-但寒苍并没有指出，而是静静去帮男人捡回了那张纸，并且在捡到的瞬间秒到了一行字<br />
-——病危通知。<br />
-“……”<br />
-收回了纸，男人重新唱了起来。<br />
-“明日的光明，永无来时！”<br />
-“嘿！Boy！可曾记得豪言的浪漫！”<br />
-“腐朽的身躯，变作了尘土。”<br />
-“无法照映的阳光，总是掠过地狱边缘！”<br />
-“不可及，如何在！”<br />
-“夜空从来都是为群星而备，尘埃失去了关注的资格！”<br />
-“Yo！未曾失去的花朵，何谈堕落！”<br />
-语气有些颤抖的同时，男人显出了些许的疲态。<br />
-寒苍稍微犹豫了一下，继续唱了下去。<br />
-“不可及，仍可在！”<br />
-“腐朽的前提，是堕落！”<br />
-“嘿！Man！可曾渴求过坠落！”<br />
-“终结的一刻，是泉的开端！”<br />
-“Yo！未曾歌颂的生命，同样伟大！”<br />
-“倾泻，倾泻爱，倾泻在虚无之上！”<br />
-“嘿！你仍存在！”<br />
-口中说着平日绝不会说出的话，仿佛像是回到了那一夜之前的状态一样，此刻的寒苍，似乎倾向于成为男人面前的太阳。<br />
-他隐约得感受到了，这个男人正在准备做些什么，甚至能够闻到和子沐相似的味道。<br />
-“枯竭的泉，如何倾泻！”<br />
-“嘿！Boy！可否明白失去的滋味！”<br />
-“世界的圆环，永无截断！”<br />
-“迷茫的灵魂，只是在打转！”<br />
-“问问他们，幸福吗，幸福吗？”<br />
-“Yo，Boy！”<br />
-“唯有渴求，渴求上帝的到场！”<br />
-男人的颤抖开始遍布全身，同时语气也透露出了一丝绝望。<br />
-这更加激起了寒苍的激情。<br />
-“不幸吗，不幸吗？”<br />
-“上帝的光辉，不如日神的在场！”<br />
-“渴求的彼岸，从未应答！”<br />
-“嘿！Man！”<br />
-“华美的迷雾，却常伴左右！”<br />
-“生者吗？死者吗？！”<br />
-“向着死者，生！”<br />
-“Yo！Man！”<br />
-“终结之前，是黄昏！”<br />
-寒苍用手指指引着男人的视线，移向了一簇为夕阳所映照的云。<br />
-虽已日暮，却仍然绚丽。<br />
-“……”<br />
-男人沉默了稍许。<br />
-“爸爸！”<br />
-随后，一个小女孩走到了他们身边。<br />
-“这个哥哥是？”<br />
-小女孩的眼神十分无暇，看来是受到了良好的教育。<br />
-“我的朋友。”<br />
-男人温柔的回应着。<br />
-“那么就是叔叔了~”<br />
-小女孩的微笑十分单纯，让寒苍回想起了小时的子沐。<br />
-“我还是比较喜欢‘哥哥’这个称谓呢。”<br />
-寒苍蹲了下来，摸了摸小女孩的头。<br />
-“嗯，那就~”<br />
-“哥哥~”<br />
-越是如此，小女孩的身影和子沐重合的就越重。<br />
-寒苍则开始思考起什么。<br />
-“那么我们就先走了。”<br />
-不知何时，男人摘下了帽子和墨镜，扔到了垃圾桶里。<br />
-而寒苍也能够清晰地看着男人的本来相貌<br />
-——三十多岁，事业有成、家庭幸福的样子。<br />
-“再见。”<br />
-寒苍礼节性地回复了一句。<br />
-“哥哥再见~”<br />
-小女孩回头挥了挥手，随后离开了。<br />
-……<br />
-“这个是…”<br />
-不知道是处于直觉疑惑是什么，寒苍走到了方才男人扔东西的垃圾桶前。<br />
-随后发现在帽子之上还有着一个小瓶。<br />
-将其拿起，看清了小瓶的样子<br />
-——透明的瓶子，瓶身有着像是什么特殊意义的纹章，内部则是无色的液体。<br />
-“拿回去吧。”<br />
-出于兴趣，寒苍将它放在了口袋内，继续散起了步。  </p>
-<div id="12"></div>
-
-<hr />
-<p><strong>情景十二</strong>  </p>
-<p>月在哭泣。<br />
-哭泣的，究竟是人眼中的月，还是月眼中的人？<br />
-没有人知道。<br />
-也或许，是不是人都不知道。<br />
-人？<br />
-“我们，到底在模仿什么。”<br />
-望着身边熟睡的子木，尚未闭眼的寒苍不经意间透露了心声<br />
-——此刻，他想起了黄昏时刻和那个男人的“交谈”。<br />
-【都是抄来的…】<br />
-如此地憎恶，但却无法否认。<br />
-他的所言，他的表达，他的所想，都仅仅是抄来的而已。<br />
-拼凑，仅仅是“拼凑”而已。<br />
-东抄一段，西抄一段，就算将其名为“整合”和“再构”，其基本来源都是不会变的。<br />
-剥去了这些外壳以后，他一无所有。<br />
-他的灵魂是虚空的，甚至感受不到任何一丝的“自在”内容物。<br />
-他的一切都只是“为他”，为了身边这个熟睡的女孩。<br />
-曾几何时，意识到了这一切的他也曾迷惘——“凭什么”？<br />
-是啊，凭什么他要为了这个身为他妹妹的女孩付出这么多，以至于放弃自己的一切？<br />
-所谓身为“戴子沐的哥哥”的“拯救”的梦想，难道不是对“戴寒苍”原本梦想的一种强盗性的覆盖，是对他自己的一种摧残么？<br />
-同时，在这种迷惘之下，他发现了——他的自我摧残，换来的并不是子沐的幸福，而是同样对子沐的一种摧残。<br />
-这种发现是痛苦的，是难以忍受的。<br />
-所以，为了消去这种痛苦，他选择了封闭和放弃——依靠习惯来过着不需要去思考的生活。<br />
-这种日子一直持续着，直到最近——不知是否是以若蕾的那次告白为契机，他的心有了些许动摇。<br />
-相信爱情也好，不信爱情也罢，机械论的分解也好，神秘主义的寄托也罢。<br />
-第一次被重视的少女如此告白的他，仍然会产生理性之外的直感。<br />
-特别是那种肉体直接的接触，让他的理性产生了不小的偏移——或许那是荷尔蒙的作用，也或许，那是他一直潜藏的渴求。<br />
-渴求爱，这是不可否认的。<br />
-越到深处，越渴求。<br />
-他恨过子沐，恨她在剥夺了自己的自由以后，还假惺惺地否定了他的付出。<br />
-【我…错了么。】<br />
-像是量变到质变一样，平时琐碎的不起眼的伏笔在这短短的时间内被完全抛出、凝结。<br />
-然后，仅仅是短短的一瞬间，他吻了子沐。<br />
-夹杂着哥哥以外的这个吻，仿佛是在宣告着什么。<br />
-这矫情、却浪漫的宣告，正是他的作风——记忆回流一般，他回到了从前的想法。<br />
-守护——守护“自由”。<br />
-【……】<br />
-他移开了视线，将其定格在窗外的星空。<br />
-【如果守护不了的话，就什么价值都没有了。】<br />
-【我，已经不可能是从前的我了。】<br />
-毕竟，时间是无法回流的。<br />
-简单的截断舍弃重组这种事情，在现实中是不可能发生的。<br />
-因为，那就是自我构成的全部。<br />
-“哥哥？”<br />
-不知何时，子沐醒了过来。<br />
-“嗯？”<br />
-回应着子沐的视线，寒苍将头转了过去。<br />
-“哥哥相信这个世界上存在着天使吗？”<br />
-子沐用平和的语气询问着并不平常的问题。<br />
-“天使？”<br />
-寒苍诧异了一下，毕竟这个时机出现这种问题是绝对不正常的，最多也就是个玩笑而已。<br />
-但如果对方是子沐的话就不一样了——毕竟她是一起生活如此之久的寒苍都无法看清的人。<br />
-“或许吧。”<br />
-结果，也只能是简短的一般论。<br />
-“还以为哥哥会给出深刻的答案呢。”<br />
-子沐如此回应着寒苍。<br />
-“如果是以前的话…不，或许现在也一样。”<br />
-寒苍这一次并没有像是从前那样敷衍过去，而是准备着接下来的应答。<br />
-此刻，他试图和从前的自己重合起来——即使那只是一个残像，他也试图去抓住那虚空的幻影。<br />
-“天使，不可证明和证伪的神秘之物。”<br />
-“它，真的能给人们带来幸福么？”<br />
-无法回答，也没有什么价值。<br />
-“哥哥今天有些不一样呢。”<br />
-子沐淡淡的微笑下，是有些诧异的眼神。<br />
-毕竟身边的这个她的哥哥已经许久没有说出过这样认真的话了。<br />
-“啊，或许这样并不好吧。”<br />
-寒苍是明白的，明白他现在的“回归”代表着什么。<br />
-“开始否定了呢。”<br />
-子沐也同样明白。<br />
-或者不如说——这就是她的愿望。<br />
-“是啊…否定之否定。”<br />
-此刻，寒苍终于明白了这句话的真意。<br />
-“这个螺旋的终点，会是什么呢？”<br />
-不知为何，子沐的语气中仿佛带上了一丝不安。<br />
-“既然是螺旋，就代表没有终点吧。”<br />
-没有察觉到这丝不安的寒苍，给出了并未考虑到她心情的回复。<br />
-“没有呢…”<br />
-“这就是‘永生’吧。”<br />
-“所谓的‘希望’，不过是未来的‘绝望’的别名而已。”<br />
-子沐掩藏了自身的不安。<br />
-“所谓的‘绝望’，也不过是过去‘希望’的别名而已。”<br />
-文字游戏一样的回复，却并不是和文字游戏同等的随意。<br />
-“那么‘现在’的哥哥，幸福么？”<br />
-子沐的语气回归了温柔。<br />
-“不知道。”<br />
-“幸福本身，就是一个非常复杂的概念。”<br />
-“我已经…失去了判断它的依据。”<br />
-寒苍的心声毫无保留得被展示了出来。<br />
-“明明只是个高中生呢。”<br />
-玩笑般的语气中却并不是玩笑，这样做只是为了让对话更加舒服而已。<br />
-“是啊，明明是个高中生却这么自大么。”<br />
-自我吐槽的寒苍，嘴角却是苦笑。<br />
-“但是果然还是想要你幸福啊，哥哥。”<br />
-“因为，我就是为了这个才存在的呢。”<br />
-子沐将本来舒展开的双臂换了个角度，抱住了寒苍。<br />
-“‘存在’这个沉重的词可不能随便用啊。”<br />
-寒苍回应了子沐的拥抱。<br />
-“我知道的，知道的…”<br />
-“当我作为‘花’的时候…我的‘存在’…”<br />
-放轻了声音，子沐的言语在寒苍耳中显得有些模糊。<br />
-但寒苍却没有进一步深究。<br />
-【她也是有自己的原因吧。】<br />
-他完全相信子沐，即使是她的隐藏。<br />
-“睡吧。”<br />
-太阳依旧会升起。<br />
-……<br />
-…<br />
-.<br />
-若蕾家，大厅。<br />
-正在吃饭的一家三口表露出的是和寒苍家完全不同的、温馨的景象。<br />
-“最近在学校怎么样？”<br />
-若蕾的母亲关切地询问着自己女儿的近况。<br />
-“挺充实的。”<br />
-若蕾没有道出任何与寒苍有关的异象。<br />
-“那就好。”<br />
-若蕾的母亲回复着。<br />
-“那个小子怎么样？”<br />
-这次提问的是若蕾的父亲，而“那个小子”自然就是寒苍。<br />
-“还是那样笨蛋！”<br />
-若蕾摆出了生气的表情。<br />
-“哈哈哈，我家的闺女喜欢的是个笨蛋啊。”<br />
-若蕾的父亲却大笑了起来。<br />
-“某人才没有脸说吧。”<br />
-若蕾的母亲接下了话茬，盯着她所爱的男人。<br />
-“切，我好歹也是个天才工程师啊！”<br />
-“能这么理直气壮地说自己是个天才真不简单呢。”<br />
-“噗。”<br />
-夫妻二人的日常吐槽让若蕾不禁笑了出来。<br />
-“……”<br />
-但下一瞬间，想到了寒苍他们在家内的情形，又很快沉默了下来。<br />
-“他的父母现在怎么样？”<br />
-随后，她问起了和她父母一起工作的、寒苍的父母的状况。<br />
-“似乎是在私下里做什么吧，不太清楚。”<br />
-“但总之心情不太好的样子，可能是那个小子又惹了什么事吧。”<br />
-若蕾的父亲平淡地回复着。<br />
-虽然若蕾和寒苍的关系很不错，但他们父母的关系也就是一般的程度而已。<br />
-“不过，你记得那时候给你的那个玩具么。”<br />
-“玩具？”<br />
-若蕾有些不解。<br />
-“读心的那个。”<br />
-若蕾的父亲用手大概描画着那个东西的样子。<br />
-“哦，就是被那个家伙弄坏的那个么。”<br />
-前不久若蕾尝试用这个东西去读寒苍的想法，也的确成功了，不过最后由于寒苍的发现被毁掉了。<br />
-“嗯，就是那个。”<br />
-“那种东西我其实是没什么兴趣的，只是帮他们的忙而已。”<br />
-“某一天，他们忽然说有个什么军方的东西要求有这种功能，虽然我本身比较反感但还是接受了…虽然，给它加上了限制。”<br />
-“限制？”<br />
-若蕾继续不解。<br />
-“没有给获取的信号加处理，也就是说只有在对方的思想很纯粹的时候、并且无防备专心的时候才能够有效。”<br />
-“看你的反应，那个小子对你没有防备而且很单纯嘛！”<br />
-这个男人再次大笑了起来。<br />
-“爸爸也是个笨蛋！”<br />
-抛下已空的饭碗，若蕾离开了饭桌。<br />
-“喂，爸爸很伤心啊！”<br />
-“笨蛋啊。”<br />
-夫妻二人相声却仍然在继续。<br />
-……<br />
-【对我…没有防备么。】<br />
-房间内，将所有的灯关掉，黑暗中抱着少女风格的动物抱枕的若蕾思索着父亲所说的话。<br />
-【那又为什么…不愿意…】<br />
-联想起那一日寒苍对她的拒绝，若蕾陷入了疑惑。<br />
-如果仅仅是因为要照顾妹妹，并不应该发展到现在的情形。<br />
-她并不介意多出一个妹妹，即使——这个妹妹是寒苍的另一个所爱之人。<br />
-她想寒苍也是明白这些事情的。<br />
-但寒苍却仍然拒绝了，没有留下哪怕一点余地。<br />
-【世界真实的颜色。】<br />
-【离群的云。】<br />
-在他愿意真诚地表达自己的想法之时，说出的却是这些话。<br />
-如果是别人，她也应该会和别人一样，根本就懒得去考虑对方的意图，或者只是认为那是无病呻吟的中二表现而已。<br />
-但对方却是寒苍——是那个她一直喜欢的、曾近非常耀眼的存在。<br />
-“或许，应该多看些书吧。”<br />
-即使，她根本没有感受到任何去了解这种东西后对自己幸福的加成。<br />
-不，那或许是——<br />
-“为了自己的幸福。”  </p>
-<div id="13"></div>
-
-<hr />
-<p><strong>情景十三</strong>  </p>
-<p>“他们的漠视一直都没有消失过。”<br />
-“象征大地的伤痛只会一直持续着——直到，平等的到来。”<br />
-“最终，白鸽降临，一切重头开始。”<br />
-“这，是下一次的轮回。”<br />
-——《古之残卷，第四章》。  </p>
-<p>又是一个普通的清晨。<br />
-今日是周末，所以并不用去学校。<br />
-但即使如此，寒苍还是选择了早起——这是他的习惯，从那时候就一直保留着的习惯。<br />
-为什么会有这个习惯已经不重要了，毕竟习惯就是用来遗忘习惯的成因以换取一种方便的东西。<br />
-虽然，他也根本不知道这有什么方便的。<br />
-“哈~”<br />
-对着窗外，寒苍舒展着自己的身体。<br />
-这个小小的不同，表征着他发生了某些变化——这一切，还在床上的子沐都看在眼里。<br />
-【但是，已经不能停下了啊。】<br />
-子沐的心中却并没有因为寒苍的改变而完全向着喜悦偏转，即使这种改变本就是她所做的这一切的目的。<br />
-【虽然生活中，并非所有起始都有一个完美逻辑化的结果，甚至很多情况下是根本没有结果。】<br />
-【但果然这个还是有呢。】<br />
-作为“花”的她，是如此定义自己的开端和结果的。<br />
-“为每一个因，结出应有一个果”<br />
-——命定论一般的构想，充斥着她信念的全部。<br />
-大脑似乎早已被替代，此刻的她已然分不清究竟哪个是自己，哪个是“花”。<br />
-“说起来，说不定自己只是一个赝品而已啊。”<br />
-子沐将心声通过语言表露了出来。<br />
-而听者，只有寒苍一人。<br />
-“质疑自我的存在没有意义啊。”<br />
-寒苍也并没有因为突然而来的子沐的声音而惊讶。<br />
-“但却是很多问题的开端吧。”<br />
-面对哥哥的敷衍，子沐如此回应。<br />
-同时，她用双手使自己在床上坐了起来。<br />
-“我来吧。”<br />
-见此状，寒苍快步走到了床前，将子沐抱到了轮椅上。<br />
-安定下来之后。<br />
-“典型的过保护呢。”<br />
-子沐撅起了嘴，语气中带着玩笑化的不满。<br />
-“…你，怎么忽然会说起这些。”<br />
-“以前的话，是会自己翻翻书之类的吧。”<br />
-寒苍对妹妹最近的疑问表示不解，毕竟很久之前开始她在没有自己探索前都是不会轻易提问的。<br />
-“已经差不多了吧，那些书。”<br />
-子沐望着书架上无尽的思想载体。<br />
-“果然，还是想要体验一下呢。”<br />
-随后，轻声表达了自己的愿望。<br />
-“原来如此…不想重复了么，文法分析之类的。”<br />
-寒苍瞬间了解了子沐的所言。<br />
-而子沐只是沉默着、微笑地面对着寒苍。<br />
-当然，寒苍明白子沐此时的意愿，只不过若不是她亲自说出口，寒苍是不会去随便由自己的猜测将子沐带走的。<br />
-“哥哥，果然还是把我当做外人啊。”<br />
-浅显至极的略带失望。<br />
-【原来如此。】<br />
-或许这就是兄妹间特殊的理解力吧。<br />
-“今天穿什么？”<br />
-寒苍离开了轮椅前，打开了衣柜，开始寻找着自己和子沐的衣服。<br />
-“哥哥喜欢的。”<br />
-子沐则是一边向着浴室的方向前行，一边回应着寒苍。<br />
-“明白了。”<br />
-寒苍拿出了那件纯白的连衣裙。<br />
-……<br />
-…<br />
-.<br />
-早，十点。<br />
-向海边的途中。<br />
-三人，并行。<br />
-阳光的强度恰到好处，云层的排布也错落有致。<br />
-微风正好在舒适的程度，由于逐渐靠近海边，所以风中的清新也越来越明显。<br />
-但寒苍的心情却并非如此完美——或许只是有些疑惑。<br />
-“怎么她也来了。”<br />
-询问的对象是子沐，而问句的指向则是身边的另一个少女——叶若蕾。<br />
-“难得出来，所以正好把姐姐叫来了呢。”<br />
-子沐的微笑在阳光下显得更为明朗。<br />
-对比身边的少女，多出了一些清新和脱俗。<br />
-“什么啊，叫个名字会死么！”<br />
-若蕾显得有些不满，怒视着寒苍。<br />
-“切。”<br />
-寒苍没有过多的理会。<br />
-“你什么态度！”<br />
-若蕾的怒气更加明显。<br />
-“姐姐一直都是这么精神呢。”<br />
-子沐望着二人，神情没有任何的变化。<br />
-只不过，那个视线偶尔会游离向后方的天空。<br />
-这一变化被很轻易地捕捉到了，无论是寒苍、还是若蕾。<br />
-寒苍立马停止了这争执，但若蕾却没有这个意思。<br />
-“因为咱和那边的那个死人不一样！”<br />
-她继续了方才的话题。<br />
-“是呢。”<br />
-若蕾点头微笑着表示赞同。<br />
-在这个程度上来看，或许若蕾才更加懂得子沐的想法吧<br />
-——她所想看到的，仅仅是常人的日常。<br />
-寒苍当然明白这一切，但他的惯性还是让他选择了沉默。<br />
-沉默之中，大海已然近在眼前。<br />
-海风比起方才更为明显，子沐的长发在风中摇摆，帽子也被吹到了一边。<br />
-寒苍捡回了帽子，试图重新给子沐带上。<br />
-“谢谢哥哥，但果然还是这样就好。”<br />
-子沐却拒绝了寒苍的意图。<br />
-“偶尔，也让我身体的一部分在风中自由一会吧。”<br />
-接下来，是简单的理由阐述。<br />
-这个请求对于寒苍而言自然是不可拒绝的。<br />
-“难得来一次，这样沉默着多浪费。”<br />
-若蕾打破了沉默。<br />
-“也是呢。”<br />
-子沐附和着若蕾的发言，寒苍则是仍然没有变化。<br />
-“嗯，所以说既然来到了大海，就必然会想起那个啊~”<br />
-若蕾的视线越过了寒苍，和子沐的眼神对了起来。<br />
-“是呢。”<br />
-二人会心一笑，随后，朗诵了起来。  </p>
-<h2>大海行</h2>
-<h2>戴寒苍</h2>
-<p>做一个天真的孩子。<br />
-向着大海前行。<br />
-那是一片充满着泥土芬芳的巨大原野。<br />
-海为草，浪为花。<br />
-群鱼化作蜂蝶，穿梭，穿梭于无尽的泡沫<br />
-——作为花间的落红，象征着原野的繁盛，与破灭。<br />
-幸福！<br />
-做一个幸福的人！<br />
-一起放牧，在花间漫步。<br />
-牧者成为了蝴蝶。<br />
-蝴蝶成为了波浪。<br />
-波浪成为了泡沫。<br />
-段落化的文字尝试描述着牧者自由与妄想的癫狂，却被牧者撕成了一句句破碎的片段。<br />
-那是永远不可达的界线，其名为<br />
-——迷雾之后，黄昏下的金色之海，所承载的漂游牧人之曲。  </p>
-<p>“你们干嘛！”<br />
-朗诵结束，寒苍的神情终于有了一些波动。<br />
-“悼念某位诗人的死亡。”<br />
-若蕾表情凝重，仿佛在宣告事实一样。<br />
-“痛心呢。”<br />
-子沐这边，虽然没有那么夸张，却还是些许配合着若蕾。<br />
-“真是闲到了极点…”<br />
-寒苍失去了吐槽的欲望一般，垂下了身体。<br />
-“原来某人还会害羞呢~”<br />
-若蕾没有放过寒苍，而是撑着这个机会进一步吐着槽。<br />
-“毕竟，哥哥还是那个哥哥啊。”<br />
-子沐的话虽然是用玩笑的语气表述的，但意思却并非如此。<br />
-“哼。”<br />
-听到了这句话的寒苍向前走了几步，伸展双臂。<br />
-“黄昏前的银色之海，所承载的，是守望着麦地的天空之影！”<br />
-“那就是大地的重量！”<br />
-某人的脚下，似乎多出了与海水重叠的眼泪。  </p>
-<div id="14"></div>
-
-<hr />
-<p><strong>情景十四</strong>  </p>
-<p>“当然，我是不会放弃的。”<br />
-寒苍在海边离开若蕾和子沐一段距离、独自沉思的时候，若蕾对着子沐表达着自己的心声。<br />
-若蕾虽然挂着微笑，但表情中更多的却是严肃和不愿放弃。<br />
-看到这一切的子沐，自然保持着她原有的意愿，同样微笑着面对着若蕾。<br />
-“姐姐加油。”<br />
-淡淡的一句鼓励，却包含着她对她哥哥的所有爱意。<br />
-“总有一天是要作为那个身份消失的吧”——她的心中是如此想的。<br />
-而这句话的真实性，恐怕也只有她自己知道了。<br />
-“姐姐，喜欢哥哥哪一点呢？”<br />
-话题在子沐这边非常自然得延续了下去。<br />
-但若蕾那一侧却似乎有些踟蹰。<br />
-“说不清楚…”<br />
-对于这个少女而言，她并不知道如何去分析自己的那份心情。<br />
-但或许，也正是因为不能分析，所以才能如此深信不疑。<br />
-“这样就够了呢。”<br />
-子沐的回应并非出于自傲或者不屑，而是真切的心声。<br />
-“因为总有一天，你会明白的吧。”<br />
-明白的那一刻，理由或许也就不那么重要了。<br />
-“嗯。”<br />
-若蕾也仅仅是用简短的言语回复着子沐，表达着她的信念。<br />
-海风中，二人的长发不断摇摆。<br />
-静默了些许，子沐建议若蕾去和寒苍聊聊天，而自己则是留在了原地，继续欣赏着大海的风景。<br />
-虽然，她的目的并不仅仅如此。<br />
-“我的外出让你们困扰了么？”<br />
-子沐没有任何动作，仅仅是视线发生了些许偏移，并用冷淡地语气向着周边的某人发问。<br />
-“属下怎敢对您困扰呢~”<br />
-“花~”<br />
-回应的，是一个不满十岁的小女孩。<br />
-她穿着与年龄相称的连衣裙，也带着可爱的笑容，但语气却与这一切完全不相符。<br />
-在天真的外表下，却是天才和冷静、甚至带着一些残酷的头脑<br />
-——这个代号为“月”的“天使”。<br />
-和其他“天使”严格按照“圣经”的命名规则不同，她的代号完全是按照自己的兴趣创立的，因为她非常清楚这个组织的本质究竟是什么。<br />
-“‘月’，不在你的实验室真是难得。”<br />
-子沐似乎已经习惯了女孩的说话风格，没有加上过多的关心。<br />
-“还是比较喜欢姐姐叫人家‘小琪’啦~”<br />
-和其他的“天使”不同，这个少女完全不在意自己真实的姓名——“杨小琪”。<br />
-对她而言，这些掩盖都没有意义，她仅仅是想通过这个组织达到自己的目的而已。<br />
-“……”<br />
-子沐似乎不愿意继续做过多的回应，沉默地望着大海。<br />
-“啊，惹姐姐讨厌了呢~”<br />
-“不过还是要说一下，那个东西已经快完成了哦~”<br />
-指向大海某一侧的方向，小琪有些得意得说着。<br />
-“是么…”<br />
-子沐这边却完全没有任何波动的意思，仿佛一切都没有关系。<br />
-“什么啊~本来还想让姐姐开心开心的~”<br />
-小琪看似遗憾的表达下，却隐藏着某种无谓和不屑。<br />
-“你们准备用那个东西做什么？”<br />
-终于，子沐还是提出了这个问题。<br />
-“他们的话，是为了寻回自己的话语权吧~”<br />
-“我呢，有趣就好啦~”<br />
-小琪的微笑中掺杂入了一些特别的情感。<br />
-“有趣么…”<br />
-子沐当然是知道对面这个女孩子的想法，也不想做过多的劝告之类的工作。<br />
- “你，相信‘天使’的存在么。”<br />
-但即使如此，她仍然提出了一个问题。<br />
-“真是明知故问啊，我不就是么，天使啊~”<br />
-对方的回应十分迅速和自然。<br />
-但很明显，和子沐想法中的回应并不一致。<br />
-“是么。”<br />
-没有继续话题的意愿，子沐再次沉默。<br />
-……<br />
-另一边，寒苍面对着大海，若蕾则站在了他的身边。<br />
-并不是装什么深沉，而是真正地在思考。<br />
-只不过是这种生活方式不怎么为群体所理解而已。<br />
-与寒苍相同，若蕾也在思考。<br />
-只不过她所思考的，是如何理解寒苍所思考的东西。<br />
-如何将自己所认为的“完全没有意义的思考”变成自己能理解的“有意义的思考”。<br />
-而这种理解的最佳方法，自然是——“交流”。<br />
-只要对方愿意表达一些什么，就一定能够捕捉到什么——尤其是对于已经在意过寒苍很久她而言，这种捕捉带来的信息量可以是巨大的。<br />
-但即使如此，这些信息也总是会重复的。<br />
-所以比起信息的量而言，分析方法才是更加重要的。<br />
-但是，对情感的分析真的是可靠的么？<br />
-不知道，也没有人能够知道。<br />
-所以，她现在能做的，果然还是猜测——这种最为原始的方法。<br />
-但原始又有什么不好呢？<br />
-或许这才是情感最为自然的表现方式吧。<br />
-所以，她走进了寒苍。<br />
-“你个笨蛋！”<br />
-说出了她的心声。<br />
-“哈？”<br />
-沉思中的寒苍被这突然的发言吓到了一般。<br />
-“所以说你这个笨蛋啊！”<br />
-若蕾加重了语气，重复了方才的那一句话。<br />
-“……”<br />
-寒苍开始思考若蕾的动机。<br />
-首先，肯定是为了引起自己的主意。<br />
-其次，由于前面若蕾想自己表过百，所以大概是想说什么自己不懂女孩子的心声之类的。<br />
-接下来，就是想通过这种方式来继续做一些告白之类的狗血工作了。<br />
-然后…<br />
-“别想了，有什么好想的！”<br />
-寒苍的思考被打断了。<br />
-“非要把我的想法和动作完全分解才罢休么！”<br />
-用自己的胳膊夹住了寒苍的脖子，若蕾带有哭腔的声音从近处完全传到了寒苍耳中。<br />
-“……”<br />
-寒苍继续保持者沉默，但已不像方才一样深思。<br />
-大脑一片空白，表面却仍然是方才一样的感觉。<br />
-“明明，明明只要感受就好了啊！”<br />
-若蕾没有改变姿势，但用力明显削减了很多。<br />
-几乎完全就是整个人摊在寒苍身上的样子。<br />
-“没有这么简单吧。”<br />
-寒苍的思考能力终于恢复了一些。<br />
-“我心为钢铁。”<br />
-寒苍开始说起了自己根本不想说出的、潜藏在心中的话。<br />
-“够了！”<br />
-而若蕾则是在制止着——这种话每次的出现都会让她感到心痛。<br />
-“从此，永远孤独。”<br />
-发言。<br />
-“够了啊！”<br />
-制止。<br />
-“本质于我，无从认知。”<br />
-制止无效。<br />
-“……“<br />
-沉默。<br />
-“我为何人，为何放弃。”<br />
-“命定的轨迹，只是纯洁。”<br />
-“真诚，步向死亡。”<br />
-声音无机质化的过程中，似乎要带走仅存的温暖，海风在二人之间穿行。<br />
-“寻找幸福吧。”<br />
-打破沉默的，是子沐的声音。<br />
-“幸福？”<br />
-寒苍的回应是不解的，是真正的不解。<br />
-“这就是我的使命呢。”<br />
-“毕竟，时间已经不多了。”<br />
-子沐望着海上的某处——方才小琪指向的那个地点。<br />
-“子沐…究竟…”<br />
-若蕾的语气中是完全的不解。<br />
-“……”<br />
-寒苍则是在一边沉默着。<br />
-“没什么，该回去了~”<br />
-暮光下，三人离开了海边。<br />
-……<br />
-“姐姐觉得谁会胜利呢~”<br />
-望着三人离去的背影，小琪对着身边的少女说着。<br />
-“不会让你们得逞的。”<br />
-少女“花月夜”用冷峻回应着小琪的微笑。<br />
-“真是无趣和无情啊。”<br />
-戏谑的口吻取代了小琪方才的微笑。<br />
-“无情的是你们才对！”<br />
-夜月现出了怒气。<br />
-“谁知道呢~”<br />
-小琪背对着夜月，离开了海边。<br />
-“……”<br />
-只剩夜月一人。<br />
-【到底…为什么…】<br />
-一直按照上边的指示遵从着命令的她，终于也产生了些许的怀疑。  </p>
-<div id="15"></div>
-
-<hr />
-<p><strong>情景十五</strong>  </p>
-<p>又是看似平和的一天。<br />
-“真无聊啊。”<br />
-名为杨小琪，同时代号为“月”的少女一人走在街道上。<br />
-虽说是同样是“走”，但她的“走”和其他人的“走”是不同的——她是如此认为的。<br />
-她将她的“走”称为“行”。<br />
-“行”是特别的，不是一种动作，而是一种状态。<br />
-这种状态是——前行。<br />
-所以，从这个角度而言，她对子沐撒了谎。<br />
-“对不起了呢~”<br />
-自嘲般的语气中是她对自我不真诚的自责。<br />
-毕竟，实际上她并不是那么一个纯粹为了乐趣而活着的所谓“兴趣主义”。<br />
-她还是在追寻着一些东西的，虽然她并不知道那究竟是什么——或许是彼岸，也或许是天堂。<br />
-当然这也仅仅是她自己所认为的而已。<br />
-她，同样在迷惘。<br />
-“啊~”<br />
-她停了下来，停在了人群中。<br />
-“我，是一个孤独的行者~”<br />
-没有在乎周围人诧异的目光，她说出了这句话。<br />
-语气中半分是玩笑，半分是真诚。<br />
-似乎，在期待这谁的回应。<br />
-一秒。<br />
-两秒。<br />
-三秒。<br />
-短暂的沉默后，人们恢复了原本的行动。<br />
-这是正常的，没有谁会因为一个少女忽然的特别行动去深思，最多，也就是作为茶余饭后的消遣而已。<br />
-小琪也似乎放弃了一样，准备抬起脚步。<br />
-“我无法到达天堂，我只能前行。”<br />
-但是，从不远处却突然传来了一个声音。<br />
-这个声音，她是比较熟悉的。<br />
-无论是作为杨小琪，还是作为“月”，她都是熟悉的。<br />
-所以，她朝着那个方向转过了身——出现在面前的，正是她所猜测的对象。<br />
-随后，露出了绝对纯真的微笑。<br />
-“大哥哥~”<br />
-伴随着与寒苍第一次相遇的口吻，她道出了一句问候。<br />
-“早上好~”<br />
-在寒苍的眼中，她就像一个绝对天真的天使一般——就像是小时候的子沐一样。<br />
-“你在这里做什么？”<br />
-寒苍收回了思索的视线，用平日一样冷淡的语气回应着小琪的问候。<br />
-“大哥哥也真是不礼貌呢~”<br />
-“我所做的，不正是大哥哥所做的么~”<br />
-小琪嘟起了嘴，伴随着些许的戏谑向着寒苍走来，直到二人仅有一步之遥。<br />
-“你觉得我在做什么？”<br />
-寒苍眼神锐利了起来，方才的感觉已然荡然无存。<br />
-“呵呵~”<br />
-小琪没有正面回答寒苍的问题，而是用拉住了寒苍的手。<br />
-“大哥哥有没有想过，我们只是某部小说里的人物而已？”<br />
-接着，说出了在寒苍眼中早已毫无价值的问题。<br />
-“是有怎样，不是又怎样。”<br />
-“无论如何，我们都只是在被推动着强行前行而已。”<br />
-寒苍松开了小琪握着的手。<br />
-“这个小说还真是无聊呢~”<br />
- “是因为话太多了吧，那么不如就仿照那些那些优秀并且的情节紧凑的小说，多一点动作就好~”<br />
-小琪再次握住了寒苍的手，然后吻了一下。<br />
-“你是想拯救这部无聊到无可救药的小说么？”<br />
-寒苍这次没有抵抗，仅仅是注视着而已。<br />
-“为什么不呢？”<br />
-小琪抬起了头，纯真的笑着。  <br />
-“没有必要。”<br />
-“再怎么波澜壮阔的情节的最末，都是无法避免的死亡和寂静。”<br />
-“希望和快乐总是短暂的，永恒的，只有绝望和孤独。”<br />
-“……”<br />
-寒苍走到了一边的座椅上，坐了下去。<br />
-小琪紧随其后，也坐了下来。<br />
-“这个开端，是子沐姐姐么？”<br />
-随后，小琪终于问出了这个问题。<br />
-“三流悲剧吧。”<br />
-寒苍则是自嘲着做出了回答。<br />
-“不一定哦~”<br />
-“说不定这个三流悲剧，正是二流悲剧甚至一流悲剧的引子呢。”<br />
-小琪望着面前不断流动的人群，饶有趣味地说着。<br />
-“那还真是荣幸万分。”<br />
-“一流悲剧的话，喜欢的人应该很多吧。”<br />
-“见证主人公们对抗不公的社会，最后却被社会所吞噬的那种绝望。”<br />
-“将其映射到自己身上，产生共鸣，在内心由衷地对社会进行控诉。”<br />
-“一部分人压力得到发泄，生活一下变得美好了起来。”<br />
-“一部分人陷入太深自杀，变成谈资后被大家所津津乐道，为大家带来了幸福。”<br />
-“多么伟大的创作形式。”<br />
-寒苍说道。<br />
-“大哥哥的这些话又让这个小说变得更无聊了呢~”<br />
-“虽然，仅仅只是和那些作品的侧重点不一样而已。”<br />
-小琪抱住了寒苍的胳膊。<br />
-当然，这也是她所认为的能让小说有趣的一种形式。<br />
-“用现成的API的确比自己造轮子要高效很多。”<br />
- “但如果不是为了单纯的利益，造轮子还是要更有趣一些。”<br />
-寒苍抽出了被小琪抱着的手臂。<br />
-“又是和主线无关的瞎扯呢~”<br />
-小琪也没有任何失望的样子。<br />
-“主线么。”<br />
-寒苍摇头笑了笑。<br />
-“是没什么意思~”<br />
-小琪也跟着附和了一下。<br />
-“下一次见面的时候，我们又是会以怎样的状态呢~”<br />
-接着，站了起来。  <br />
-“和子沐有关么？”<br />
-这段时间发生的事情，让寒苍隐约也察觉到了什么。<br />
-“不告诉你~”<br />
-小琪像是普通的小女孩一眼露出了调皮的笑容，轻轻掀起了裙摆。<br />
-“这可是‘天使’的秘密呢。”<br />
-接着，渐渐离开了寒苍的视线。<br />
-“天使…似乎最近经常听到这个词啊。”<br />
-寒苍也站了起来，继续没有目的得随着人群漫游。  </p>
-<div id="16"></div>
-
-<hr />
-<p><strong>情景十六</strong>  </p>
-<p>“……”<br />
-离开小琪后，寒苍试图寻找一个安静和绝对不会被人打扰的地方。<br />
-如果是在往常的这个时候，他应该是直接回家了才对，但今天不同。<br />
-或许是出于烦闷和内心的某种不解，他需要找一个环境让自己安定下来进行比较详尽的思考和推演。<br />
-要问为什么不选择在家中进行这种思考，原因很简单——他不可能在子沐面前进行这样的思考。<br />
-在子沐面前的他，是一个完美的演员，所谓演员，就是这样的一种以“本性”为伪装，掩饰着自己的其他一切的存在。<br />
-本性，或许不过是习惯而已，只不过是根深蒂固的习惯。<br />
-“就这了。”<br />
-走到了一片无人的小树林。<br />
-烘托出尾夏渐秋的氛围的、绿黄相间的树叶，也正好衬托出了他现在的心境。<br />
-在其中找了个地方，他坐了下来。<br />
-这并不是什么文学作品，不是什么青春文学，所以坐下的地方肯定是肮脏的。<br />
-被蚯蚓轮了不知道多少遍的土壤，在这种土壤中构造着自己的巢穴的蚂蚁，还有捕食这些蚂蚁的蜘蛛，不断在他周围忙碌着。<br />
-偶尔也会有几只蚂蚁爬上他的身体，但随之就被他毫不留情地赶了下去。<br />
-爬上、赶下、爬上、赶下。<br />
-不断重复着这种举动。<br />
-当然这种举动只是他的选择的附属品而已，但即使是附属品，也会或多或少干扰正常的思绪。<br />
-“选错地方了吧…”<br />
-他是如此想的。<br />
-但无论如何，他也找不到另外的合适的地方了。<br />
-这或许也是一种无法调和的矛盾，毕竟十全十美的东西几乎是不存在的——对于一般人而言。<br />
-所以将自己标榜为一般人的他也是如此。<br />
-“所以，来想想吧。”<br />
-他思考了起来。<br />
-“首先，最近举动比较奇怪的几个人物。”<br />
-对任何人而言，“奇怪”这种状态都是有一个阈值的，而对于他，这个阈值低于正常人的平均水平。<br />
-他从来都是一个敏感的人，敏感到连自己内心的些许的“坏想法“都会感到反胃。<br />
-“若蕾。”<br />
-名为叶若蕾的女孩子，是他的发小。<br />
-所谓发小，应当是那种根本不会产生越过友情的关系，当然这个地方专指爱情的存在。<br />
-诚然，无论是发小是否会成为那种情感的对象的“一般通则”，在他看来不过都是只具备统计学意义的东西而已。<br />
-具体人物具体事件具体分析而已。<br />
-说到底爱情不过是一种模糊的概念，难道对彼此非常了解的双方就不能拥有爱情了？还是说会直接越过爱情到达另一种更加深层的关系呢？<br />
-他不了解，不过唯一一点可以确定的是，他对对方越来越不解了。<br />
-同时对方对自己似乎越来越了解了。<br />
-如果这样的情况下爱情成立了，那么毫无疑问就是对一切“爱情定义”的打脸。<br />
-但这种打脸似乎也没什么意义，就算是打脸，又有谁会在乎呢？<br />
-更何况他现在根本不相信自己会产生这种只有在体验中才能感受到的情感，因为，他只是一个演员。<br />
-曾经有个人叫做唐璜，他也是一个演员。<br />
-他表演着什么，不断地寻求着那名为爱的存在。<br />
-他给予和索取，在绝望和荒谬之中舍弃了对虚假的未来的棋盘，享受着每一次演戏的乐趣。<br />
-石头骑士并不能战胜他，但这又怎样呢？<br />
-他是可悲的——寒苍是如此认为的。<br />
-然而对于所谓的悲剧，有这么一个说法——性格悲剧是三流悲剧，环境悲剧是二流悲剧，而社会悲剧，则是一流悲剧。<br />
-但这个说法在他看来并不完备。<br />
-其实最大的悲剧，就是把悲剧当作喜剧。<br />
-所以，他每天都在演出着最大的悲剧。<br />
-以三流悲剧为幌子，客串二流、一流、以及极品的悲剧。<br />
-悲剧究竟是什么已经无所谓了，他每次想到自己和她的关系都会发笑。<br />
-“子沐。”<br />
-过去，他浑然不知这是一个悲剧，所以发出了会心的、由衷的、指向希望和自由的纯粹微笑。<br />
-幸福极了——这是他当年的判断。<br />
-直到那一天的到来，他再也无法发出这样的微笑了。<br />
-然后过了不久，他又笑了起来。<br />
-这次的笑，是一种别致的微笑。<br />
-子沐看到他的微笑，也笑了起来。<br />
-当自我的微笑被剥夺，纯粹成为了他人的微笑时，微笑又成为了什么呢？<br />
-他很清楚，所以他发出了第三次微笑。<br />
-这就是悲剧的微笑。<br />
-而现在，他终于笑不出来了。<br />
-“呵呵。”<br />
-“我，是想改变了么。”<br />
-“还是想逆转呢。”<br />
-从虚无的命运中解脱出来，这绝对不是他所能设想的。<br />
-“夜月。”<br />
-花夜月，一个近乎完美的女孩子。<br />
-一个自称自己有未来视的女孩子。<br />
-他自然不会相信什么未来视，在常识范围内的他是如此考虑的。<br />
-但还存在一个非常识范围内的他。<br />
-人就是这样的东西，无数平面堆积出来的一个立体。<br />
-一方面相信，一方面质疑，每一面都拥有着自己的逻辑。<br />
-说到底，人都是不一致的。<br />
-他讨厌不一致，但实际上这是在嘲讽自己，不过他喜欢嘲讽自己，这又达成了另一种一致。<br />
-“就算有未来视，又如何呢？”<br />
-和他当时所言一样，他认为未来视这种东西在改变不了未来的情况下没有任何价值。<br />
-无非就是给任何悲剧加上了一层命运的意味而已。<br />
-命定论，是最差劲的理论——这是寒苍的观点。<br />
-那么如果这个叫做夜月的少女能够改变未来呢？<br />
-说不定未来就像薛定谔的猫一样，和观测有着很强的关联。<br />
-这么一想，这位少女倒是无时不刻不在改变着未来，但也挺有意思。<br />
-“但是，我看不到你的未来。”——但夜月是这么说的。<br />
-也就是说，对于寒苍本人，是没有什么改变与不改变的。<br />
-就像是三流的垃圾小说一样，作者让他做什么他就要做什么，他只不过是一个祭品，为了取悦观众而设立的一个无所谓的祭品。<br />
-一个无法选择自己身份的演员。<br />
-这时候他又想起了某位哲学家“被抛在世”的言论——我们都是被抛在世的，没有经过我们的同意，父母便将我们抛在这个世界上，并且必然是以这样一种姿态被抛在了这个世界上。<br />
-所以，他又想起了自己的父母。<br />
-“切。”<br />
-然而他立马切断了联想，并转向了另一个少女。<br />
-“小琪。”<br />
-可爱的名字与可爱的外表，但却有着于此并不相称的言论和行为。<br />
-“天使…”<br />
-这个是她所提到的东西，子沐也同样提到过这个东西。<br />
-不过她们二者提到的似乎不是一个东西。<br />
-在小琪看来，似乎这个世界只是为了寻乐而准备的。<br />
-无趣的东西，没有惋惜的价值。<br />
-寒苍并不反对小琪的这个观点，只是本性，不错，只是本性让他无法接受这种观点而已。<br />
-他还是善良的，太善良了，善良到连自己的黑暗面都想杀死。<br />
-然后他很快发现这是做不到的，杀掉暗面，光面也就完蛋了。<br />
-所以无情或许才是唯一的出路——这也就是他的行为理念，当然子沐除外。<br />
-“或许，下一次就全部知道了吧。”<br />
-小琪既然能够撂下那句话，那么她们一定在准备着什么东西，什么事件一定会在某个时刻发生。<br />
-然而这和他没有什么关系，至少现在的他还是这么认为的。<br />
-“结果…什么都没有么。”<br />
-即使用如此长的篇幅去思考，他也没有得到任何的结论。<br />
-唯一能够确信的是，他的周围在发生什么变故，这些变故有些奇怪，并且他并不排斥这些变故。<br />
-那么接下来的做法就十分显然了。<br />
-顺其自然。<br />
-既然无法预测和造成相应的冲击，那么久等待和接受吧。<br />
-此刻，他还不明白。<br />
-少女们正在酝酿着的，是他所无法笑对而使其升华的悲剧——这是悲剧的最后一种形式，永远保持着自身的悲剧。  </p>
-<div id="17"></div>
-
-<hr />
-<p><strong>情景十七</strong> </p>
-<p>“咚咚咚”。<br />
-一个二十出头的青年站着某个诊室的门，不断用某种似乎特殊的节奏对面前紧闭的大门进行着敲击。<br />
-这个诊室在整个医院中是一个非常诡异的存在，虽然名为“心理咨询室”，但却常年不见对病人的接待，所以如果不是对医院历史很了解的人，是不会知道这个地方的。<br />
-也故诊室里面的医生也理所当然带上了一层神秘的面纱，从医院的招聘流程来看，似乎并没有直接进入这个诊室工作或者实习的途径。<br />
-由此，这个青年的行为更加耐人寻味，没人能够理解他是如何知道这个诊室，并且站在这个诊室门口的——绝对不是挂号部门的人让他来的，也不太可能是他的主治医生之类的，所以即便是医院的工作人员，也只是在一定的距离之外用奇怪的眼神看着他。<br />
-但他并没有动摇，而只是继续不断地按照某个节奏敲着门，全然没有离开的打算。<br />
-青年  【......】<br />
-在不知道是除了他之外的何人的沉默中，门被打开了，跟随着打开的门，他很自然地走了进去。<br />
-青年  【你好。】<br />
-青年微笑着，向着面前这个穿着白大褂的女子打了个招呼，这个还带着惺忪睡眼的女子似乎是此间诊室的主人。<br />
-女子    【坐。】<br />
-女子用简短有力的语气回应了青年，随后坐到了青年对面的一个椅子上。<br />
-青年 【嗯。】<br />
-青年随后坐到了女子对面的椅子上。<br />
-女子  【名字？】<br />
-女子虽然摆出了一副疲倦的样子，但双眼却发出了一道锐利的光线，青年毫无疑问捕捉到了它，瞬间对对方的本领做出了真实的判断。<br />
-青年  【戴天宇。】<br />
-这是没有任何掩饰的、真诚的回应。<br />
-女子  【年龄？】<br />
-天宇  【二十二。】<br />
-女子  【目的？】<br />
-天宇  【心理咨询。】<br />
-女子  【咨询什么？】<br />
-天宇  【大学。】<br />
-女子  【哪个大学？】<br />
-天宇  【东南大学。】<br />
-女子  【没听说过。】<br />
-天宇  【这是自然，毕竟...】<br />
-顺畅的对话在这里停住了，天宇似乎想要隐藏些什么。<br />
-天宇  【不，没什么，你知不知道这个大学并不重要，只要知道它是我们这次话题的背景就OK了。】<br />
-他似乎放弃了预先准备的解释。<br />
-月夜  【随你。】<br />
-对方当然看出了天宇在隐藏什么，不过她也没有追究下去的兴趣。<br />
-天宇  【医生的名字，是花月夜吧。】<br />
-天宇  【和令妹的名字只差一个翻转呢。】<br />
-天宇似乎想用人际关系这一个手段来让谈话的环境变得温暖一些。<br />
-月夜  【...你是什么人。】<br />
-和天宇的预期不一样，夜月忽然变得严肃了起来。<br />
-天宇  【不要激动，谈谈话而已。】<br />
-天宇仍然保持着他一贯的微笑，从未变过的表情让人怀疑他是否有情感表现障碍。<br />
-月夜  【...说吧。】<br />
-而对方不知道是否是由于终于理解了天宇的方才的本意，态度缓和了下来。<br />
-天宇  【好。】<br />
-天宇开始诉说。<br />
-天宇  【我是在2011年八月份入学的。】<br />
-天宇  【依稀记得那是一个盛夏，但又似乎不是，总之无论如何，我的大学生活就是从那个时候开始的。】<br />
-天宇  【我从小就是一个非常自大的高傲的孩子，所以即使以前接受教育的省份导致的我在这个学校这个专业成绩倒数第一的事实摆在了面前，我也想当然的将自己预设在了一个极为优秀的地位。】<br />
-天宇  【现在想想，还真是年轻啊。】<br />
-天宇一边道说一边感慨着什么。<br />
-月夜  【怎么，又是所谓成长了就否定了自己过去的那一套烂大街的东西么。】<br />
-月夜的口吻中传递出了一丝不屑。<br />
-天宇  【你这可不像是心理医生说的话啊哈哈。】<br />
-但天宇并没有由于对方的语气而让情绪发生了什么变化。<br />
-天宇  【首先是军训，这个大学的军训为时一个月，作为进入大学后的第一门课，它着实给我了一个下马威。】<br />
-天宇  【对于我这么一个要面子但能力又不足的人而言，军训就是无尽的打脸堆积起来的血泪史吧笑。】<br />
-天宇  【不过那时候虽然每天都承受着身体上的痛苦，但精神上还是很不错的，不知道是由于什么原因，在那个过程中的我居然对教官产生了强烈的好感。】<br />
-天宇  【仔细想来，我被教官折磨，但有时候又被他给与了一些甜头，这样一来二去所形成的关系还真有点斯德哥尔摩症候群的意思。】<br />
-天宇露出了苦笑。<br />
-月夜  【所以你是对那个时候的行为和状态感到后怕了么。】<br />
-月夜似乎并不想听这些东西，所以只是用一般反问句进行了草率的敷衍。<br />
-天宇  【谁知道呢，过去的事情都过去了。而且反正当时实际的生活并没有受到什么威胁，所以最多也就算一个调剂而已吧。】<br />
-天宇  【不过想想，这个调剂和后面一年的大一生活比起来，还真是五彩斑斓啊。】<br />
-天宇停止了军训的话题，进入了下一个阶段。<br />
-月夜  【哦？你的大一生活很无趣么。】<br />
-天宇  【比起无趣，更应该说堕落？吧。】<br />
-天宇  【几乎完全放弃了学业，试图加入学生会和社团的失败，以及在某些东西上面的败家。】<br />
-天宇  【想来其实这个学校还是有点意思的，不说学生会，社团还是很丰富的，比如我想要申请的某话剧社就很不错。】<br />
-天宇  【可惜对方拒绝了我，当时我还觉得信心满满呢，虽然三年后才知道当时只是因为他们不想要我这个性格的人了而已。】<br />
-月夜  【你感到遗憾么？】<br />
-天宇  【遗憾？其实我并不知道遗憾是什么概念，也没有过什么直接的感受。】<br />
-月夜  【就是说，“如果当时我做出了另一种选择会...”，这样的想法。】<br />
-天宇  【不能说没有，但现在也没有什么特别的感觉了，毕竟时间可以冲淡一切嘛。】<br />
-月夜  【你说的没错，但你不是应该去加了动漫社才对么。】<br />
-月夜看着天宇穿的T恤。<br />
-天宇  【我的确很喜欢ACG，不过那帮人太low了www好吧其实只是大家的主要关注点不一样而已。】<br />
-天宇  【不过我的确加过一年的动漫社，这也是我整个大学最重要的选择之一，因为在其中一个名为‘里社’的部门中，我遇到了或许是一生中最重要的人之一。】<br />
-天宇试图更进一步，将话题引入下一个阶段。<br />
-月夜  【关于“某些东西的败家”你还没有论述。】<br />
-月夜大概是不想放弃任何一点细节，这或许就是她作为心理医生的职业精神吧。<br />
-天宇  【哦，那个东西啊。】<br />
-天宇  【当时很痛苦吧，可以支持的是有限的，而想要获取的和可疑支出的差距又是比较大的，而我这样的性格又是对某个自己很想了解的东西难以轻易罢休的，所以就导致了某种悲剧。】<br />
-天宇  【这算是性格悲剧中夹杂着一点环境悲剧吧。】<br />
-月夜  【哦，继续下一个话题吧。】<br />
-月夜似乎对这种单纯而愚蠢的行为没什么兴趣。<br />
-天宇  【只获取自己感兴趣的信息的心理医生，真是敬业呢。】<br />
-月夜  【反讽就免了，大家都很忙尽量说重点。】<br />
-天宇  【是么，那么我就说重点吧。】<br />
-天宇拿起了不知何时放置在旁边的水，喝了两口。<br />
-天宇  【我在动漫社认识了一个没有加入动漫社的学姐，在大一的暑假和她出去玩了几天聊了很多，然后我把高中写的游戏设定拿了出来进行完善，在之后的学期中我开始好好学习并且申请了一个SRTP项目，在另一个很重要的人、我的某个舍友的帮助下，花了两年时间学习了很多东西并完成了第一版本的剧本和SRTP，但成绩一直不高，但我还是找到了一份自己想要方向的工作，然后我开始做毕设，学校要求有一个对大学生活总结的论文，于是我就来到了这里，我来到这里的原因就是这个，所以我认为...】<br />
-月夜  【你是故意的么。】<br />
-月夜打断了天宇连绵不断的发言，但虽说是带着冷峻的口吻，面部却出现了些许的笑意。<br />
-天宇  【算是吧，不过也达成效果了不是么，语境已经基本构造完毕了。】<br />
-天宇  【对方没有投入的对话，缺少了几分诗意。】<br />
-月夜  【想在日常对话中找诗意的人，大脑构造没问题么？】<br />
-天宇  【所以我写不好日常哈哈哈。】<br />
-月夜  【自嘲是一种好方法，因为它是对别人的嘲讽最好的还击。】<br />
-天宇  【但是没有必要用在这里是吧。】<br />
-天宇望着月夜的眼睛，月夜会心一笑。<br />
-天宇  【其实我也不知道我要咨询些什么，也不知道为什么学校让写这篇论文我就要来这里咨询，或许是和加缪所言的荒诞，也或许是决定论所言的必然，这都无所谓。】<br />
-天宇  【最重要的是，我已经在这里了，所以总不能让这次对话烂尾吧。】<br />
-月夜  【你说的没错，但这种为了对话而对话的行为可不怎么入流。】<br />
-天宇  【我反而觉得这是最入流的啊，为了对话而对话，就是最大的耗散嘛。】<br />
-月夜  【就算是耗散，也要是有趣的耗散吧，有趣的耗散，总的有些有趣的内容。】<br />
-天宇  【那么就说说这学校吧。】<br />
-月夜  【说。】<br />
-天宇  【这学校的确不错，虽然比不上TOP10啥的，但好歹也是个985+211的中上，校园生活很丰富，人文活动众多，学生培养也很不错，比如我一个人就可以申请到一个一万经费的项目。】<br />
-天宇  【如果能够妥善利用，对于学生无疑是有极大好处的。】<br />
-月夜  【你利用了几成？】<br />
-天宇  【五成？谁知道呢，除了项目之外，其他资源利用的很少吧。】<br />
-天宇  【非要说，大三的某个哲学选修课让我受益匪浅，也对我影响颇深。】<br />
-月夜  【一个工科生去选哲学课，目的呢？】<br />
-天宇  【对于我而言，很多事情一开始都是为了装逼，但最后坚持下来的基本都会形成一种奇怪的冲动。】<br />
-天宇  【人总是会在习惯中忘记了一个习惯的初始动机，然而这个动机对于养成了习惯的人也不怎么重要了。】<br />
-月夜  【不错，所以你达到了怎样的水平？】<br />
-天宇  【不入流吧，啊哈哈...】<br />
-天宇尴尬地笑了起来。<br />
-天宇  【对于我这个只会看观点的人，永远都入不了哲学的门，我现在看着当时写的那个论文就会有这样的感想。】<br />
-月夜  【你还写过论文？】<br />
-天宇  【当时一个星期写了五万字，可以在这里找到<a href="http://dtysky.moe/articles/zhong-gu-xu-wu-zai-gou.html">重估，虚无，再构</a>，不要吐槽我写给谁看的。】<br />
-月夜  【没什么好吐槽的，无关紧要的东西而已，我比较在意你写的是怎样的内容？】<br />
-天宇  【一个很宏大框架的糟糕实现。】<br />
-月夜  【也就是没有了解的价值么？】<br />
-天宇  【对于观者而言没什么价值吧，不过对于我自身还是很有价值的。】<br />
-天宇  【直接让我从原来的左派转到了虚无主义，从而为转向自由主义立下了根本。】<br />
-天宇  【从此我成了一个消极而悲观的人。】<br />
-月夜  【我这里可看不出来。】<br />
-天宇  【悲剧的最终形式就是，将自己的生活演绎成看起来像喜剧的悲剧。】<br />
-月夜  【所以你认为自己是可悲的？】<br />
-天宇  【我认为你也是可悲的。】<br />
-月夜  【哦？】<br />
-天宇的发言进一步引起了月夜的兴趣。<br />
-月夜  【你觉得我哪一点可悲呢？】<br />
-天宇  【在这之前，让我先说一下对东南大学的建议吧。】<br />
-天宇  【希望老校区的宿舍能够重建，或者让学弟学妹们能够大四不搬。】<br />
-天宇  【其他的，也没有什么特别的感想了，我也不想说什么假大空的东西。】<br />
-月夜  【虽然不怎么了解，但我觉得你这个唯一的愿望的可行性已经足够假大空了。】<br />
-天宇  【也是，哈哈哈。】<br />
-天宇  【那么。】<br />
-天宇忽然站了起来。<br />
-月夜  【？】<br />
-月夜则是突然被这个举动吓了一跳。<br />
-天宇  【让我来说说，你为什么是一个悲剧吧。】<br />
-天宇  【这个世界，是我所创造的世界。】<br />
-天宇  【而你，则是我由于一个很小的理由临时创造的人物。】<br />
-天宇  【这个理由，就是这场对话。】<br />
-天宇  【所以虽然你有这花夜月的姐姐这个设定，但却没有任何实质性的和花夜月交互的经验，因为我还没有添加进去。】<br />
-月夜  【......】<br />
-虽然月夜想把这些话都当做一个神经病的自言自语，但对方真诚的态度却似乎让她难以这么去想。<br />
-天宇  【也就是说，我正在通过我在这个世界的投影和你交互。】<br />
-天宇  【你有想过为什么你的发言都这么简短吗？这并不是由于你的本性冷冰冰的和沉默，而是由于我不想为了这个无聊的对话而想更多的台词，因为你只是构建这个语境的工具而已。】<br />
-月夜  【......】<br />
-天宇  【怎么，这个“你是个悲剧”的理由算不算充分呢？】<br />
-天宇俯视着坐在他对面的月夜，虽然还是一样微笑的表情，却带上了几分嘲讽的态度。<br />
-月夜  【不...不是这样的！我才不是你所创造的！我能分析，分析出来你的行为和动机，以及你的症状！】<br />
-月夜  【你在大学充满了悔意，无论是浪费了大一最佳的学习时机，还是没有放下自己那无聊的态度去做更多和年龄相衬的事情去享受青春，还是没有突破自己的惰性去为自己选择一个更好的进修的未来。】<br />
-月夜  【你一直在恨着，恨着学校没有给你这种类型的人才一个机会，恨它只会以成绩定人，甚至恨周围没有你努力的人凭借考试突击最终拥有了比你更好的机会！你...】<br />
-天宇  【够了。】<br />
-天宇打断了月夜那近似于歇斯底里的发泄。<br />
-天宇  【如果你不是我创造出来的，又怎么会了解我所没有表述出来的事实呢？】<br />
-月夜  【......】<br />
-月夜哑口无言，因为她的确是不知道为什么大脑中会冒出这些经验。<br />
-天宇  【不过，即便是我创造了你，又如何呢。】<br />
-天宇收起了戏谑，转而用着十分温柔的语气。<br />
-天宇  【我只不过是一个废柴的神，是一个不敢轻易赋予自己随机造物死亡的垃圾神而已，所以你是不会消失的。】<br />
-天宇  【这样一想我是不是你的创造者都没有关系了吧。】<br />
-月夜  【无法掌控的承诺没有...】<br />
-天宇  【需要一个理由么？】<br />
-月夜  【......】<br />
-天宇  【夜月，需要人去拯救。】<br />
-天宇  【但只凭他一个人，是不够的。】<br />
-月夜  【他...】<br />
-月夜脑海中浮现出了某个少年。<br />
-天宇  【那么，就交给你了。】<br />
-天宇  【这次谈话，就到此为止吧。】<br />
-天宇打开了诊室的门，准备为这次对话画上一个句号。<br />
-天宇  【不知道上面会不会接受呢，这篇名为“我的大学生活”的论文。】<br />
-这是他最后的自言自语。  </p>
-<div id="18"></div>
-
-<hr />
-<p><strong>情景十八</strong>  </p>
-<p>她站在门口，犹豫了一下。<br />
-此刻的她终于意识到——即便是只有妹妹，她也毕竟是一个有家庭的女人，而不是少女了。<br />
-要说为什么——<br />
-“姐姐？”<br />
-从身后传来了一个比她小十岁左右的女孩子的声音，这个声音显得并不是那么温柔，但她还是能够感受到其中掺杂的那种暖意。<br />
-“放学了啊。”<br />
-她收敛起了若有所思的表情，迅速换上了和工作时完全不同、和那个少年交谈时完全不同、和“月”交谈时完全不同的表情——在这种表情下，她就像是一个普通的温柔大姐姐，或者从另一种角度来讲，就像是一个无聊的中年人一样。<br />
-“嗯，今天没什么事。”<br />
-当然，这种对话一部分的原因只是对话发生在楼道里而已。<br />
-“那么就想想晚上吃什么吧。”<br />
-她转过了身，打开了门，走了进去。<br />
-“嗯。”<br />
-紧接着，妹妹——花夜月也走了进去。<br />
-【砰！】<br />
-伴随着有力的这一声，门关上了。<br />
-房间并不大，如果平均一下的话，大约是四叠半吧——这并不意味着房间总共有九叠，而是说从心灵的角度而言，每人大概可以占据四叠半。<br />
-“......”<br />
-“......”<br />
-二人站在房中，沉默了稍许。<br />
-“那个...姐姐，今晚吃什么？”<br />
-和一般人所构想的两个少女所居住的粉色系房间不同，她们所住的屋子是严肃的——由石灰和瓷砖构成的纯粹的白色从地面一直蔓延到了天花板、进一步溢出了窗外。<br />
-虽然姐姐还保有着那种温柔的表情，但显然已经打了个折扣，妹妹也沉默了许多，这种状况即便是在平常也是不多见的。<br />
-“嗯，就青椒肉丝面吧。”<br />
-说着，姐姐打开了冰箱，从中拿出了肉准备化冻。<br />
-“嗯，那我先去完成作业了。”<br />
-像是完美的一般家庭一样，二人看起来没什么特别的地方。<br />
-要说唯一的特别，也就是这个家庭并不存在着“父母”这种角色吧。<br />
-“......”<br />
-姐姐做起了饭，同时回想起了方才和那个说着自己是上帝的少年的对话，以及之后在路上遇到的“月”的交谈。<br />
-（回想）<br />
-“哟，大姐姐~啊不，应该说是阿姨吧~”<br />
-在从医院回家的道路上，月夜被侧面传来的某个以幼女的姿态呈现的声音叫停了。<br />
-“是你...”<br />
-月夜慵懒的身体一下子警觉了起来，紧紧盯着面前的这个看起来只有十岁左右的女孩子。<br />
-“你有什么目的。”<br />
-紧接着便是一句直截了当的质问，这也非常符合她的风格。<br />
-“你对刚才的那位大哥哥可没有这么上心和这么凶呢~”<br />
-“不过，你们姐妹还真是像呢~”<br />
-这个叫做小琪的女孩子纯真地笑了笑，露出了两排洁白的牙齿。<br />
-“...他果然是你们那边的人么。”<br />
-月夜若有所思。<br />
-“不是哦，再怎么说我们也不可能让神大人下水啊~”<br />
-小琪十分果断地否定了月夜的猜测。<br />
-“你们不正是打着神的旗号做着那些肮脏的计划么？”<br />
-虽然带着点责难的语气，但却听不出一丝的愤怒。<br />
-“不要这样嘛，反正大家都只是想拯救世界——”<br />
-“当然，顺带着可能会毁灭世界而已~”<br />
-小琪将手中的雪糕拆开，用舌头舔了舔。<br />
-“一边吃着这玩意一边拯救毁灭世界，真是punk。”<br />
-和夜月不同，即便是对方如此的发言也没有引起月夜太大的情绪波动。<br />
-“姐姐要不要来一口~？”<br />
-小琪垫了垫脚，试图将雪糕递到月夜的嘴旁。<br />
-“没兴趣。”<br />
-果断的拒绝。<br />
-“嘛...毕竟我只是对这个世界绝望了而已。”<br />
-小琪收回了雪糕，又舔了一口。<br />
-“不错，我和你们不同，我对这个世界已经失望了。”<br />
-月夜稍微恢复了一点无精打采，试图快点结束话题。<br />
-“不过，和‘绝望’的悲壮不同，你们的‘失望’才是真正能够毁灭世界的东西啊。”<br />
-“毕竟那可是能够把‘赞扬’变成‘嘲讽’的神奇力量呢。”<br />
-一滴融化的雪糕滴到了地面之后，小琪不再去舔，而是咬了起来。<br />
-“你不会懂得，即便拥有那种才能、年纪轻轻就到了那种位置，你也不会体会到养家的感受。”<br />
-月夜的语气中吐露出了一些不屑。<br />
-“我对什么拯救毁灭没有兴趣，只是他们给出的酬劳能够让我和妹妹活的不错，所以我只需要尽职，仅此而已。”<br />
-似乎已经完全失去了兴趣，月夜转过身准备离开。<br />
-“你的妹妹可不是这么想的哦，毕竟她可不是什么无聊的中年人~”<br />
-看来继续吃着雪糕的小琪并不想让月夜这么早就离开。<br />
-“......”
-月夜犹豫了一下。<br />
-“即便如你，也想去满足家人的愿望不是么。”<br />
-随后发出了反击。<br />
-“是呢，我还是有着凡人的一面啊~”<br />
-那瓶液体并不是属于天上的“圣水”，而是货真价实的“药物”。<br />
-“不过这并不能说明什么，毕竟‘方舟’里的名单并没有他们的样子~”<br />
-小琪尽量让语气显得残酷而戏谑。<br />
-“不是因为你觉得以凡人之躯死去更加幸福而已么。”<br />
-然而这并不能骗过月夜，毕竟她至少的确是一个心理医生，是经过正规教育的。<br />
-“撒，谁知道呢~”<br />
-这次换小琪转身准备离去。<br />
-“这种谈话也没什么意思了，说不定只是神大人在无聊的时候编造出的呓语而已。”<br />
-“似乎很久没有说话的呢~”<br />
-渐行渐远的声音中有一些不满的调调。<br />
-“......”<br />
-望着小琪的背影，月夜似乎回忆了什么。<br />
-（回忆结束）<br />
-“姐姐！”<br />
-“嗯？”<br />
-妹妹的大喊吧月夜的思绪拉了回来。<br />
-“啊！”<br />
-望了眼锅里，妹妹着急大喊的理由完全清晰了起来——锅里的汤汁快烧干了。<br />
-“去。”<br />
-向锅里又加了一勺水，月夜开始下起了面。<br />
-“姐姐你今天怎么了？感觉不太对啊。”<br />
-夜月关切地询问了起来。<br />
-“我在你这么大的时候，一直有两个愿望。”<br />
-月夜一边将面放到烧热的水中，一边说着。<br />
-“第一，不要成为一个无聊的中年人。”<br />
-“第二，无论年龄多大，都不要挡道下一代的道路。”<br />
-下完了面，月夜望向了妹妹的眼睛，正了正色。<br />
-“如果你有自己的想法，不用顾忌我，想如何就如何吧。”<br />
-“我会想办法解决我们的生存问题的。”<br />
-“......”
-意识到自己说的有些直白了，她连闭上了嘴。<br />
-“姐姐...”<br />
-二人尴尬得面对面站着，直到面和菜都完全煮好了。<br />
-“先吃饭吧。”<br />
-对于姐妹二人而言，在生存问题之前，其它所有都要让步，至少现在是如此。<br />
-“味道不错，还好刚才发现的及时。”<br />
-“嗯。”<br />
-没有什么比味道不错的食物更好了。<br />
-即便这种“食物”并不是物质。</p></description>
-<dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">命月天宇</dc:creator>
-<pubDate>Saturday, 17 Oct 2015 23:00:00 -00:00</pubDate>
-<guid>tag:http://dtysky.moe,2015.10.17 23:00:article/Art-花</guid>
-<category>小说</category>
-<category>原创</category>
-<category>花</category>
+<h1>感谢</h1>
+<p>仿真图像来源：
+<a href="http://www.pixiv.net/member_illust.php?mode=medium&amp;illust_id=49603329">041-マツムシソウ</a></p>
+<script type="text/javascript" src="http://src.dtysky.moe/MathJax/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></description>
+<dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">dtysky</dc:creator>
+<pubDate>Saturday, 30 May 2015 00:30:00 -00:00</pubDate>
+<guid>tag:http://dtysky.moe,2015.05.30 00:30:article/Life-test</guid>
+<category>FPGA</category>
+<category>FPGA-Imaging-Library</category>
+<category>图像处理</category>
+<category>几何变换</category>
+<category>旋转</category>
 </item>
 
 </channel>

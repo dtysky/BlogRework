@@ -6,11 +6,17 @@
 var React = require('react/addons');
 var Link = require('react-router').Link;
 var config = require('./utils').config;
+var links = config.links;
 var theme_color = config.theme_color;
 
 require('./theme/css/sky.css');
 
 module.exports = React.createClass({
+    getInitialState: function(){
+        return {
+            links_is_open: false
+        };
+    },
     changeThemeRequire: function(info){
         this.props.changeTheme(info, true);
     },
@@ -19,6 +25,16 @@ module.exports = React.createClass({
     },
     setDefaultTheme: function(info){
         this.props.setDefaultTheme(info);
+    },
+    showLinks: function(){
+        this.setState({
+            links_is_open: true
+        });
+    },
+    hideLinks: function(){
+        this.setState({
+            links_is_open: false
+        });
     },
     componentDidUpdate: function(){
         document.getElementsByClassName("home-menu")[0].style.backgroundColor = theme_color[this.props.theme_info];
@@ -73,11 +89,50 @@ module.exports = React.createClass({
                 <div className="home-menu-hr2"></div>
                 <p className="home-menu-links-p">Links</p>
                 <div className="home-menu-links">
-                    <Link id="home-menu-proj" to="http://proj.dtysky.moe" target="_blank">Projects</Link>
-                    <button id="home-menu-friend" onclick="$.actLinks('show')">Friends</button>
+                    <a
+                        id="home-menu-proj"
+                        href="http://proj.dtysky.moe"
+                        target="_blank"
+                    >
+                        Projects
+                    </a>
+                    <button
+                        id="home-menu-friend"
+                        onClick={this.showLinks}
+                    >
+                        Friends
+                    </button>
                 </div>
                 <div className="home-menu-hr3"></div>
                 <p className="home-menu-end">这是一个孤独行者的轨迹。</p>
+                <div
+                    id="home-links"
+                    style={{
+                        top: this.state.links_is_open ? 0 : -400,
+                        backgroundColor: theme_color[this.props.theme_info]
+                    }}
+                >
+                    <ul>
+                        {
+                            links.map(function(item){
+                                return (
+                                    <li><a
+                                        target="_blank"
+                                        href={item.url}
+                                        className="thank"
+                                    >
+                                        {item.name}
+                                    </a></li>
+                                );
+                            })
+                        }
+                        <li><button
+                            onClick={this.hideLinks}
+                        >
+                            Hide Links
+                        </button></li>
+                    </ul>
+                </div>
             </div>
         );
     }
