@@ -116,7 +116,7 @@ class Logger(object):
             self._file = open(
                 "%s/%s.log" %
                 (self._log_dir_path, now),
-                "w"
+                "a"
             )
 
     def _log(self, message, color):

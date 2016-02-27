@@ -20,8 +20,11 @@ Veloctiy-react
 React-modal  
 Rrcode.react  
 React-helmet  
-Express.js   
 Jquery  
+
+## Dependencies-server
+Express.js  
+Tracer  
 
 ### Dependencies-dev
 
