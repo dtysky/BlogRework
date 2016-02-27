@@ -15,7 +15,7 @@ from markdown_parser import MarkdownParser
 from meta_parsers import MetaDataParser
 from utils import get_all_classes
 from utils import logger
-from setting import setting
+from config import config
 
 
 class Parser(object):
@@ -51,7 +51,7 @@ class Parser(object):
                 self._error("Can not find the parser '%s' !" % key)
             tmp[key] = self._meta_parsers[key].parse(value)
         if "authors" not in tmp:
-            tmp["authors"] = setting["default_authors"]
+            tmp["authors"] = config["default_authors"]
         for meta_name, meta_obj in self._meta_parsers.items():
             if meta_obj.is_necessary() and meta_name not in tmp:
                 self._error("Meta '%s' is necessary !" % meta_name)
@@ -62,7 +62,7 @@ class Parser(object):
         logger.info("Parsing start: %s" % file_path)
 
         self._file_path = file_path
-        with open("%s/%s" % (setting["content_path"], file_path)) as f:
+        with open("%s/%s" % (config["content_path"], file_path)) as f:
             text = f.read()
 
         result = self._split_meta_and_content(text)

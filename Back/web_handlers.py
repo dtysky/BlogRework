@@ -13,7 +13,7 @@ from flask.views import View
 from json import dumps as to_json
 from utils import convert_to_underline
 from utils import logger
-from setting import setting
+from config import config
 from flask import Response
 
 
@@ -231,7 +231,7 @@ class SitemapHandler(WebHandler):
         return None
 
     def _find_data(self, parameters):
-        with open(setting["sitemap_path"]) as f:
+        with open(config["sitemap_path"]) as f:
             result = f.read()
         return result
 
@@ -253,14 +253,14 @@ class FeedsHandler(WebHandler):
     def _find_data(self, parameters):
         import json
         with open(
-                "%s/indexes.json" % setting["feeds_dir_path"]
+                "%s/indexes.json" % config["feeds_dir_path"]
         ) as f:
             indexes = json.load(f)
         if parameters not in indexes:
             return None
         with open(
             "%s/%s" % (
-                        setting["feeds_dir_path"],
+                        config["feeds_dir_path"],
                         indexes[parameters]
                 )
         ) as f:

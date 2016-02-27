@@ -3,7 +3,7 @@
  * Created by dtysky on 16/2/3.
  */
 
-var React = require('react/addons');
+var React = require('react');
 var APlayer = require('./aplayer/aplayer');
 var config = require('./utils').config;
 var theme_color = config.theme_color;

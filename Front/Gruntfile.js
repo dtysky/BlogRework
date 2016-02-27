@@ -82,15 +82,29 @@ module.exports = function (grunt) {
                     {
                         flatten: true,
                         expand: true,
-                        src: ['<%= pkg.src %>/*'],
-                        dest: '<%= pkg.dist %>/',
+                        src: ['<%= pkg.src %>/theme/image/*'],
+                        dest: '<%= pkg.dist %>/theme/image/',
                         filter: 'isFile'
                     },
                     {
                         flatten: true,
                         expand: true,
-                        src: ['<%= pkg.src %>/images/*'],
-                        dest: '<%= pkg.dist %>/images/'
+                        src: [
+                            '<%= pkg.src %>/index.html',
+                            '<%= pkg.src %>/config.js'
+                        ],
+                        dest: '<%= pkg.dist %>/',
+                        filter: 'isFile'
+                    }
+                ]
+            },
+            compress: {
+                files: [
+                    {
+                        flatten: true,
+                        expand: true,
+                        src: ['<%= pkg.dist %>/assets/tmp/*'],
+                        dest: '<%= pkg.dist %>/assets/'
                     }
                 ]
             }
@@ -104,8 +118,32 @@ module.exports = function (grunt) {
                         '<%= pkg.dist %>'
                     ]
                 }]
+            },
+            compress: {
+                files: [{
+                    dot: true,
+                    src: [
+                        '<%= pkg.dist %>/assets/tmp'
+                    ]
+                }]
+            }
+        },
+
+        compress: {
+            main: {
+                cwd: '<%= pkg.dist %>/assets/',
+                options: {
+                    mode: 'gzip'
+                },
+                expand: true,
+                src: [
+                    '*.js',
+                    '*.css'
+                ],
+                dest: '<%= pkg.dist %>/assets/tmp'
             }
         }
+
     });
 
     grunt.registerTask('server', function (target) {
@@ -121,7 +159,9 @@ module.exports = function (grunt) {
 
     //grunt.registerTask('test', ['karma']);
 
-    grunt.registerTask('build', ['clean', 'copy', 'webpack']);
+    grunt.registerTask('debug', ['webpack-dev-server']);
+
+    grunt.registerTask('build', ['clean:dist', 'webpack', 'copy:dist', 'compress', 'copy:compress', 'clean:compress']);
 
     grunt.registerTask('default', []);
 };

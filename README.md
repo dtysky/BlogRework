@@ -23,6 +23,11 @@ React-helmet
 Express.js   
 Jquery  
 
+### Dependencies-dev
+
+Grunt  
+Webpack  
+
 ### Adaptation
 
 APlayer

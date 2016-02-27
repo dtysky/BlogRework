@@ -6,10 +6,10 @@ Settings.
 
 __author__ = "Tianyu Dai (dtysky)"
 __email__ = "dtysky@outlook.com"
-__name__ = "MarkdownParser"
+__name__ = "Config"
 
 
-setting = {
+config = {
     "server_ip": "localhost",
     "server_port": 4444,
     "default_authors": ["dtysky"],

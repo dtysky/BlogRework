@@ -16,7 +16,7 @@ __name__ = "FeedsGenerator"
 import json
 from datetime import datetime
 from utils import logger
-from setting import setting
+from config import config
 from utils import format_date
 
 
@@ -63,7 +63,7 @@ class FeedsGenerator(object):
         result = template["content"].format(
             article["title"]["view"],
             "%s/article/%s" % (
-                setting["site_url"],
+                config["site_url"],
                 article["title"]["slug"]
             ),
             article["content"],
@@ -79,7 +79,7 @@ class FeedsGenerator(object):
                 datetime.strptime(article["date"], "%Y.%m.%d %H:%M"),
                 "feeds"
             ),
-            setting["site_url"],
+            config["site_url"],
             article["date"],
             "article/%s" % article["title"]["slug"],
             "".join(
@@ -112,18 +112,18 @@ class FeedsGenerator(object):
             name, view = name_pair["slug"], name_pair["view"]
             if name not in self._files:
                 file_name = "%s/%s.rss.xml" % (
-                        setting["feeds_dir_path"],
-                        name
+                    config["feeds_dir_path"],
+                    name
                     )
                 self._files[name] = open(file_name, "w")
                 self._files[name].write(
                     template["begin"].format(
-                        setting["site_title"],
-                        setting["site_url"],
-                        setting["site_description"],
+                        config["site_title"],
+                        config["site_url"],
+                        config["site_description"],
                         "%s/%s/%s" % (
-                            setting["site_url"],
-                            setting["feeds_slug"],
+                            config["site_url"],
+                            config["feeds_slug"],
                             file_name
                         ),
                         time
@@ -151,7 +151,7 @@ class FeedsGenerator(object):
             logger.info("Feeds: Done %s..." % file_name)
         with open(
             "%s/%s" % (
-                    setting["feeds_dir_path"],
+                        config["feeds_dir_path"],
                     "indexes.json"
                 ),
             "w"

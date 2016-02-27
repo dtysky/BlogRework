@@ -6,7 +6,7 @@
 require('velocity-animate');
 require('velocity-animate/velocity.ui');
 
-var React = require('react/addons');
+var React = require('react');
 var VelocityComponent = require('velocity-react').VelocityComponent;
 var velocityHelpers = require('velocity-react').velocityHelpers;
 var Link = require('react-router').Link;
@@ -46,13 +46,13 @@ module.exports = React.createClass({
     },
     componentDidUpdate: function(){
         this.theme_now = this.props.theme_info;
-        //Hack!!!!!(reason: Homepage mixins with content_list...)
-        console.log("did update");
+        //////////////////////////////Warning!!!////////////////////////////////////
+        //Hack!!!!!(reason: Homepage is based on mixin "content_list"...)
         var elements = document.getElementsByClassName("home-article-sphr");
         for(var i=0; i<elements.length; i++){
-            console.log(this.props.theme_info);
             elements[i].style.backgroundColor = theme_color[this.props.theme_info];
         }
+        //////////////////////////////Warning!!!////////////////////////////////////
     },
     onWindowResize: function(){
         this.setState({
@@ -64,11 +64,12 @@ module.exports = React.createClass({
         var title = this.cp_list.filter(function(item){
             return item.theme === self.props.theme_info ? item : null;
         })[0];
+        var span = title === undefined ? undefined : $("#" + title.id).find("span");
         return velocityHelpers.registerEffect({
             defaultDuration: animation_default_duration,
             calls:[
                 [
-                    title === undefined ?
+                    span === undefined ?
                     {
                         opacity: 0
                     }
@@ -76,8 +77,8 @@ module.exports = React.createClass({
                     {
                         opacity: 1,
                         backgroundColor: theme_color[title.theme],
-                        marginLeft: $("#" + title.id).find("span").offset().left - $("#home-main-title-bar").offset().left - 10,
-                        width: $("#" + title.id).find("span").width() + 20
+                        marginLeft: span.offset().left - $("#home-main-title-bar").offset().left - 10,
+                        width: span.width() + 20
                     },
                     1,
                     {

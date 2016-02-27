@@ -4,7 +4,7 @@
  */
 
 
-var React = require('react/addons');
+var React = require('react');
 var ContentList = require('./content_list');
 
 require('./theme/css/sky.css');

@@ -11,7 +11,7 @@ __name__ = "Utils"
 import os
 from os.path import splitext
 from datetime import datetime
-from setting import setting
+from config import config
 
 
 def convert_to_underline(name):
@@ -147,4 +147,4 @@ class Logger(object):
         )
 
 # Singleton
-logger = Logger(setting["log_path"])
+logger = Logger(config["log_path"])

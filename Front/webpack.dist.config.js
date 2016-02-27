@@ -8,35 +8,39 @@
 
 var webpack = require('webpack');
 var path = require('path');
-
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-
+var srcPath = path.join(__dirname, 'src');
     
 module.exports = {
 
     output: {
         publicPath: '/assets/',
         path: 'dist/assets/',
-        filename: 'index.js'
+        filename: 'bundle.js'
     },
 
     debug: false,
-    entry: 'index.tsx',
+    entry: 'index.js',
 
     stats: {
         colors: true,
         reasons: true
     },
 
-    devtool: 'source-map',
+    devtool: false,
 
     resolve: {
-      root:[path.join(__dirname,"bower_components")],
-      extensions: ['.ts', '.js', '.tsx'],
-      alias: {
-          'styles': __dirname + '/src/styles',
-          'lib': __dirname + '/src/lib'
-      }
+        root: [srcPath],
+        extensions: ["", ".webpack.js", ".web.js", ".js"],
+        alias: {
+            config: "config.js"
+        }
+    },
+
+    target: "web",
+
+    node:{
+        fs: "empty"
     },
 
     module: {
@@ -49,12 +53,8 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                loaders:['react-hot','babel'],
-                include : path.join(__dirname,'src')
-            },
-            {
-                test: /\.(ts|tsx)$/,
-                loader: 'ts-loader'
+                loaders: ['react-hot','babel'],
+                include : srcPath
             },
             {
                 test: /\.css$/,
@@ -62,29 +62,28 @@ module.exports = {
             },
             {
                 test: /\.(png|jpg|gif|woff|woff2)$/,
-                loader: 'url-loader?limit=10'
+                loader: 'url?limit=10'
             },
             {
-                test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-                loader: "url?limit=10000&minetype=application/font-woff"
+                test   : /\.woff|\.woff2|\.svg|.eot|\.ttf/,
+                loader : 'url?prefix=font/&limit=10000'
             },
             {
-                test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,    loader: "url?limit=10000&minetype=application/octet-stream"
-            },
-            {
-                test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,    loader: "file"
-            },
-            {
-                test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,    loader: "url?limit=10000&minetype=image/svg+xml"
+                test: /\.json$/,
+                loader: "json-loader"
             }
+        ],
+        noParse:[
+            'jquery'
         ]
     },
 
     plugins: [
-        new ExtractTextPlugin("[name].css"),
-        new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json",["main"]),
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoErrorsPlugin()
+        new ExtractTextPlugin("main.css"),
+        new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.UglifyJsPlugin({minimize: true}),
+        new webpack.ProvidePlugin({
+            $:'jquery'
+        })
     ]
-
 };

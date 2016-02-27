@@ -34,7 +34,10 @@ module.exports = {
 
     resolve: {
         root: [srcPath],
-        extensions: ["", ".webpack.js", ".web.js", ".js"]
+        extensions: ["", ".webpack.js", ".web.js", ".js"],
+        alias: {
+            config: "config.js"
+        }
     },
 
     target: "web",
@@ -87,5 +90,4 @@ module.exports = {
             $:'jquery'
         })
     ]
-
 };

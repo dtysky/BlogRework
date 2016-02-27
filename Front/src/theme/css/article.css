@@ -11,8 +11,8 @@
 }
 
 .home-article-top p{
-	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-top: 0;
+	margin-bottom: 0;
 	width: 100%;
 	color: gray;
 	text-align: center;
@@ -41,7 +41,7 @@ ol{
 .home-article-middle{
 	margin-bottom: 20px;
 	font-size: 14px;
-	font-family: "Microsoft YaHei",Arial ! important;
+	font-family: "Microsoft YaHei", Arial ! important;
 }
 
 .home-article-middle h1{
@@ -206,13 +206,13 @@ center {
 
 #resume-photo{
 	position: absolute;
-	right: 0px;
+	right: 0;
 	max-height: 125px;
 }
 
 .resume-title{
 	position: absolute;
-	left: 0px;
+	left: 0;
 }
 
 .MathJax {
@@ -222,7 +222,7 @@ center {
 
 table{
 	border-color: black;
-	padding: 0px;
+	padding: 0;
 }
 
 tr{

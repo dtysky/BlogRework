@@ -11,7 +11,7 @@ __name__ = "SitemapGenerator"
 
 from datetime import datetime
 from utils import logger
-from setting import setting
+from config import config
 from utils import format_date
 
 
@@ -63,11 +63,11 @@ class SitemapGenerator(object):
 
     def _add_one(self, url, time):
         result = template["content"].format(
-            setting["site_url"],
+            config["site_url"],
             url,
             format_date(time, "sitemap"),
-            setting["sitemap_freq"],
-            setting["sitemap_priority"]
+            config["sitemap_freq"],
+            config["sitemap_priority"]
         )
         if self._debug:
             print result
@@ -81,7 +81,7 @@ class SitemapGenerator(object):
                     "%s/%s" % (url, item["slug"]),
                     datetime.now()
                 )
-            for index in xrange(item["count"] / setting["articles_per_page"] + 1):
+            for index in xrange(item["count"] / config["articles_per_page"] + 1):
                 result += self._add_one(
                     "%s/%s/%d" % (url, item["slug"], index),
                     datetime.now()
@@ -120,7 +120,7 @@ class SitemapGenerator(object):
 
     def generate(self):
         logger.info("Sitemap: Writing start...")
-        with open(setting["sitemap_path"], "w") as f:
+        with open(config["sitemap_path"], "w") as f:
             f.write(template["begin"])
             f.write(self._add_static())
             for url in ["tag", "author", "category"]:

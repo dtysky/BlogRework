@@ -7,7 +7,7 @@
 require('velocity-animate');
 require('velocity-animate/velocity.ui');
 
-var React = require('react/addons');
+var React = require('react');
 var VelocityComponent = require('velocity-react').VelocityComponent;
 var velocityHelpers = require('velocity-react').velocityHelpers;
 var config = require('./utils').config;

@@ -3,7 +3,7 @@
  * Created by dtysky on 16/2/3.
  */
 
-var React = require('react/addons');
+var React = require('react');
 var Link = require('react-router').Link;
 var config = require('./utils').config;
 var theme_color = config.theme_color;
@@ -21,12 +21,12 @@ module.exports = React.createClass({
         this.props.setDefaultTheme(info);
     },
     componentDidUpdate: function(){
-        document.getElementById("home-menu-phone").style.backgroundColor = theme_color[this.props.theme_info];
+        document.getElementsByClassName("home-menu-phone")[0].style.backgroundColor = theme_color[this.props.theme_info];
     },
     render: function(){
         var self= this;
         return (
-            <div id="home-menu-phone" className="duration-1s">
+            <div className="home-menu-phone duration-1s">
                 <div className="top">
                     <a href="/feeds/all.rss.xml" className="home-menu-icon-phone" target="_blank">
                         <img src="/theme/image/rss.png" alt="RSS"/>

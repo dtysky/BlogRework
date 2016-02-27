@@ -6,7 +6,7 @@
 require('velocity-animate');
 require('velocity-animate/velocity.ui');
 
-var React = require('react/addons');
+var React = require('react');
 var VelocityComponent = require('velocity-react').VelocityComponent;
 var velocityHelpers = require('velocity-react').velocityHelpers;
 var Link = require('react-router').Link;
@@ -99,6 +99,7 @@ module.exports = {
             redirect();
         }
         var right = left + articles_per_page < max_index ? left + articles_per_page : left + 10;
+        //////////////////////////////Warning!!!////////////////////////////////////
         //I don't know why but it works...
         var self = this;
         function fun(){
@@ -112,6 +113,7 @@ module.exports = {
             self.props.disableContentAnimation();
         }
         setTimeout(fun, 20);
+        //////////////////////////////Warning!!!////////////////////////////////////
     },
     updateData: function(props){
         this.props.enableContentAnimation();
@@ -129,7 +131,6 @@ module.exports = {
             var timeoutId = 0;
             var fun = function() {
                 if (cache.has(name)) {
-                    console.log("check");
                     clearTimeout(timeoutId);
                     self.getInfo(name, props.params.index);
                 }
