@@ -25,6 +25,7 @@ Jquery
 ## Dependencies-server
 Express.js  
 Tracer  
+Request
 
 ### Dependencies-dev
 
