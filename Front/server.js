@@ -6,6 +6,9 @@
 var express = require('express');
 var path = require('path');
 var request = require('request');
+var React = require('react');
+var ReactRouter = require('react-router');
+var router = require('./src/router');
 
 var server_url = "http://localhost:4444/";
 var port = 2333;
@@ -51,6 +54,14 @@ app.get("/feeds/:slug", function(req, res){
     }catch(e) {
         log_error(url, e);
     }
+});
+
+app.use(function(req, res, next) {
+    var router = Router.create({location: req.url, routes: routes});
+    router.run(function(Handler, state) {
+        var html = React.renderToString(<Handler/>);
+        return res.render('react_page', {html: html});
+    })
 });
 
 app.use(express.static(
