@@ -5,6 +5,7 @@
 
 var React = require('react');
 var ReactDom = require('react-dom');
+var App = require('./App');
 var router = require('./router');
 
 ReactDom.render(router, document.getElementById('content'));

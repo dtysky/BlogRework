@@ -25,6 +25,7 @@
   "dependencies": {
     "express": "^4.13.4",
     "jquery": "^2.2.0",
+    "node-jsx": "^0.13.3",
     "qrcode.react": "^0.6.0",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
