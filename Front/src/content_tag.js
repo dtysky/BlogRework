@@ -13,6 +13,7 @@ module.exports = React.createClass({
     mixins: [ContentList],
     type: "tag",
     theme: "tag",
+    rss: "all",
     render: function(){
         return this.topRender();
     }

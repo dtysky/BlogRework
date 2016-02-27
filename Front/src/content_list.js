@@ -75,9 +75,10 @@ module.exports = {
                         site_title
                     )
             ),
-            keywords: format(
-                "%s",
-                view
+            keywords: (
+                this.keywords ?
+                    this.keywords :
+                    view
             ),
             description: (
                 this.description ?
@@ -87,7 +88,13 @@ module.exports = {
                         view
                     )
             ),
-            author: "dtysky,命月天宇"
+            author: "dtysky,命月天宇",
+            rss: format(
+                "/feeds/%s",
+                this.rss ?
+                    this.rss :
+                    view
+            )
         });
     },
     getInfo: function(name, index){

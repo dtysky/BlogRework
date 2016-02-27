@@ -80,7 +80,8 @@ module.exports = React.createClass({
             title: format("%s - %s", "Tags", site_title),
             keywords: "Tags",
             description: "所有的路标",
-            author: "dtysky,命月天宇"
+            author: "dtysky,命月天宇",
+            rss: "/feeds/all"
         });
     },
     componentDidMount: function(){

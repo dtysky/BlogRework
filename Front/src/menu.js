@@ -45,7 +45,7 @@ module.exports = React.createClass({
             <div className="home-menu duration-1s">
                 <Link to="/articles/wo-de-jian-li.html" id="home-menu-name">dtysky</Link>
                 <div className="home-menu-icons">
-                    <a href="/feeds/skill.rss.xml" className="home-menu-icon" target="_blank">
+                    <a href={this.props.rss} className="home-menu-icon" target="_blank">
                         <img src="/theme/image/rss.png" alt="RSS"/>
                     </a>
                     <a href="https://github.com/dtysky" className="home-menu-icon" target="_blank">

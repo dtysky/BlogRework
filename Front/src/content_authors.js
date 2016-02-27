@@ -64,7 +64,8 @@ module.exports = React.createClass({
             title: format("%s - %s", "Authors", site_title),
             keywords: "Authors",
             description: "所有的路标",
-            author: "dtysky,命月天宇"
+            author: "dtysky,命月天宇",
+            rss: "/feeds/all"
         });
     },
     componentDidMount: function(){
@@ -110,7 +111,7 @@ module.exports = React.createClass({
                     this.state.content.map(function(author){
                         return (
                             <li><Link
-                                to={getLocalUrl("authors", author.slug, null)}
+                                to={getLocalUrl("author", author.slug, null)}
                             >
                                 {author.view}
                             </Link></li>

@@ -87,7 +87,11 @@ module.exports = React.createClass({
             title: format("%s - %s", data.view, site_title),
             keywords: tags.join(","),
             description: data.content.summary,
-            author: authors.join(",")
+            author: authors.join(","),
+            rss: format(
+                "/feeds/%s",
+                data.content.category.slug
+            )
         });
         this.props.setDefaultTheme(data.content.category.view);
         this.props.changeTheme(this.props.theme_default, true);
