@@ -244,14 +244,14 @@ module.exports = {
     topRender: function(){
         var self = this;
         if (this.state.state === "error"){
-            return <NormalError/>;
+            return <NormalError key="normal-error"/>;
         }
         if (this.state.state === "wait"){
-            return <Loading/>;
+            return <Loading key="loading"/>;
         }
         return (
             <div>
-                <ul>
+                <ul key="ul">
                     {
                         this.state.content.map(function(item, index){
                             return (

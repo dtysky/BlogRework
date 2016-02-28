@@ -180,12 +180,14 @@ APlayer.prototype.init = function (auto_play) {
     if (this.playIndex > -1) {
         for (i = 0; i < this.option.music.length; i++) {
             this.element.getElementsByClassName('aplayer-list')[0].getElementsByTagName('li')[i].addEventListener('click', function(){
+                console.log(this.getElementsByClassName('aplayer-list-index')[0].innerHTML);
                 var musicIndex = parseInt(this.getElementsByClassName('aplayer-list-index')[0].innerHTML) - 1;
                 if (musicIndex !== _self.playIndex) {
                     _self.setMusic(musicIndex);
                 }
                 _self.play();
-            });
+            }
+            );
         }
     }
 

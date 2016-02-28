@@ -11,7 +11,7 @@ var getLocalUrl = function(type, name, index){
 
 var redirect = function(){
     console.log("Redirect to 404");
-    window.location.href = "/#/404";
+    window.location.href = "/404";
 };
 
 module.exports = {

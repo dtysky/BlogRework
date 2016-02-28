@@ -6,11 +6,9 @@
 
 Back -------- done.  
 
-Front -------- 80%:  
-Using server rendering  
+Front -------- done.  
 
-Others ------ 0%:  
-Deploying on the VPS 
+Others ------ 80%.  
 
 ## Description
 
@@ -46,18 +44,24 @@ All records in cache will be cleared when database is updated.
 
 ## Front
 
-### Dependencies
+### Platform
 
-Node.js  
-React.js  
+OSX 10.10.5  
+Node.js 0.10.37
+
+### Dependencies
+  
+React  
 React-router  
 Veloctiy-react  
 React-modal  
 Rrcode.react  
 React-helmet  
+React-ga  
 Jquery  
 
 ## Dependencies-server
+
 Express.js  
 Tracer  
 Request  
@@ -83,9 +87,12 @@ Music player(the music list can be defined in markdown)
 
 ## Back
 
+### Platform
+
+Python 2.7.11
+
 ### Dependencies
 
-Python  
 MongoDB  
 Markdown  
 Pygments  

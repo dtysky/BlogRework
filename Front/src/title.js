@@ -106,10 +106,12 @@ module.exports = React.createClass({
                     {
                         this.cp_list.map(function (item) {
                             return (
-                                <li id={item.id}
-                                       onMouseEnter={function(e){self.changeThemeRequire(item.theme);}}
-                                       onMouseLeave={function(e){self.changeThemeToDefault();}}
-                                       onClick={function(e){self.setDefaultTheme(item.theme);}}
+                                <li
+                                    key={item.id}
+                                    id={item.id}
+                                    onMouseEnter={function(e){self.changeThemeRequire(item.theme);}}
+                                    onMouseLeave={function(e){self.changeThemeToDefault();}}
+                                    onClick={function(e){self.setDefaultTheme(item.theme);}}
                                 >
                                     <Link to={"/category/" + item.theme}><span>{item.theme}</span></Link>
                                 </li>
@@ -119,6 +121,7 @@ module.exports = React.createClass({
                 </div>
                 <div id="home-main-title-bar">
                     <VelocityComponent
+                        key="velocity"
                         animation={this.titleEffect()}
                     >
                         <span id="title-bar"/>

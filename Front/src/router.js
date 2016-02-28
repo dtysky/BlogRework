@@ -8,6 +8,7 @@ var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
+var Ga = require('react-ga');
 
 var App = require('./App');
 var ContentHome = require('./content_home');
@@ -19,12 +20,19 @@ var ContentTags = require('./content_tags');
 var ContentAuthors = require('./content_authors');
 var ContentArticle = require('./content_article');
 var NotFound = require('./not_found');
+var config = require('./utils').config;
 
 require('./theme/css/sky.css');
+
+Ga.initialize(config.ga_tracking_id);
+function logPageView() {
+    Ga.pageview(this.state.location.pathname);
+}
 
 module.exports = (
     <Router
         history={ReactRouter.browserHistory}
+        onUpdate={logPageView}
         id="home-main-content"
     >
         <Route path="/" component={App}>

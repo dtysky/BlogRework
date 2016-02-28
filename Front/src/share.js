@@ -67,6 +67,7 @@ module.exports = React.createClass({
                     onClick={this.openModal}
                 />
                 <Modal
+                    key="modal"
                     className="share-window"
                     isOpen={this.state.showModal}
                     onRequestClose={this.closeModal}
@@ -80,6 +81,7 @@ module.exports = React.createClass({
                         }}
                     >
                         <QrCode
+                            key="qr-code"
                             value={this.props.info.url}
                             size={160}
                             fgColor={theme_color[this.props.theme]}

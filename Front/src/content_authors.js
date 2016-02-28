@@ -100,10 +100,10 @@ module.exports = React.createClass({
     },
     render: function(){
         if (this.state.state === "error"){
-            return <NormalError/>;
+            return <NormalError key="normal-error"/>;
         }
         if (this.state.state === "wait"){
-            return <Loading/>;
+            return <Loading key="wait"/>;
         }
         return (
             <ul className="authors-list">

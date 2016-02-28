@@ -33,6 +33,23 @@ module.exports = React.createClass({
         this.props.setDefaultTheme("404");
         this.props.changeTheme("404", true);
         this.props.setMusicList(["パーフェクトヴァニティ"]);
+        this.props.handleHead({
+            title: (
+                format(
+                    "%s - %s",
+                    "终末之地",
+                    site_title
+                )
+            ),
+            keywords: (
+                "dtysky,墓场"
+            ),
+            description: (
+                "欢迎来到没有希望、却很美的荒漠。"
+            ),
+            author: "dtysky,命月天宇",
+            rss: "/feeds/all"
+        });
     },
     render: function() {
         return (

@@ -51,7 +51,7 @@
             ["google", 'https://plus.google.com/share?url={{URL}}']
         ],
         default_music: {
-            "url": "localhost:5555",
+            "url": "http://localhost:5555",
             "info": [
                 {
                     "slug": "パーフェクトヴァニティ",

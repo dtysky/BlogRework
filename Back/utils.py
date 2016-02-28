@@ -14,6 +14,26 @@ from datetime import datetime
 from config import config
 
 
+def init_database(database):
+    """
+    Creating collections.
+    """
+    now_collection_names = database.collection_names()
+    collection_names = [
+        "archives",
+        "article",
+        "author",
+        "authors",
+        "categories",
+        "category",
+        "tag",
+        "tags"
+    ]
+    for name in collection_names:
+        if name not in now_collection_names:
+            database.create_collection(name)
+
+
 def convert_to_underline(name):
     """
     Convert upper camel case to underline.

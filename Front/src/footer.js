@@ -20,11 +20,15 @@ module.exports = React.createClass({
         return (
             <footer className="duration-1s">
                 <p>Links</p>
-                <div id="home-links-phone">
+                <div
+                    key="home-links-phone"
+                    id="home-links-phone"
+                >
                     {
                         links.map(function(item){
                             return (
                                 <a
+                                    key={item.name}
                                     target="_blank"
                                     href={item.url}
                                     className="thank"

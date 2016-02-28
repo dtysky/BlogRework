@@ -14,11 +14,13 @@ from watchdog.observers import Observer
 from file_monitor import FileMonitor
 from web_server import WebServer
 from config import config
+from utils import init_database
 
 if __name__ == "__main__":
     client = MongoClient()
-    database = client.get_database("test")
+    database = client.get_database(config["database_name"])
     client.close()
+    init_database(database)
     server = WebServer(database).web_server
     observer = Observer()
     file_monitor = FileMonitor(

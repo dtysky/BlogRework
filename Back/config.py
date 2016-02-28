@@ -10,8 +10,9 @@ __name__ = "Config"
 
 
 config = {
-    "server_ip": "localhost",
+    "server_ip": "127.0.0.1",
     "server_port": 4444,
+    "database_name": "test",
     "default_authors": ["dtysky"],
     "site_url": "http://dtysky.moe",
     "site_title": "dtysky|一个行者的轨迹",

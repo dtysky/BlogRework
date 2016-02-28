@@ -1,6 +1,0 @@
-2016-02-27T19:54:13+0800 <error> server.js:29 (log_error) { '0': 'http:/localhost:4444/sitemap',
-  '1': [Error: Invalid URI "http:/localhost:4444/sitemap"] }
-2016-02-27T19:54:56+0800 <error> server.js:29 (log_error) { '0': 'http:/localhost:4444/sitemap',
-  '1': [Error: Invalid URI "http:/localhost:4444/sitemap"] }
-2016-02-27T19:56:35+0800 <error> server.js:29 (log_error) { '0': 'http:///localhost:4444/sitemap',
-  '1': [Error: Invalid URI "http:///localhost:4444/sitemap"] }

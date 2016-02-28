@@ -8,8 +8,9 @@ var path = require('path');
 var fs = require('fs');
 var request = require('request');
 
+require("./dist/config");
 var server_url = "http://localhost:4444/";
-var port = 2333;
+var port = 233;
 var public_path = path.resolve(__dirname, "dist");
 var log_path = path.resolve(__dirname, "logs");
 var logger_console = require('tracer').colorConsole();

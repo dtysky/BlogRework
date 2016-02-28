@@ -32,26 +32,10 @@ module.exports = React.createClass({
             music_list: []
         };
     },
-    ga_start: function(){
-        (function(i,s,o,g,r,a,m){
-            i['GoogleAnalyticsObject']=r;
-            i[r]=i[r]||function(){
-                    (i[r].q=i[r].q||[]).push(arguments)
-                };
-            i[r].l=1*new Date();a=s.createElement(o);
-            m=s.getElementsByTagName(o)[0];
-            a.async=1;
-            a.src=g;
-            m.parentNode.insertBefore(a,m);
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-        ga('create', config.ga_tracking_id, 'auto');
-        ga('send', 'pageview');
-    },
     handleHead: function(head){
         this.setState({
             head: head
         });
-        this.ga_start();
     },
     setDefaultTheme: function(info){
         if(this.state.theme_default !== info){
@@ -106,6 +90,7 @@ module.exports = React.createClass({
                 className="full"
             >
                 <Helmet
+                    key="helmet"
                     title={this.state.head.title}
                     titleTemplate= {"%s"}
                     meta={[
@@ -123,10 +108,12 @@ module.exports = React.createClass({
                     ]}
                 />
                 <LeftImage
+                    key="left-image"
                     theme_info={this.state.theme_info}
                     theme_default={this.state.theme_default}
                 />
                 <Menu
+                    key="menu"
                     theme_info={this.state.theme_info}
                     theme_default={this.state.theme_default}
                     rss={this.state.head.rss}
@@ -134,6 +121,7 @@ module.exports = React.createClass({
                     setDefaultTheme={this.setDefaultTheme}
                 />
                 <MenuPhone
+                    key="menu-phone"
                     theme_info={this.state.theme_info}
                     theme_default={this.state.theme_default}
                     rss={this.state.head.rss}
@@ -141,11 +129,13 @@ module.exports = React.createClass({
                     setDefaultTheme={this.setDefaultTheme}
                 />
                 <MusicPlayer
+                    key="music-player"
                     theme_info={this.state.theme_info}
                     music_list={this.state.music_list}
                 />
                 <div id="home-main">
                     <Title
+                        key="title"
                         theme_info={this.state.theme_info}
                         theme_default={this.state.theme_default}
                         changeTheme={this.changeTheme}
@@ -173,6 +163,7 @@ module.exports = React.createClass({
                     </div>
                 </div>
                 <Footer
+                    key="footer"
                     theme_info={this.state.theme_info}
                     theme_default={this.state.theme_default}
                 />

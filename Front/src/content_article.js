@@ -165,6 +165,7 @@ module.exports = React.createClass({
         );
         return <article className="home-article">
             <Share
+                key="share"
                 info={{
                     url: url,
                     title: format("%s - %s", this.state.title, site_title),
@@ -235,12 +236,10 @@ module.exports = React.createClass({
     },
     render: function(){
         if (this.state.state === "error"){
-            return (
-                <NormalError/>
-            );
+            return <NormalError key="normal-error"/>;
         }
         if (this.state.state === "wait"){
-            return <Loading/>;
+            return <Loading key="wait"/>;
         }
         return this.showArticle();
     }
