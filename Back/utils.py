@@ -130,6 +130,8 @@ class Logger(object):
         self._new_with_check()
 
     def _new_with_check(self):
+        if not os.path.exists(self._log_dir_path):
+            os.mkdir(self._log_dir_path)
         now = datetime.now().strftime("%Y-%m-%d")
         if now != self._time:
             self._time = now

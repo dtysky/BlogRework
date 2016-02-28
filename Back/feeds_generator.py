@@ -14,6 +14,7 @@ __name__ = "FeedsGenerator"
 
 
 import json
+import os
 from datetime import datetime
 from utils import logger
 from config import config
@@ -108,6 +109,8 @@ class FeedsGenerator(object):
         )
 
     def _update_files(self, file_names, time):
+        if not os.path.exists(config["feeds_dir_path"]):
+            os.mkdir(config["feeds_dir_path"])
         for name_pair in file_names:
             name, view = name_pair["slug"].encode("utf-8"), name_pair["view"].encode("utf-8")
             if name not in self._files:
