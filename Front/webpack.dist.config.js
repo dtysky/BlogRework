@@ -39,10 +39,6 @@ module.exports = {
 
     target: "web",
 
-    node:{
-        fs: "empty"
-    },
-
     module: {
         preLoaders: [{
             test: /\.js$/,

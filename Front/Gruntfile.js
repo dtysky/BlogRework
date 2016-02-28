@@ -68,17 +68,10 @@ module.exports = function (grunt) {
                 path: 'http://localhost:<%= connect.options.port %>/'
             }
         },
-        //
-        //karma: {
-        //    unit: {
-        //        configFile: 'karma.conf.js'
-        //    }
-        //},
 
         copy: {
             dist: {
                 files: [
-                    // includes files within path
                     {
                         flatten: true,
                         expand: true,
@@ -90,7 +83,7 @@ module.exports = function (grunt) {
                         flatten: true,
                         expand: true,
                         src: [
-                            '<%= pkg.src %>/index.html',
+                            '<%= pkg.src %>/index_public.html',
                             '<%= pkg.src %>/config.js'
                         ],
                         dest: '<%= pkg.dist %>/',
@@ -104,7 +97,19 @@ module.exports = function (grunt) {
                         flatten: true,
                         expand: true,
                         src: ['<%= pkg.dist %>/assets/tmp/*'],
-                        dest: '<%= pkg.dist %>/assets/'
+                        dest: '<%= pkg.dist %>/assets/',
+                        filter: 'isFile'
+                    }
+                ]
+            }
+        },
+
+        rename: {
+            main:{
+                files: [
+                    {
+                        src: ['<%= pkg.dist %>/index_public.html'],
+                        dest: '<%= pkg.dist %>/index.html'
                     }
                 ]
             }
@@ -157,12 +162,9 @@ module.exports = function (grunt) {
         ]);
     });
 
-    //grunt.registerTask('test', ['karma']);
-
     grunt.registerTask('debug', ['webpack-dev-server']);
 
-    grunt.registerTask('build', ['clean:dist', 'webpack', 'copy:dist', 'compress', 'copy:compress', 'clean:compress']);
-    //grunt.registerTask('build', ['clean:dist', 'webpack', 'copy:dist']);
+    grunt.registerTask('build', ['clean:dist', 'webpack:dist', 'copy:dist', 'rename', 'compress', 'copy:compress', 'clean:compress']);
 
     grunt.registerTask('default', []);
 };

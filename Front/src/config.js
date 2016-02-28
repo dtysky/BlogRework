@@ -5,6 +5,7 @@
         "site_url": "http://localhost:8000",
         "server_url": "http://localhost:4444",
         "disqus_short_name": 'dtysky',
+        "ga_tracking_id": "......",
         "tag_cloud_step": 4,
         "articles_per_page": 10,
         "animation_default_duration": 800,

@@ -5,11 +5,8 @@
 
 var express = require('express');
 var path = require('path');
+var fs = require('fs');
 var request = require('request');
-var renderToString = require('react-dom/server').renderToString;
-var match = require('react-router').match;
-var RouterContext = require('react-router').RouterContext;
-var router = require('./src/router');
 
 var server_url = "http://localhost:4444/";
 var port = 2333;
@@ -17,9 +14,6 @@ var public_path = path.resolve(__dirname, "dist");
 var log_path = path.resolve(__dirname, "logs");
 var logger_console = require('tracer').colorConsole();
 var logger_file = require('tracer').dailyfile({root: log_path, maxLogFiles: 10});
-
-require('node-jsx').install();
-
 
 function log_info(){
     logger_console.info(arguments);
@@ -60,24 +54,6 @@ app.get("/feeds/:slug", function(req, res){
     }
 });
 
-app.use(function(req, res, next) {
-    match(
-        {
-            routes: router,
-            location: req.url
-        },
-        function(err, redirectLocation, renderProps){
-            if (error) {
-                log_error(error);
-                res.status(500).send(error.message);
-            } else{
-                res.status(200).send(renderToString(<RouterContext {...renderProps} />));
-            }
-        }
-    );
-    next();
-});
-
 app.use(express.static(
     public_path,
     {
@@ -92,6 +68,11 @@ app.use(express.static(
         }
     }
 ));
+
+app.get('*', function (request, response){
+    response.sendFile(path.join(public_path, 'index.html'))
+});
+
 
 app.listen(port, function(){
     log_info("Server start:", port);
