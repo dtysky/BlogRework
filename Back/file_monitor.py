@@ -109,10 +109,10 @@ class FileMonitor(FileSystemEventHandler):
 
     def on_modified(self, event):
         path = event.src_path
-        if not is_markdown_file(path):
-            return
-        logger.info("Modify: %s" % path)
-        self._work(path, "update")
+        # if not is_markdown_file(path):
+        #     return
+        logger.info("Modify(happen with create and delete, ignore...): %s" % path)
+        # self._work(path, "update")
 
     def on_moved(self, event):
         src_path = event.src_path

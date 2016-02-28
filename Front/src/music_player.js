@@ -40,8 +40,7 @@ module.exports = React.createClass({
         if(this.isMobile){
             this.player.init(false);
         }else{
-            //this.player.init(true);
-            this.player.init(false);
+            this.player.init(true);
         }
     },
     componentDidMount: function(){

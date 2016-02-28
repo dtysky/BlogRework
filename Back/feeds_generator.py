@@ -109,7 +109,7 @@ class FeedsGenerator(object):
 
     def _update_files(self, file_names, time):
         for name_pair in file_names:
-            name, view = name_pair["slug"], name_pair["view"]
+            name, view = name_pair["slug"].encode("utf-8"), name_pair["view"].encode("utf-8")
             if name not in self._files:
                 file_name = "%s/%s.rss.xml" % (
                     config["feeds_dir_path"],
@@ -140,7 +140,7 @@ class FeedsGenerator(object):
             content, file_names = self._format_article(article)
             self._update_files(file_names, time)
             for name in file_names:
-                self._files[name["slug"]].write(self._add_one(content))
+                self._files[name["slug"].encode("utf-8")].write(self._add_one(content))
         indexes = {}
         for file_name, file_obj in self._files.items():
             file_obj.write(

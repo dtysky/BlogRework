@@ -225,7 +225,6 @@ class WriterWithCount(object):
                 }
             }
         )
-        print item, item["slug"]
         if self._collection.find_one(
             {
                 "slug": item["slug"]
