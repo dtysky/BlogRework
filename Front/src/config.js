@@ -12,8 +12,8 @@
         "links": [
             {"name": "Lm7", "url": "http://lm7.xxxxxxxx.jp"},
             {"name": "APlayer", "url": "https://github.com/DIYgod/APlayer"},
-            {"name": "Glyph", "url": "http://glyphicons.com"},
-            {"name": "Nekohand", "url": "http://blog.nekohand.moe/"}
+            {"name": "IconMoon", "url": "https://icomoon.io"},
+            {"name": "F-I-L", "url": "http://fil.dtysky.moe"}
         ],
         "theme_color": {
             "Create": "#586181",
@@ -60,34 +60,28 @@
                     "format": ".mp3"
                 },
                 {
+                    "slug": "これから",
+                    "title": "これから",
+                    "author": "坂本真綾",
+                    "format": ".ogg"
+                },
+                {
+                    "slug": "雪の羽　時の風",
+                    "title": "雪の羽　時の風",
+                    "author": "茶太",
+                    "format": ".mp3"
+                },
+                {
                     "slug": "Ordinary World",
                     "title": "Ordinary World",
                     "author": "仲村芽衣子",
                     "format": ".ogg"
                 },
                 {
-                    "slug": "パーフェクトヴァニティ2",
-                    "title": "パーフェクトヴァニティ",
-                    "author": "茶太",
+                    "slug": "疾走銀河",
+                    "title": "疾走銀河",
+                    "author": "TEPPAN",
                     "format": ".mp3"
-                },
-                {
-                    "slug": "Ordinary World2",
-                    "title": "Ordinary World",
-                    "author": "仲村芽衣子",
-                    "format": ".ogg"
-                },
-                {
-                    "slug": "パーフェクトヴァニティ3",
-                    "title": "パーフェクトヴァニティ",
-                    "author": "茶太",
-                    "format": ".mp3"
-                },
-                {
-                    "slug": "Ordinary World3",
-                    "title": "Ordinary World",
-                    "author": "仲村芽衣子",
-                    "format": ".ogg"
                 }
             ]
         }

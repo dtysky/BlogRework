@@ -824,8 +824,7 @@ article .description a{
 
 .home-icon-playstation:before {
     content: "\e901";
-    color: rgb(255, 255, 255);
-    background-color: rgb(0,0,0);
+	font-size: 23px;
 }
 .home-icon-github:before {
     content: "\e902";
