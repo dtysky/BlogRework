@@ -47,8 +47,7 @@ module.exports = React.createClass({
                 server_url,
                 name
             ),
-            success: function(result, status){
-                var data = JSON.parse(result);
+            success: function(data, status){
                 cache.add(name, data);
             }.bind(this),
             error: function(obj, info, ex){
@@ -220,16 +219,21 @@ module.exports = React.createClass({
             </div>
             <div id="disqus_container">
                 <div id="disqus_thread">
-                    <button
+                    <a
                         id="disqus_button"
                         onClick={this.openDisqus}
                     >
+                        <span
+                            className="home-icon-disqus"
+                        >
+
+                        </span>
                         点击查看评论
-                    </button>
+                    </a>
                 </div>
             </div>
             <div className="home-article-bottom">
-                <div className="home-article-sphr"></div>
+                <div className="home-article-sphr duration-1s"></div>
                 <p>此博客所有文章若无特殊说明皆为博主原创，转载ß请声明出处。</p>
             </div>
         </article>;

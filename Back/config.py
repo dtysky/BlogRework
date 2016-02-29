@@ -10,6 +10,7 @@ __name__ = "Config"
 
 
 config = {
+    "is_linux": True,
     "server_ip": "127.0.0.1",
     "server_port": 4444,
     "database_name": "test",

@@ -7,6 +7,7 @@
 var React = require('react');
 var Link = require('react-router').Link;
 var getLocalUrl = require('./utils').getLocalUrl;
+var config = require('./utils').config;
 
 require('./theme/css/sky.css');
 
@@ -16,8 +17,11 @@ module.exports = React.createClass({
         var index = this.props.now_index;
         var type = this.props.type;
         var name = this.props.name;
-        var left = parseInt(index / 8);
-        var right = left + 9 > max_index ? max_index : left + 8;
+        var left = parseInt(index / config.pages_per_pagination) * config.pages_per_pagination;
+        var right = left + config.pages_per_pagination + 1 > max_index ?
+            max_index :
+            left + config.pages_per_pagination;
+        console.log(index, left, right);
         var index_nums = [];
         for(var i=left; i<right; i++){
             index_nums.push(i);

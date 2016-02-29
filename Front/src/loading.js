@@ -11,7 +11,7 @@ module.exports = React.createClass({
     render: function() {
         return (
             <div className="content-wait">
-                <img src="/theme/image/logo.png" alt="wait-image"/>
+                <img src="/theme/image/logo.svg" alt="wait-image"/>
                 <br/>
                 <p>
                     少女祈祷中......

@@ -42,10 +42,9 @@ module.exports = {
                 server_url,
                 name
             ),
-            success: function(result, status){
-                var data = JSON.parse(result);
-                data.content.sort({
-                    "date": -1
+            success: function(data, status){
+                data.content.sort(function(a, b){
+                    return a.date > b.date ? -1 : 1;
                 });
                 cache.add(name, data);
             }.bind(this),
@@ -101,18 +100,22 @@ module.exports = {
         var data = cache.get(name);
         var totle_count = data.content.length;
         var max_index = parseInt(totle_count / articles_per_page) + 1;
-        var left = index === undefined ? 0 : parseInt(this.props.params.index);
-        if(left > max_index){
+        var now_index = index === undefined ? 0 : parseInt(index);
+        if(isNaN(now_index)){
             redirect();
         }
-        var right = left + articles_per_page < max_index ? left + articles_per_page : left + 10;
+        var left = now_index * articles_per_page;
+        if(left > totle_count){
+            redirect();
+        }
+        var right = left + articles_per_page < totle_count ? left + articles_per_page : totle_count;
         //////////////////////////////Warning!!!////////////////////////////////////
         //I don't know why but it works...
         var self = this;
         function fun(){
             self.setState({
                 state: "ok",
-                now_index: left,
+                now_index: now_index,
                 max_index: max_index,
                 content: data.content.slice(left, right)
             });
@@ -196,7 +199,7 @@ module.exports = {
             >
                 <div>
                     <Link
-                        to={getLocalUrl("article", item.slug, null)}
+                        to={getLocalUrl("article", item.slug)}
                         rel="bookmark"
                         title={item.title.view}
                     >
@@ -265,7 +268,7 @@ module.exports = {
                     }
                 </ul>
                 <Pagination
-                    type={this.props.params.type}
+                    type={this.type}
                     name={this.props.params.name}
                     now_index={this.state.now_index}
                     max_index={this.state.max_index}

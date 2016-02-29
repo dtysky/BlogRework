@@ -5,20 +5,20 @@ a:-webkit-any-link {
 .share{
     position: absolute;
     margin-top: -40px;
-    right: 0px;
-    height: 20px;
+    right: 0;
 }
 
 .share-button {
     height: 50px;
     border: none;
     cursor: pointer;
-    background: transparent url(../image/share.png) no-repeat;
     text-align: center;
     opacity: 0.8;
-    width: 50px;
+    width: 32px;
+    font-size: 32px;
     color: black;
     transition: opacity .5s ease-in;
+    background: none;
 }
 
 .share-button:hover{

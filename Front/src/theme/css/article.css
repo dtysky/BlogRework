@@ -1,3 +1,32 @@
+@font-face {
+	font-family: 'icomoon';
+	src:    url('../font/icomoon.eot?c8cymx');
+	src:    url('../font/icomoon.eot?c8cymx#iefix') format('embedded-opentype'),
+	url('../font/icomoon.ttf?c8cymx') format('truetype'),
+	url('../font/icomoon.woff?c8cymx') format('woff'),
+	url('../font/icomoon.svg?c8cymx#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.home-article-middle a:after{
+	/* use !important to prevent issues with browser extensions that change fonts */
+	font-family: 'icomoon' !important;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.home-icon-disqus:before {
+	content: "\e22b";
+}
+
 .home-article{
 	margin-top: 60px;
 	width: 100%;
@@ -78,12 +107,14 @@ ol{
 }
 
 .home-article-middle a{
-	background: url(../image/jump.png) no-repeat right 0px;
-	padding-right:20px;
 	word-break: break-all;
 	color: #444444;
 }
 
+.home-article-middle a:after{
+	margin-left: 2px;
+	content: "\e906";
+}
 
 .home-article-bottom{
 	margin-top: 40px;
@@ -142,12 +173,11 @@ pre{
 	margin-top: 30px;
 }
 
-#disqus_container #disqus_button{
+#disqus_button{
     border: none;
     cursor: pointer;
 	font-size:16px;
-	background: url(../image/discuss.png) no-repeat left 0;
-	padding-left: 24px;
+	background: none;
 }
 
 .highlight{

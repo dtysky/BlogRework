@@ -168,7 +168,7 @@ module.exports = React.createClass({
                     theme_default={this.state.theme_default}
                 />
                 <div id="return-top">
-                    <button onClick={this.returnTop}/>
+                    <button className="home-icon-return" onClick={this.returnTop}/>
                 </div>
             </div>
         );

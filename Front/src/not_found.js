@@ -5,6 +5,9 @@
 
 var React = require('react');
 var Link = require('react-router').Link;
+var config = require('./utils').config;
+var site_title = config.site_title;
+var format = require('util').format;
 
 require('./theme/css/sky.css');
 
@@ -59,7 +62,7 @@ module.exports = React.createClass({
                         ["1", "2", "3", "4"].map(function(e){
                             return <img
                                 className={"my404-img" + e}
-                                src={"/theme/image/404-" + e + ".png"}
+                                src={"/theme/image/404-" + e + ".svg"}
                                 alt={"404-image-" + e}
                             />;
                         })

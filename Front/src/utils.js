@@ -4,9 +4,13 @@
  */
 
 var config = window.config;
+var format = require('util').format;
 
 var getLocalUrl = function(type, name, index){
-    return index === null ? "/" + type + "/" + name : "/" + type + "/" + name + "/" + index.toString();
+    if(name === undefined){
+        return index === undefined ? format("/%s", type) : format("/%s/%d", type, index);
+    }
+    return index === undefined ? format("/%s/%s", type, name) : format("/%s/%s/%d", type, name, index);
 };
 
 var redirect = function(){

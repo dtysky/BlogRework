@@ -83,7 +83,8 @@ class WebHandler(View):
     def _response(self, data, status):
         response = Response(
             data,
-            status=status
+            status=status,
+            mimetype='application/json'
         )
         response.headers.add(
             'Access-Control-Allow-Origin', '*'
@@ -241,6 +242,17 @@ class SitemapHandler(WebHandler):
     def _format_data(self, data, url, parameters):
         return data
 
+    def _response(self, data, status):
+        response = Response(
+            data,
+            status=status,
+            mimetype='text/xml'
+        )
+        response.headers.add(
+            'Access-Control-Allow-Origin', '*'
+        )
+        return response
+
 
 class FeedsHandler(WebHandler):
     """
@@ -272,3 +284,14 @@ class FeedsHandler(WebHandler):
 
     def _format_data(self, data, url, parameters):
         return data
+
+    def _response(self, data, status):
+        response = Response(
+            data,
+            status=status,
+            mimetype='text/xml'
+        )
+        response.headers.add(
+            'Access-Control-Allow-Origin', '*'
+        )
+        return response

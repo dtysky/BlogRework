@@ -52,8 +52,7 @@ module.exports = React.createClass({
                 server_url,
                 name
             ),
-            success: function(result, status){
-                var data = JSON.parse(result);
+            success: function(data, status){
                 cache.add(name, data);
             }.bind(this),
             error: function(obj, info, ex){

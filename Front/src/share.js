@@ -10,6 +10,7 @@ var config = require('./utils').config;
 var templates = config.share_templates;
 var theme_color = config.theme_color;
 
+require('./theme/css/sky.css');
 require('./theme/css/share.css');
 
 module.exports = React.createClass({
@@ -63,7 +64,7 @@ module.exports = React.createClass({
                 className="share"
             >
                 <button
-                    className="share-button"
+                    className="share-button home-icon-share"
                     onClick={this.openModal}
                 />
                 <Modal

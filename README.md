@@ -6,7 +6,9 @@
 
 Back -------- done.  
 
-Front -------- done.  
+Front -------- 90%：  
+Replacing some image by svg/font.  
+Server rendering for seo.  
 
 Others ------ 80%.  
 

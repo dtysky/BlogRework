@@ -45,17 +45,13 @@ module.exports = React.createClass({
             <div className="home-menu duration-1s">
                 <Link to="/articles/wo-de-jian-li.html" id="home-menu-name">dtysky</Link>
                 <div className="home-menu-icons">
-                    <a href={this.props.rss} className="home-menu-icon" target="_blank">
-                        <img src="/theme/image/rss.png" alt="RSS"/>
+                    <a href={this.props.rss} className="home-menu-icon home-icon-rss" target="_blank">
                     </a>
-                    <a href="https://github.com/dtysky" className="home-menu-icon" target="_blank">
-                        <img src="/theme/image/github.png" alt="Github"/>
+                    <a href="https://github.com/dtysky" className="home-menu-icon home-icon-github" target="_blank">
                     </a>
-                    <a href="https://cn.linkedin.com/pub/tianyu-dai/a8/818/44a" className="home-menu-icon" target="_blank">
-                        <img src="/theme/image/linked-in.png" alt="Linked-In"/>
+                    <a href="https://cn.linkedin.com/pub/tianyu-dai/a8/818/44a" className="home-menu-icon home-icon-linkedin" target="_blank">
                     </a>
-                    <a href="http://psnprofiles.com/dtysky" className="home-menu-icon" target="_blank">
-                        <img src="/theme/image/playstation.png" alt="Playstation"/>
+                    <a href="http://psnprofiles.com/dtysky" className="home-menu-icon home-icon-playstation" target="_blank">
                     </a>
                 </div>
                 <div className="home-menu-hr1"></div>

@@ -28,20 +28,15 @@ module.exports = React.createClass({
         return (
             <div className="home-menu-phone duration-1s">
                 <div className="top">
-                    <a href={this.props.rss} className="home-menu-icon-phone" target="_blank">
-                        <img src="/theme/image/rss.png" alt="RSS"/>
+                    <a href={this.props.rss} className="home-menu-icon-phone home-icon-rss" target="_blank">
                     </a>
-                    <a href="https://github.com/dtysky" className="home-menu-icon-phone" target="_blank">
-                        <img src="/theme/image/github.png" alt="Github"/>
+                    <a href="https://github.com/dtysky" className="home-menu-icon-phone home-icon-github" target="_blank">
                     </a>
-                    <a href="/articles/wo-de-jian-li" className="home-menu-icon-phone">
-                        <img src="/theme/image/resume.png" alt="Resume"/>
+                    <a href="/articles/wo-de-jian-li" className="home-menu-icon-phone home-icon-resume">
                     </a>
-                    <a href="https://cn.linkedin.com/pub/tianyu-dai/a8/818/44a" className="home-menu-icon-phone" target="_blank">
-                        <img src="/theme/image/linked-in.png" alt="Linked-In"/>
+                    <a href="https://cn.linkedin.com/pub/tianyu-dai/a8/818/44a" className="home-menu-icon-phone home-icon-linkedin" target="_blank">
                     </a>
-                    <a className="home-menu-icon-phone" href="http://psnprofiles.com/dtysky" target="_blank">
-                        <img src="/theme/image/playstation.png" alt="Playstation"/>
+                    <a className="home-menu-icon-phone  home-icon-playstation" href="http://psnprofiles.com/dtysky" target="_blank">
                     </a>
                 </div>
                 <div id="home-menu-hr1-phone"></div>
