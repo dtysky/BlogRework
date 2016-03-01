@@ -73,10 +73,16 @@ module.exports = function (grunt) {
             dist: {
                 files: [
                     {
+                        expand: true,
+                        cwd: "<%= pkg.src %>/theme/image",
+                        src: '**/*',
+                        dest: '<%= pkg.dist %>/theme/image/'
+                    },
+                    {
                         flatten: true,
                         expand: true,
-                        src: ['<%= pkg.src %>/theme/image/*'],
-                        dest: '<%= pkg.dist %>/theme/image/',
+                        src: ['<%= pkg.src %>/theme/font/*'],
+                        dest: '<%= pkg.dist %>/theme/font/',
                         filter: 'isFile'
                     },
                     {

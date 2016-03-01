@@ -66,6 +66,42 @@
                     "format": ".ogg"
                 },
                 {
+                    "slug": "造花の距離感",
+                    "title": "造花の距離感",
+                    "author": "のぶなが",
+                    "format": ".mp3"
+                },
+                {
+                    "slug": "NULL",
+                    "title": "茶太",
+                    "author": "TEPPAN",
+                    "format": ".mp3"
+                },
+                {
+                    "slug": "ささめく竜は飛ぶ夢を見ない",
+                    "title": "ささめく竜は飛ぶ夢を見ない",
+                    "author": "やなぎなぎ",
+                    "format": ".mp3"
+                },
+                {
+                    "slug": "白い月、微笑んだ太陽",
+                    "title": "白い月、微笑んだ太陽",
+                    "author": "中恵光城",
+                    "format": ".mp3"
+                },
+                {
+                    "slug": "千年の花",
+                    "title": "千年の花",
+                    "author": "中恵光城",
+                    "format": ".mp3"
+                },
+                {
+                    "slug": "未来を謳う詩人",
+                    "title": "未来を謳う詩人",
+                    "author": "中恵光城",
+                    "format": ".mp3"
+                },
+                {
                     "slug": "雪の羽　時の風",
                     "title": "雪の羽　時の風",
                     "author": "茶太",

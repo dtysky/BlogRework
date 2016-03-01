@@ -48,6 +48,14 @@ template = {
 }
 
 
+entity_ref = {
+    "<": "&lt;",
+    ">": "&gt;",
+    "&": "&amp;",
+    "'": "&apos;",
+    '"': "&quot;"
+}
+
 
 class FeedsGenerator(object):
     """
@@ -67,7 +75,7 @@ class FeedsGenerator(object):
                 config["site_url"],
                 article["title"]["slug"]
             ),
-            article["content"],
+            self._format_content(article["content"]),
             "".join(
                 [
                     template["creator"].format(
@@ -134,16 +142,27 @@ class FeedsGenerator(object):
                 )
                 logger.info("Feeds: Writing %s..." % view)
 
+    def _format_content(self, content):
+        result = content
+        for k, v in entity_ref.items():
+            result = result.replace(k, v)
+        return result
+
     def generate(self):
         logger.info("Feeds: Writing start...")
         self._files = {}
         time = format_date(datetime.now(), "feeds")
         articles = list(self._collection.find({}))
+        articles.sort(
+            key=lambda article: article["date"],reverse=True
+        )
         for article in articles:
             content, file_names = self._format_article(article)
             self._update_files(file_names, time)
             for name in file_names:
-                self._files[name["slug"].encode("utf-8")].write(self._add_one(content))
+                self._files[name["slug"].encode("utf-8")].write(
+                    self._add_one(content)
+                )
         indexes = {}
         for file_name, file_obj in self._files.items():
             file_obj.write(

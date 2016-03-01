@@ -110,3 +110,7 @@ Database manager
 File state monitor  
 Logger  
 Router  
+
+## Others
+
+Forever.js is used for starting all servers as daemons. 

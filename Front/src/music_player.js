@@ -14,7 +14,6 @@ require('./theme/css/sky.css');
 module.exports = React.createClass({
     getInitialState: function(){
         this.url = config.default_music.url;
-        this.isMobile = navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i);
         return {};
     },
     getMusicInfo: function(list){
@@ -36,12 +35,8 @@ module.exports = React.createClass({
             };
         });
     },
-    initPlayer: function(){
-        if(this.isMobile){
-            this.player.init(false);
-        }else{
-            this.player.init(false);
-        }
+    initPlayer: function(reload){
+        this.player.init(true, reload);
     },
     componentDidMount: function(){
         this.player = new APlayer({
@@ -52,7 +47,7 @@ module.exports = React.createClass({
             theme: '#ffffff',
             music: this.getMusicInfo([])
         });
-        this.initPlayer();
+        this.initPlayer(false);
     },
     shouldComponentUpdate: function(nextProps, nextState){
         if(nextProps.music_list.toString() !== this.props.music_list.toString()){
@@ -61,7 +56,7 @@ module.exports = React.createClass({
                 this.getMusicInfo(
                     nextProps.music_list
                 );
-            this.initPlayer();
+            this.initPlayer(true);
         }
         return true;
     },

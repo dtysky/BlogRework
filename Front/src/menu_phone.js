@@ -32,8 +32,8 @@ module.exports = React.createClass({
                     </a>
                     <a href="https://github.com/dtysky" className="home-menu-icon-phone home-icon-github" target="_blank">
                     </a>
-                    <a href="/articles/wo-de-jian-li" className="home-menu-icon-phone home-icon-resume">
-                    </a>
+                    <Link to="/article/Create-MyResume" className="home-menu-icon-phone home-icon-resume">
+                    </Link>
                     <a href="https://cn.linkedin.com/pub/tianyu-dai/a8/818/44a" className="home-menu-icon-phone home-icon-linkedin" target="_blank">
                     </a>
                     <a className="home-menu-icon-phone  home-icon-playstation" href="http://psnprofiles.com/dtysky" target="_blank">

@@ -93,6 +93,7 @@ module.exports = React.createClass({
                         templates.map(function(t){
                             return (
                                 <a
+                                    target="_blank"
                                     href={self.format_template(t[1])}
                                     className={"share-icon icon-" + t[0]}
                                 />

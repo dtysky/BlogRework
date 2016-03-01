@@ -38,7 +38,7 @@ function APlayer(option) {
 /**
  * AutoLink initialization function
  */
-APlayer.prototype.init = function (auto_play) {
+APlayer.prototype.init = function (auto_play, reload) {
     this.element = this.option.element;
     this.music = this.playIndex > -1 ? this.option.music[this.playIndex] : this.option.music;
     this.option.autoplay = auto_play;
@@ -180,10 +180,9 @@ APlayer.prototype.init = function (auto_play) {
     if (this.playIndex > -1) {
         for (i = 0; i < this.option.music.length; i++) {
             this.element.getElementsByClassName('aplayer-list')[0].getElementsByTagName('li')[i].addEventListener('click', function(){
-                console.log(this.getElementsByClassName('aplayer-list-index')[0].innerHTML);
                 var musicIndex = parseInt(this.getElementsByClassName('aplayer-list-index')[0].innerHTML) - 1;
                 if (musicIndex !== _self.playIndex) {
-                    _self.setMusic(musicIndex);
+                    _self.setMusic(musicIndex, false);
                 }
                 _self.play();
             }
@@ -281,13 +280,13 @@ APlayer.prototype.init = function (auto_play) {
         });
     }
 
-    this.setMusic(0);
+    this.setMusic(0, reload);
 };
 
 /**
  * Set music
  */
-APlayer.prototype.setMusic = function (index) {
+APlayer.prototype.setMusic = function (index, reload) {
     // get this.music
     if (this.playIndex > -1 && typeof(arguments[0]) !== 'undefined') {
         this.playIndex = arguments[0];
@@ -315,7 +314,7 @@ APlayer.prototype.setMusic = function (index) {
     }
 
     // get this audio object
-    if ((this.playIndex > -1 && !this.audios[indexMusic]) || this.playIndex === -1) {
+    if ((this.playIndex > -1 && !this.audios[indexMusic]) || this.playIndex === -1 || reload) {
         this.audio = document.createElement("audio");
         this.audio.src = this.music.url;
         this.audio.preload = this.isMobile ? 'none' : 'metadata';
@@ -343,10 +342,10 @@ APlayer.prototype.setMusic = function (index) {
         if (this.playIndex > -1) {
             this.audio.addEventListener('ended', function () {
                 if (_self.playIndex < _self.option.music.length - 1) {
-                    _self.setMusic(++_self.playIndex);
+                    _self.setMusic(++_self.playIndex, false);
                 }
                 else if (_self.loop) {
-                    _self.setMusic(0);
+                    _self.setMusic(0, false);
                 }
                 else if (!_self.loop) {
                     _self.pause();

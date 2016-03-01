@@ -43,7 +43,7 @@ module.exports = React.createClass({
         var self = this;
         return (
             <div className="home-menu duration-1s">
-                <Link to="/articles/wo-de-jian-li.html" id="home-menu-name">dtysky</Link>
+                <Link to="/article/Create-MyResume" id="home-menu-name">dtysky</Link>
                 <div className="home-menu-icons">
                     <a href={this.props.rss} className="home-menu-icon home-icon-rss" target="_blank">
                     </a>

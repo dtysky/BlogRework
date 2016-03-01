@@ -21,7 +21,6 @@ module.exports = React.createClass({
         var right = left + config.pages_per_pagination + 1 > max_index ?
             max_index :
             left + config.pages_per_pagination;
-        console.log(index, left, right);
         var index_nums = [];
         for(var i=left; i<right; i++){
             index_nums.push(i);
