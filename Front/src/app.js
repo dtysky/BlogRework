@@ -15,6 +15,11 @@ var MusicPlayer = require('./music_player');
 
 require('./theme/css/sky.css');
 
+
+var EasterEgg =
+    "　　　　　　　 　/　　 /　　　　　　　ヽ　　　　　　ヽ　　　　　ヽ: . : l\n　　　　　 　　 / /　/　　　 /　　　　　､　　　　　　ヽ　　　　　l: . . |\n　　　　　 　 /イ 　 l　　　/ |　　　　　　､　　　　　　l　　|　l 　 l: . .|\n　　　　　　　　| :.　.:| 　 /　 l　　　　　 　､　　　　　 :l　　l: :|＼ﾊ: ﾊ\n　　　　　　 　 ﾚ|: 　|　/　￣ |　　　 　　　!:.　　　　　l: : : ト| ー } |\n　　　　　　　 　 |: . l　| '￣ﾋぅ| 　 l　　　　:.:..　　　l:　 .:| /ﾚ　ｊ: / {\n　　　　　　　　　VヽN　` ー　ｊﾊノ ＼|:　 :.:.|:.　l:.:.ﾊ:.:./ﾚ ﾉ ノ /. :ﾄ\n　　　　　　　 　 　 　 |　 　 　l　　　　 ヽ/ソﾄﾊﾚ　 ﾝ　　 ´ ノ〃 |\n　　　　　　　　　　　　l　　　 l　　　　　　　　　　　　　　　fl : ..　 |\n　　　　　　　　　　　　 l　　　ヽ　 _　　　　　　　　　　　　l　|ﾊ/|ﾉ＿\n　　　　　　　　　　　　　､　　　　　　　　　　　　　　　　 　　　　|　7 |\n　　　　　　　　　　　　　 ヽ　　　 　　　　　_　　　　　 /　　　　 ／　 l\n　　　　　　　　　　,.. -─‐`‐-､ヽ二二二ノ　　　　／　　　 ／\n　　　　　　 ＿_L´-､　ノ　　　　　｀丶､　　　　,　'´ 　 　 ／\n　　　　 /´　　{_ 　.::}　　　　　. : . : . : .|_,.. - ´　　　　／\n\n\n\n" +
+    "没有想到少女居然是个大叔吧哈哈哈哈？";
+
 module.exports = React.createClass({
     getInitialState: function(){
         this.timeout_id = 0;
@@ -31,6 +36,9 @@ module.exports = React.createClass({
             can_content_animate: true,
             music_list: []
         };
+    },
+    componentDidMount: function(){
+        console.log(EasterEgg);
     },
     handleHead: function(head){
         this.setState({

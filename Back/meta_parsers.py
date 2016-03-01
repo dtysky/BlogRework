@@ -40,7 +40,7 @@ class TagsParser(MetaDataParser):
 
     def parse(self, content):
         import re
-        return re.split(",\s*", content.replace("，", ","))
+        return re.split(",\s*", content.strip().replace("，", ","))
 
 
 class AuthorsParser(MetaDataParser):
@@ -50,7 +50,7 @@ class AuthorsParser(MetaDataParser):
 
     def parse(self, content):
         import re
-        return re.split(",\s*", content.replace("，", ","))
+        return re.split(",\s*", content.strip().replace("，", ","))
 
 
 class TitleParser(MetaDataParser):
@@ -98,4 +98,4 @@ class MusicParser(MetaDataParser):
 
     def parse(self, content):
         import re
-        return re.split(",\s*", content.replace("，", ","))
+        return re.split(",\s*", content.strip().replace("，", ","))

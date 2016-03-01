@@ -30,15 +30,15 @@ module.exports = React.createClass({
         };
     },
     getTagCloud: function(tags){
-        var max = tags.sort({
-            count: -1
+        var max = tags.sort(function(a, b){
+            return a.count > b.count ? -1 : 1;
         })[0].count;
         var base = (max + 1) / tag_cloud_step;
         return tags.map(function(tag){
             return {
                 view: tag.view,
                 url: getLocalUrl("tag", tag.slug, null),
-                style: format("%s-%d", "tag", parseInt(tag.count / base))
+                font_size: 14 + parseInt(tag.count / base) * 2
             };
         });
     },
@@ -127,7 +127,7 @@ module.exports = React.createClass({
                         return (
                             <Link
                                 to={tag.url}
-                                className={tag.style}
+                                style={{fontSize: tag.font_size}}
                             >
                                 {tag.view}
                             </Link>

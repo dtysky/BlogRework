@@ -180,6 +180,7 @@ module.exports = React.createClass({
             <div className="home-article-top description">
                 <h1>{this.state.title}</h1>
                 <p>
+                    少女
                     {
                         this.state.authors.map(function(author){
                             return (
@@ -191,13 +192,13 @@ module.exports = React.createClass({
                             );
                         })
                     }
-                    更新于 {this.state.date} 在
+                    于 {this.state.date} 在
                     <Link
                         to={getLocalUrl("category", this.state.category.slug, 0)}
                     >
                         {this.state.category.view}
                     </Link>
-                    内
+                    世界内创作
                 </p>
                 <p>
                     路标：
@@ -234,7 +235,7 @@ module.exports = React.createClass({
             </div>
             <div className="home-article-bottom">
                 <div className="home-article-sphr duration-1s"></div>
-                <p>此博客所有文章若无特殊说明皆为博主原创，转载ß请声明出处。</p>
+                <p>如果不是自己的创作,少女是会标识出来的,所以要告诉别人是少女写的哦。</p>
             </div>
         </article>;
     },

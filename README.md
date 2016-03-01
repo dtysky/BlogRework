@@ -67,7 +67,7 @@ Jquery
 Express.js  
 Tracer  
 Request  
-React and React-router(rendering on server))
+Jade
 
 ### Dependencies-dev
 
@@ -85,7 +85,8 @@ Cache
 Router  
 Social-share  
 Animations with js and css3  
-Music player(the music list can be defined in markdown)
+Music player(the music list can be defined in markdown)  
+Server side rendering for SEO
 
 ## Back
 

@@ -36,7 +36,7 @@ module.exports = React.createClass({
         });
     },
     initPlayer: function(reload){
-        this.player.init(true, reload);
+        this.player.init(false, reload);
     },
     componentDidMount: function(){
         this.player = new APlayer({

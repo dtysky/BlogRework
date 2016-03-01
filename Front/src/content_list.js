@@ -210,6 +210,7 @@ module.exports = {
                     <p dangerouslySetInnerHTML={{__html: item.summary}}>
                     </p>
                     <hr className='home-main-content-ghr'/>
+                    <p>少女</p>
                     {
                         item.authors.map(function(author){
                             return (
@@ -221,13 +222,13 @@ module.exports = {
                             );
                         })
                     }
-                    <p>更新于</p>
+                    <p>于</p>
                     <p
                         title={item.date}
                     >
                         {item.date}
                     </p>
-                    <p>，</p>
+                    <p>创作，</p>
                     <p>路标：</p>
                     {
                         item.tags.map(function(tag){
