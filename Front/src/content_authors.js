@@ -62,7 +62,7 @@ module.exports = React.createClass({
         this.props.handleHead({
             title: format("%s - %s", "Authors", site_title),
             keywords: "Authors",
-            description: "所有的路标",
+            description: "所有的少女",
             author: "dtysky,命月天宇",
             rss: "/feeds/all"
         });

@@ -1,0 +1,32 @@
+//
+   Created by dtysky on 16/3/2.
+
+extends base
+
+block metadata
+    title #{page.title.view} - #{site_title}
+    meta(name="keywords", content=keywords)
+    meta(name="description", content=page.summary)
+    meta(name="author", content=authors)
+    link(
+        href="feeds/" + page.category.slug
+        rel="alternate"
+        title= page.category.view + "-" + site_title
+        type="application/rss+xml"
+    )
+
+block content
+    article
+        h1 #{page.title.view}
+        p 少女
+        each author in page.authors
+            a(href="/author/" + author.slug) #{author.view}
+        p 于
+        a(href="/category/" + page.category.slug) #{page.category.view}
+        p 世界内创作, 路标:
+        each tag in page.tags
+            a(href="/tag/" + tag.slug) #{tag.view}
+        div !{page.content}
+
+block outer_links
+    include outer-links

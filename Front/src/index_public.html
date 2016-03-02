@@ -2,18 +2,91 @@
 <html lang="zh">
 <head>
     <meta charset="utf-8">
+    <meta name="fragment" content="!">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <meta property="fs:webmaster" content="fB13uuNNHbmPPXxy" />
     <link rel="shortcut icon" href="/theme/image/logo.ico">
     <link rel="stylesheet" href="/assets/main.css">
+    <style>
+        @keyframes rotate-full {
+            from {
+                transform: rotate(0deg);
+
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        @-moz-keyframes rotate-full {
+            from {
+                -moz-transform: rotate(0deg);
+
+            }
+            to {
+                -moz-transform: rotate(360deg);
+            }
+        }
+        @-ms-keyframes rotate-full {
+            from {
+                -ms-transform: rotate(0deg);
+
+            }
+            to {
+                -ms-transform: rotate(360deg);
+            }
+        }
+        @-webkit-keyframes rotate-full {
+            from {
+                -webkit-transform: rotate(0deg);
+
+            }
+            to {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+        @-o-keyframes rotate-full {
+            from {
+                -o-transform: rotate(0deg);
+
+            }
+            to {
+                -o-transform: rotate(360deg);
+            }
+        }
+        .intro{
+            text-align: center;
+            margin-top: 20%;
+            margin-bottom: 20%;
+        }
+        .intro img{
+            width: 25%;
+            border-radius: 50%;
+            border-left: dashed;
+            border-bottom: dashed;
+            margin-bottom: 40px;
+            animation: rotate-full 3s linear 0s infinite normal;
+            -webkit-animation: rotate-full 3s linear 0s infinite normal;
+            -o-animation: rotate-full 3s linear 0s infinite normal;
+            -moz-animation: rotate-full 3s linear 0s infinite normal;
+        }
+        .intro p{
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
 <!--[if lt IE 8]>
 <p class="browsehappy">少女不喜欢<strong>过于保守</strong>的观察者，请到<a href="http://browsehappy.com/">此处</a>提升你的姿势水平。</p>
 <![endif]-->
 <div id="content">
-    <h1>少女期望的是一个多彩的世界，不要禁用JS。</h1>
+    <div class="intro">
+        <img src="/theme/image/logo.svg" alt="wait-image"/>
+        <br/>
+        <p>少女祈祷中......</p>
+        <p>少女期望的是一个多彩的世界，不要禁用JS。</p>
+    </div>
 </div>
 <script type="text/javascript" src="/config.js"></script>
 <script type="text/javascript" src="/assets/bundle.js"></script>

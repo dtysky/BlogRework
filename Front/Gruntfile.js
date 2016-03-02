@@ -153,6 +153,19 @@ module.exports = function (grunt) {
                 ],
                 dest: '<%= pkg.dist %>/assets/tmp'
             }
+        },
+
+        "file-creator": {
+            "dist": {
+                "dist/config.js": function(fs, fd, done) {
+                    var data = "(function(){\n    " +
+                        "window.config = " +
+                        fs.readFileSync("./config.json") + "\n" +
+                        "}());";
+                    fs.writeSync(fd, data);
+                    done();
+                }
+            }
         }
 
     });
@@ -170,7 +183,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('debug', ['webpack-dev-server']);
 
-    grunt.registerTask('build', ['clean:dist', 'webpack:dist', 'copy:dist', 'rename', 'compress', 'copy:compress', 'clean:compress']);
+    grunt.registerTask('build', ['clean:dist', 'webpack:dist', 'copy:dist', 'rename', 'compress', 'copy:compress', 'clean:compress', "file_creator"]);
 
     grunt.registerTask('default', []);
 };
