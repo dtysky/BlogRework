@@ -183,7 +183,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('debug', ['webpack-dev-server']);
 
-    grunt.registerTask('build', ['clean:dist', 'webpack:dist', 'copy:dist', 'rename', 'compress', 'copy:compress', 'clean:compress', "file_creator"]);
+    grunt.registerTask('build', ['clean:dist', 'webpack:dist', 'copy:dist', 'rename', 'compress', 'copy:compress', 'clean:compress', "file-creator"]);
 
     grunt.registerTask('default', []);
 };
