@@ -109,7 +109,7 @@ Most of animations are based on css3, a little(title-bar and left-image) are bas
 **Music player:**  
 The music list can be defined in markdown, if not, a default music list will be used.  
 
-**Server side rendering for SEO:**  
+**First page rendering on server for SEO:**  
 React router server side rendering and full page rendering with jade.  
 
 **One key build**
