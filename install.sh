@@ -9,8 +9,9 @@ printf "Install %s..." "python modules"
 sudo pip install pymongo
 sudo pip install watchdog
 sudo pip install flask
-sudo pip install flaskcompress
+sudo pip install flask-compress
 sudo pip install pygments
+sudo pip install markdown
 
 #Install node modules
 cd Front/
@@ -18,3 +19,4 @@ printf "Install %s..." "node modules"
 npm install grunt -g
 npm install grunt-cli -g
 npm install
+npm install forever -g
