@@ -1,0 +1,13 @@
+//
+   Created by dtysky on 16/3/2.
+
+div.pagination
+    ul
+        - for(var index = 0; index < max_index; index++){
+            - if(name === undefined)
+                li.active
+                    a(href= "/" + type + "/" + index) #{index}
+            - else
+                li.active
+                    a(href= "/" + type + "/" + name + "/" + index) #{index}
+        - }

@@ -6,9 +6,7 @@
 
 Back -------- done.  
 
-Front -------- 90%：  
-Replacing some image by svg/font.  
-Server rendering for seo.  
+Front -------- done.  
 
 Others ------ 80%.  
 
@@ -24,7 +22,7 @@ It was deployed on github:
 
 ### 2014.06
 
-Changing the theme... emm, as you known, my aesthetics at that time, so...
+Changing the theme... emm, as you known, my aesthetics at that time, so... 
 
 ### 2015.02
 
@@ -67,7 +65,8 @@ Jquery
 Express.js  
 Tracer  
 Request  
-Jade
+Jade(One method for SEO, but  finally I do not use it)  
+React and react-router(For server side rendering)
 
 ### Dependencies-dev
 

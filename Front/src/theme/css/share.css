@@ -6,6 +6,7 @@ a:-webkit-any-link {
     position: absolute;
     margin-top: -40px;
     right: 0;
+    width: 40px;
 }
 
 .share-button {

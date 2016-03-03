@@ -1,0 +1,74 @@
+//
+   Created by dtysky on 16/3/2.
+
+doctype html
+html(lang="zh-CN")
+    block vars
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0, minimum-scale=1.0")
+        meta(property="fs:webmaster", content="fB13uuNNHbmPPXxy")
+        block metadata
+        link(rel="stylesheet", href="/assets/main.css")
+        link(rel="shortcut icon", href="/theme/image/logo.ico")
+
+    body.full
+        div#home-left
+            div.home-left-image(style="left:50%;background-image:url(" + theme_background[theme_info] + ");")
+        div.home-menu(style="background-color:" + theme_color[theme_info])
+            a#home-menu-name(href="/article/MyResume") dtysky
+            div.home-menu-icons
+                a.home-menu-icon.home-icon-rss(href="/feeds/all", target="_blank")
+                a.home-menu-icon.home-icon-github(href="https://github.com/dtysky", target="_blank")
+                a.home-menu-icon.home-icon-linkedin(href="https://cn.linkedin.com/pub/tianyu-dai/a8/818/44a", target="_blank")
+                a.home-menu-icon.home-icon-playstation(href="http://psnprofiles.com/dtysky", target="_blank")
+            div.home-menu-hr1
+            div
+                div
+                    a#home-menu-home(href="/") Home
+                div.home-menu-tag-ath
+                    a#home-menu-tags(href="/tags") Tags
+                    a#home-menu-authors(href="/authors") Authors
+            div.home-menu-hr2
+            p.home-menu-links-p Links
+            div.home-menu-links
+                a#home-menu-proj(href="http://proj.dtysky.moe", target="_blank") Projects
+                button#home-menu-friend Friends
+            div.home-menu-hr3
+            p.home-menu-end 这是一个孤独行者的轨迹。
+        div.home-menu-phone(style="background-color:" + theme_color[theme_info])
+            div.top
+                a.home-menu-icon-phone.home-icon-rss(href="/feeds/all", target="_blank")
+                a.home-menu-icon-phone.home-icon-github(href="https://github.com/dtysky", target="_blank")
+                a.home-menu-icon-phone.home-icon-resume(href="/article/Create-MyResume")
+                a.home-menu-icon-phone.home-icon-linkedin(href="https://cn.linkedin.com/pub/tianyu-dai/a8/818/44a", target="_blank")
+                a.home-menu-icon-phone.home-icon-playstation(href="http://psnprofiles.com/dtysky", target="_blank")
+            div#home-menu-hr1-phone
+            div.bottom
+                div#home-menu-index-phone
+                    a#home-menu-tags-phone(href="/tags") Tags
+                    a#home-menu-home-phone(href="/") Home
+                    a#home-menu-authors-phone(href="/authors") Authors
+        div#home-main
+            div#home-main-title
+                div#title-list
+                    li#title-create
+                        a(href="/category/Create") Create
+                    li#title-skill
+                        a(href="/category/Skill") Skill
+                    li#title-art
+                        a(href="/category/Art") Art
+                    li#title-life
+                        a(href="/category/Life") Life
+            div.home-main-content
+                div#pre
+                    block pre
+                div#content
+                    block content
+        footer(style="background-color:" + theme_color[theme_info])
+            p Links
+            div#home-links-phone
+                each link in outer_links
+                    a.thank(href=link.url target="_blank") #{link.name}
+            div#home-menu-hr3-phone
+            p#home-menu-end-phone 这是一个孤独行者的轨迹。

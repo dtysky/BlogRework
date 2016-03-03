@@ -159,6 +159,7 @@ ol{
 }
 
 blockquote{
+	background-color: #00d6b2;
 	padding: 10px;
 	margin-left: 0px;
 	margin-right: 0px;
@@ -199,23 +200,7 @@ pre{
 }
 
 .tag-cloud a{
-    padding: 2px;
-}
-
-a.tag-4{
-	font-size: 14px;
-}
-
-a.tag-3{
-	font-size: 16px;
-}
-
-a.tag-2{
-	font-size: 18px;
-}
-
-a.tag-1{
-	font-size: 20px;
+    padding: 4px;
 }
 
 img {

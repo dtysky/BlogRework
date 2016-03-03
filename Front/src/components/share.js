@@ -6,12 +6,12 @@
 var React = require('react');
 var Modal = require('react-modal');
 var QrCode = require('qrcode.react');
-var config = require('./utils').config;
+var config = require('./../utils').config;
 var templates = config.share_templates;
 var theme_color = config.theme_color;
 
-require('./theme/css/sky.css');
-require('./theme/css/share.css');
+require('./../theme/css/sky.css');
+require('./../theme/css/share.css');
 
 module.exports = React.createClass({
     getInitialState: function(){

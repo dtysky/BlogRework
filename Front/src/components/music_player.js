@@ -4,12 +4,12 @@
  */
 
 var React = require('react');
-var APlayer = require('./aplayer/aplayer');
-var config = require('./utils').config;
+var APlayer = require('./../aplayer/aplayer');
+var config = require('./../utils').config;
 var theme_color = config.theme_color;
 
-require('./aplayer/aplayer.css');
-require('./theme/css/sky.css');
+require('./../aplayer/aplayer.css');
+require('./../theme/css/sky.css');
 
 module.exports = React.createClass({
     getInitialState: function(){
@@ -36,7 +36,7 @@ module.exports = React.createClass({
         });
     },
     initPlayer: function(reload){
-        this.player.init(false, reload);
+        this.player.init(true, reload);
     },
     componentDidMount: function(){
         this.player = new APlayer({

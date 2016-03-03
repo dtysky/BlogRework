@@ -13,14 +13,22 @@ var srcPath = path.join(__dirname, 'src');
 module.exports = {
     cache: true,
     debug: true,
-    entry: [
-        'webpack-dev-server/client?http://0.0.0.0:8000',
-        'webpack/hot/only-dev-server',
-        path.join(srcPath, 'index.js')
-    ],
+    entry: {
+        main: [
+            'webpack-dev-server/client?http://0.0.0.0:8000',
+            'webpack/hot/only-dev-server',
+            path.join(srcPath, 'index.js')
+        ],
+        velocity: [
+            'webpack-dev-server/client?http://0.0.0.0:8000',
+            'webpack/hot/only-dev-server',
+            path.join(srcPath, 'require_velocity.js')
+        ]
+    }
+    ,
 
     output: {
-        filename: "bundle.js",
+        filename: "[name].bundle.js",
         publicPath: '/assets/'
     },
 

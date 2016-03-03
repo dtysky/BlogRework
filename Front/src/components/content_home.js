@@ -5,9 +5,9 @@
 
 var React = require('react');
 var ContentList = require('./content_list');
-var config = require('./utils').config;
+var config = require('./../utils').config;
 
-require('./theme/css/sky.css');
+require('./../theme/css/sky.css');
 
 module.exports = React.createClass({
     mixins: [ContentList],

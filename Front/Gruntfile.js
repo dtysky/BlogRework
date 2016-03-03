@@ -5,7 +5,8 @@ var mountFolder = function (connect, dir) {
 };
 
 var webpackDistConfig = require('./webpack.dist.config.js'),
-    webpackDevConfig = require('./webpack.config.js');
+    webpackDevConfig = require('./webpack.config.js'),
+    webpackServerConfig = require('./webpack.server.config.js');
 
 
 module.exports = function (grunt) {
@@ -19,10 +20,8 @@ module.exports = function (grunt) {
         pkg: pkgConfig,
 
         webpack: {
-            options: webpackDistConfig,
-            dist: {
-                cache: false
-            }
+            dist: webpackDistConfig,
+            server: webpackServerConfig
         },
 
         'webpack-dev-server': {
@@ -90,7 +89,6 @@ module.exports = function (grunt) {
                         expand: true,
                         src: [
                             '<%= pkg.src %>/index_public.html',
-                            '<%= pkg.src %>/config.js'
                         ],
                         dest: '<%= pkg.dist %>/',
                         filter: 'isFile'
@@ -107,6 +105,23 @@ module.exports = function (grunt) {
                         filter: 'isFile'
                     }
                 ]
+            },
+            server: {
+                files: [
+                    {
+                        flatten: true,
+                        expand: true,
+                        src: ['<%= pkg.dist %>/tmp/server.js'],
+                        dest: '<%= pkg.dist %>/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        cwd: "<%= pkg.src %>/templates",
+                        src: '*.jade',
+                        dest: '<%= pkg.dist %>/templates/'
+                    }
+                ]
             }
         },
 
@@ -115,7 +130,7 @@ module.exports = function (grunt) {
                 files: [
                     {
                         src: ['<%= pkg.dist %>/index_public.html'],
-                        dest: '<%= pkg.dist %>/index.html'
+                        dest: '<%= pkg.dist %>/base.html'
                     }
                 ]
             }
@@ -135,6 +150,14 @@ module.exports = function (grunt) {
                     dot: true,
                     src: [
                         '<%= pkg.dist %>/assets/tmp'
+                    ]
+                }]
+            },
+            server: {
+                files: [{
+                    dot: true,
+                    src: [
+                        '<%= pkg.dist %>/tmp'
                     ]
                 }]
             }
@@ -157,11 +180,10 @@ module.exports = function (grunt) {
 
         "file-creator": {
             "dist": {
-                "dist/config.js": function(fs, fd, done) {
-                    var data = "(function(){\n    " +
-                        "window.config = " +
-                        fs.readFileSync("./config.json") + "\n" +
-                        "}());";
+                "src/config.js": function(fs, fd, done) {
+                    var data = "module.exports =\n" +
+                        fs.readFileSync("./config.json") +
+                        ";";
                     fs.writeSync(fd, data);
                     done();
                 }
@@ -183,7 +205,11 @@ module.exports = function (grunt) {
 
     grunt.registerTask('debug', ['webpack-dev-server']);
 
-    grunt.registerTask('build', ['clean:dist', 'webpack:dist', 'copy:dist', 'rename', 'compress', 'copy:compress', 'clean:compress', "file-creator"]);
+    grunt.registerTask('client-build', ["file-creator", 'clean:dist', 'webpack:dist', 'copy:dist', 'rename', 'compress', 'copy:compress', 'clean:compress']);
+
+    grunt.registerTask('server-build', ["file-creator", "webpack:server", 'copy:server', 'clean:server']);
+
+    grunt.registerTask('build', ['client-build', 'server-build']);
 
     grunt.registerTask('default', []);
 };

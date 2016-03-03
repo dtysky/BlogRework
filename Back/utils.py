@@ -155,19 +155,19 @@ class Logger(object):
     def info(self, message):
         self._log(
             "Info:\n%s" % message,
-            "\033[1;32;0m"
+            "\033[1;32m"
         )
 
     def warning(self, message):
         self._log(
             "Warning:\n%s" % message,
-            "\033[1;35;0m"
+            "\033[1;35m"
         )
 
     def error(self, message):
         self._log(
             "Error:\n%s" % message,
-            "\033[1;31;0m"
+            "\033[1;31m"
         )
 
 # Singleton

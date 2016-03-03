@@ -1,33 +1,31 @@
 /*
- * Webpack distribution configuration
+ * Webpack development server configuration
  *
- * This file is set up for serving the distribution version. It will be compiled to dist/ by default
+ * This file is set up for serving the webpack-dev-server, which will watch for changes and recompile as required if
+ * the subfolder /webpack-dev-server/ is visited. Visiting the root will not automatically reload.
  */
-
 'use strict';
-
 var webpack = require('webpack');
+var fs = require('fs');
 var path = require('path');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var srcPath = path.join(__dirname, 'src');
-    
+
 module.exports = {
+    cache: true,
+    debug: true,
+    entry: path.join(srcPath, 'server.js'),
 
     output: {
-        publicPath: '/assets/',
-        path: 'dist/assets/',
-        filename: '[name].bundle.js'
-    },
-
-    debug: false,
-    entry: {
-        main: ['index.js'],
-        velocity: ['require_velocity.js']
+        publicPath: '/',
+        path: 'dist/tmp/',
+        filename: 'server.js'
     },
 
     stats: {
         colors: true,
-        reasons: true
+        reasons: true,
+        errorDetails: true
     },
 
     devtool: false,
@@ -40,20 +38,27 @@ module.exports = {
         }
     },
 
-    target: "web",
+    // keep node_module paths out of the bundle
+    externals: fs.readdirSync(path.resolve(__dirname, 'node_modules')).concat([
+        'react-dom/server'
+    ]).reduce(function (ext, mod) {
+        ext[mod] = 'commonjs ' + mod;
+        return ext
+    }, {}),
+
+    target: "node",
+
+    node: {
+        __filename: true,
+        __dirname: true
+    },
 
     module: {
-        preLoaders: [{
-            test: /\.js$/,
-            exclude: [/node_modules/,/bower_components/,/extra/],
-            loader: 'jsxhint'
-        }],
         loaders: [
             {
                 test: /\.js$/,
-                exclude: /node_modules/,
-                loaders: ['react-hot','babel'],
-                include : srcPath
+                exclude: [/node_modules/, path.join(srcPath, "config.js")],
+                loader: 'babel-loader?presets[]=es2015&presets[]=react'
             },
             {
                 test: /\.css$/,
@@ -73,6 +78,7 @@ module.exports = {
             }
         ],
         noParse:[
+            'react-bootstrap',
             'jquery'
         ]
     },

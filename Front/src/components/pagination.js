@@ -3,13 +3,12 @@
  * Created by dtysky on 16/2/3.
  */
 
-
 var React = require('react');
 var Link = require('react-router').Link;
-var getLocalUrl = require('./utils').getLocalUrl;
-var config = require('./utils').config;
+var getLocalUrl = require('./../utils').getLocalUrl;
+var config = require('./../utils').config;
 
-require('./theme/css/sky.css');
+require('./../theme/css/sky.css');
 
 module.exports = React.createClass({
     render: function(){

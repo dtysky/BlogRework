@@ -5,7 +5,7 @@
 
 var React = require('react');
 
-require('./theme/css/sky.css');
+require('./../theme/css/sky.css');
 
 module.exports = React.createClass({
     render: function() {

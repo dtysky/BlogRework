@@ -3,9 +3,6 @@
  * Created by dtysky on 16/2/3.
  */
 
-require('velocity-animate');
-require('velocity-animate/velocity.ui');
-
 var React = require('react');
 var VelocityComponent = require('velocity-react').VelocityComponent;
 var velocityHelpers = require('velocity-react').velocityHelpers;
@@ -16,15 +13,15 @@ var Loading = require('./loading');
 var NormalError = require('./normal_error');
 var Pagination = require('./pagination');
 
-var cache = require('./cache');
-var getLocalUrl = require('./utils').getLocalUrl;
-var redirect = require('./utils').redirect;
-var config = require('./utils').config;
+var cache = require('./../cache');
+var getLocalUrl = require('./../utils').getLocalUrl;
+var redirect = require('./../utils').redirect;
+var config = require('./../utils').config;
 var site_title = config.site_title;
 var server_url = config.server_url;
 var articles_per_page = config.articles_per_page;
 
-require('./theme/css/sky.css');
+require('./../theme/css/sky.css');
 
 module.exports = {
     getInitialState: function(){

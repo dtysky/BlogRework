@@ -6,12 +6,12 @@
 var React = require('react');
 var Helmet = require('react-helmet');
 
-var Title = require('./title');
-var Menu = require('./menu');
-var MenuPhone = require('./menu_phone');
-var LeftImage = require('./left_image');
-var Footer = require('./footer');
-var MusicPlayer = require('./music_player');
+var Title = require('./components/title');
+var Menu = require('./components/menu');
+var MenuPhone = require('./components/menu_phone');
+var LeftImage = require('./components/left_image');
+var Footer = require('./components/footer');
+var MusicPlayer = require('./components/music_player');
 
 require('./theme/css/sky.css');
 

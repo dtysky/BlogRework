@@ -1,5 +1,11 @@
 /**
  * Created by dtysky on 16/2/27.
+ * If you want to use this, add the meta "<meta name="fragment" content="!">" to your index.html !
+ * If using this server, a mini size page which rendering from jade templates will be sent while the visitor is bot.
+ * This server uses this method for SEO:
+ * http://blog.vararu.org/adding-pushstate-support-mean-seo/
+ * It just works for a part of search engine...
+ *
  */
 "use strict";
 
@@ -8,7 +14,7 @@ var path = require('path');
 var fs = require('fs');
 var request = require('request');
 
-var port = 2333;
+var port = 233;
 var public_path = path.resolve(__dirname, "dist");
 var log_path = path.resolve(__dirname, "logs");
 var logger_console = require('tracer').colorConsole();

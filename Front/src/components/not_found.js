@@ -5,11 +5,11 @@
 
 var React = require('react');
 var Link = require('react-router').Link;
-var config = require('./utils').config;
+var config = require('./../utils').config;
 var site_title = config.site_title;
 var format = require('util').format;
 
-require('./theme/css/sky.css');
+require('./../theme/css/sky.css');
 
 module.exports = React.createClass({
     getInitialState: function(){

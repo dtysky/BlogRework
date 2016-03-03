@@ -11,15 +11,15 @@ var format = require('util').format;
 var Loading = require('./loading');
 var NormalError = require('./normal_error');
 
-var cache = require('./cache');
-var getLocalUrl = require('./utils').getLocalUrl;
-var redirect = require('./utils').redirect;
-var config = require('./utils').config;
+var cache = require('./../cache');
+var getLocalUrl = require('./../utils').getLocalUrl;
+var redirect = require('./../utils').redirect;
+var config = require('./../utils').config;
 var site_title = config.site_title;
 var server_url = config.server_url;
 
-require('./theme/css/sky.css');
-require('./theme/css/article.css');
+require('./../theme/css/sky.css');
+require('./../theme/css/article.css');
 
 module.exports = React.createClass({
     getInitialState: function(){

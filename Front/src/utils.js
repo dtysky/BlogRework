@@ -3,7 +3,8 @@
  * Created by dtysky on 16/2/3.
  */
 
-var config = window.config;
+
+var config = require("./config");
 var format = require('util').format;
 
 var getLocalUrl = function(type, name, index){

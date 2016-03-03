@@ -3,18 +3,16 @@
  * Created by dtysky on 16/2/3.
  */
 
-require('velocity-animate');
-require('velocity-animate/velocity.ui');
 
 var React = require('react');
 var VelocityComponent = require('velocity-react').VelocityComponent;
 var velocityHelpers = require('velocity-react').velocityHelpers;
 var Link = require('react-router').Link;
-var config = require('./utils').config;
+var config = require('./../utils').config;
 var theme_color = config.theme_color;
 var animation_default_duration = config.animation_default_duration;
 
-require('./theme/css/sky.css');
+require('./../theme/css/sky.css');
 
 module.exports = React.createClass({
     getInitialState: function(){

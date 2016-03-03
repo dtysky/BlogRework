@@ -5,10 +5,10 @@
 
 var React = require('react');
 var Link = require('react-router').Link;
-var config = require('./utils').config;
+var config = require('./../utils').config;
 var theme_color = config.theme_color;
 
-require('./theme/css/sky.css');
+require('./../theme/css/sky.css');
 
 module.exports = React.createClass({
     changeThemeRequire: function(info){
@@ -41,7 +41,7 @@ module.exports = React.createClass({
                 </div>
                 <div id="home-menu-hr1-phone"></div>
                 <div className="bottom">
-                    <div id="home-menu-index-phone" className="home-canbackchange">
+                    <div id="home-menu-index-phone">
                         <Link to="/tags" id="home-menu-tags-phone"
                               onMouseEnter={function(e){self.changeThemeRequire("tags");}}
                               onMouseLeave={function(e){self.changeThemeToDefault();}}

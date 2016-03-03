@@ -5,7 +5,22 @@
 
 var React = require('react');
 var ReactDom = require('react-dom');
-var App = require('./App');
-var router = require('./router');
+var ReactRouter = require('react-router');
+var Router = ReactRouter.Router;
+var Ga = require('react-ga');
+var config = require('./utils').config;
+var routes = require('./routes');
 
-ReactDom.render(router, document.getElementById('content'));
+Ga.initialize(config.ga_tracking_id);
+function logPageView() {
+    Ga.pageview(this.state.location.pathname);
+}
+
+ReactDom.render(
+    <Router
+        routes={routes}
+        history={ReactRouter.browserHistory}
+        onUpdate={logPageView}
+        id="home-main-content"
+    />, document.getElementById('content')
+);
