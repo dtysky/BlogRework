@@ -12,7 +12,7 @@ Others ------ done.
 
 ## Description
 
-Reworking my blog, here are what I did for my blog:  
+Reworking my blog with react, flask, mongodb...here are what I did for my blog:  
 
 ### 2014.05
 
@@ -91,26 +91,28 @@ A beautiful music player, the one in blog is based on it with some changes.
 
 ### Finish
 
-View:  
+**View:**  
 All pages.  
 
-Cache:  
+**Cache:**  
 A cache for storing data, it's useful for reduce the number of requests.  
 
-Router:  
+**Router:*  
 In stie router with react-router.  
 
-Social-share:  
+**Social-share:**  
 Sharing articles to socal Apps.  
 
-Animations with js and css3:  
+**Animations with js and css3:**  
 Most of animations are based on css3, a little(title-bar and left-image) are based on velocity.  
 
-Music player:  
+**Music player:**  
 The music list can be defined in markdown, if not, a default music list will be used.  
 
-Server side rendering for SEO:  
+**Server side rendering for SEO:**  
 React router server side rendering and full page rendering with jade.  
+
+**One key build**
 
 ## Back
 
@@ -131,23 +133,23 @@ Flask-compress
 
 Most of these use  inheritance and reflection  so that I can add any new function easily.
 
-Server:  
-Web server for providing articles.  
+**Server:**  
+Web server for providing articles as json compressed with gzip.  
 
-Parser:  
+**Parser:**  
 File parsers and slug(URL) warppers.  
 
-Feeds and sitemap generator:  
+**Feeds and sitemap generator:**  
 Generating the feeds and sitemap.  
 
-Database manager:  
+**Database manager:**  
 Writing articles to database with "Incremental build", the desgin of it is here:  
 [Database desigin](https://github.com/dtysky/BlogRework/blob/master/Back/Database.md)  
 
-File state monitor:  
+**File state monitor:**  
 Monitoring state of pages , if there are files changed, it will check database and call parsers, warppers and database writers to update database.  
 
-Logger:  
+**Logger:**  
 A logger for recording infomations, errors and warnings.  
 
 ## Others
