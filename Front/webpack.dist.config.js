@@ -79,8 +79,8 @@ module.exports = {
 
     plugins: [
         new ExtractTextPlugin("main.css"),
-        //new webpack.optimize.DedupePlugin(),
-        //new webpack.optimize.UglifyJsPlugin({minimize: true}),
+        new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.UglifyJsPlugin({minimize: true}),
         new webpack.ProvidePlugin({
             $:'jquery'
         })
