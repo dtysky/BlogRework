@@ -4,9 +4,9 @@ a:-webkit-any-link {
 
 .share{
     position: absolute;
-    margin-top: -40px;
+    margin-top: -60px;
     right: 0;
-    width: 40px;
+    width: 60px;
 }
 
 .share-button {

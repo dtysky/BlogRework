@@ -88,7 +88,7 @@ module.exports = function (grunt) {
                         flatten: true,
                         expand: true,
                         src: [
-                            '<%= pkg.src %>/index_public.html',
+                            '<%= pkg.src %>/index_public.html'
                         ],
                         dest: '<%= pkg.dist %>/',
                         filter: 'isFile'
@@ -114,6 +114,12 @@ module.exports = function (grunt) {
                         src: ['<%= pkg.dist %>/tmp/server.js'],
                         dest: '<%= pkg.dist %>/',
                         filter: 'isFile'
+                    },
+                    {
+                        flatten: true,
+                        expand: true,
+                        src: ['<%= pkg.src %>/table.json'],
+                        dest: '<%= pkg.dist %>/'
                     },
                     {
                         expand: true,

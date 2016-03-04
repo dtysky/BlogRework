@@ -8,6 +8,7 @@
     "tag_cloud_step": 4,
     "articles_per_page": 10,
     "animation_default_duration": 800,
+    "mathjax_url": "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
     "links": [
         {"name": "Lm7", "url": "http://lm7.xxxxxxxx.jp"},
         {"name": "APlayer", "url": "https://github.com/DIYgod/APlayer"},

@@ -19,6 +19,7 @@ var config = require('./../utils').config;
 var site_title = config.site_title;
 var server_url = config.server_url;
 var theme_color = config.theme_color;
+var mathjax_url = config.mathjax_url;
 
 require('./../theme/css/sky.css');
 require('./../theme/css/article.css');
@@ -130,8 +131,21 @@ module.exports = React.createClass({
         dsq.src = 'http://' + config.disqus_short_name + '.disqus.com/embed.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     },
+    showMath: function(){
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true
+            }
+        });
+        MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+    },
     componentDidMount: function(){
         this.updateData(this.props);
+        var script = document.createElement("script");
+        script.src = mathjax_url;
+        script.async = true;
+        document.body.appendChild(script);
     },
     shouldComponentUpdate: function(nextProps, nextState){
         if(
@@ -153,6 +167,12 @@ module.exports = React.createClass({
         elements = document.getElementsByClassName("home-article-sphr");
         for(i=0; i<elements.length; i++){
             elements[i].style.backgroundColor = theme_color[this.props.theme_info];
+        }
+        try{
+            this.showMath();
+        }
+        catch(e){
+            setTimeout(this.showMath, 200);
         }
     },
     showArticle: function(){
