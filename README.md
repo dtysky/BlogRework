@@ -155,3 +155,15 @@ A logger for recording infomations, errors and warnings.
 ## Others
 
 Forever.js is used for starting all servers as daemons. 
+
+## How to use?  
+
+**Back:**  
+Edit the "config.py" then run the "main.py".  
+
+**Front:**  
+Edit the "config.json" then:  
+1. "grunt client-build" will build the client code  
+2. "grunt server-build" will build the server code  
+3. "grunt build" will build client and server all  
+4. "grunt debug" will open the port 8000 for development   
