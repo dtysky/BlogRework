@@ -93,8 +93,9 @@ module.exports = React.createClass({
                 data.content.category.slug
             )
         });
-        this.props.setDefaultTheme(data.content.category.view);
-        this.props.changeTheme(this.props.theme_default, true);
+        var theme_info = data.content.category.view;
+        this.props.setDefaultTheme(theme_info);
+        this.props.changeTheme(theme_info, true);
         this.props.setMusicList(
             data.content.music === undefined ? [] : data.content.music
         );

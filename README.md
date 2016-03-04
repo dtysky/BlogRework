@@ -12,17 +12,17 @@ Others ------ done.
 
 ## Description
 
-Reworking my blog with react, flask, mongodb...here are what I did for my blog:  
+Reworke my blog with react, flask, mongodb...here are what I did for my blog:  
 
 ### 2014.05
 
-Creating my blog with [pelican](https://github.com/getpelican/pelican) with a default theme.  
+Create my blog with [pelican](https://github.com/getpelican/pelican) with a default theme.  
 It was deployed on github:  
 **https://dtysky.github.io**(It dosn't work now.)
 
 ### 2014.06
 
-Changing the theme... emm, my aesthetics at that time, so... 
+Change the theme... emm, my aesthetics at that time, so... 
 
 ### 2015.02
 
@@ -143,7 +143,7 @@ File parsers and slug(URL) warppers.
 Generating the feeds and sitemap.  
 
 **Database manager:**  
-Writing articles to database with "Incremental build", the desgin of it is here:  
+Write articles to database with "Incremental build", the desgin of it is here:  
 [Database desigin](https://github.com/dtysky/BlogRework/blob/master/Back/Database.md)  
 
 **File state monitor:**  
