@@ -97,7 +97,7 @@ All pages.
 **Cache:**  
 A cache for storing data, it's useful for reduce the number of requests.  
 
-**Router:*  
+**Router:**  
 In stie router with react-router.  
 
 **Social-share:**  

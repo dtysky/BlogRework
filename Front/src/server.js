@@ -25,6 +25,7 @@ var renderToString = require('react-dom/server').renderToString;
 var match = require('react-router/lib/match');
 var RouterContext = require('react-router/lib/RoutingContext');
 var routes = require('./routes');
+var url = require('url');
 
 var has = require("./templates/utils").has;
 var errorHandler = require("./templates/utils").errorHandler;
@@ -38,6 +39,8 @@ var outer_links = config.links;
 var articles_per_page = config.articles_per_page;
 var theme_background = config.theme_background;
 var theme_color = config.theme_color;
+
+var redirect_table = JSON.parse(fs.readFileSync("./table.json"));
 
 function log_info(){
     logger_console.info(arguments);
@@ -59,6 +62,18 @@ function log(req, res, next){
 }
 
 app.use(log);
+
+function redirect(req, res, next){
+    if(req.path in redirect_table){
+        log_info("Redirect: from", req.path, "to ", redirect_table[req.path]);
+        res.redirect(301, redirect_table[req.path])
+    }else{
+        next();
+    }
+}
+
+app.use(redirect);
+
 app.use(express.static(
     public_path,
     {
@@ -82,7 +97,10 @@ app.use(express.static(
 function SEO(req, res, next) {
     var escapedFragment = req.query._escaped_fragment_;
     if (escapedFragment !== undefined) {
-        res.redirect("/jade" + req.baseUrl)
+        var parsed_url = url.parse(req.url);
+        var rd_path = "/jade" + parsed_url.pathname;
+        log_info("Redirect: from", req.path, "to ", rd_path);
+        res.redirect(rd_path);
     } else {
         next();
     }
@@ -286,7 +304,7 @@ app.get("/jade/:type/:name/:index", function(req, res){
             outer_links: outer_links,
             theme_background: theme_background,
             theme_color: theme_color,
-            theme_info: "category" ? name : type
+            theme_info: type === "category" ? name : type
         });
     });
 });
@@ -304,7 +322,7 @@ app.get("/sitemap", function(req, res){
 });
 
 app.get("/feeds/:slug", function(req, res){
-    var url = server_url + "/" + path.join("feeds", req.params.slug);
+    var url = server_url + "/" + path.join("feeds", req.params.slug.replace(".rss.xml", ""));
     log_info("Forwarding", url);
     try {
         request(url).pipe(res);
