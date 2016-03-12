@@ -19,6 +19,7 @@ module.exports = React.createClass({
     },
     setDefaultTheme: function(info){
         this.props.setDefaultTheme(info);
+        this.changeThemeRequire(info);
     },
     componentDidUpdate: function(){
         document.getElementsByClassName("home-menu-phone")[0].style.backgroundColor = theme_color[this.props.theme_info];
