@@ -1,3 +1,7 @@
+h1,h2,h3,h4,h5,h6,p,a{
+	word-break: break-all;
+}
+
 @font-face {
 	font-family: 'icomoon';
 	src:    url('../font/icomoon.eot?c8cymx');
@@ -259,4 +263,8 @@ blockquote{
     -moz-transition: background-color 1s ease-in;
     -o-transition: background-color 1s ease-in;
     transition: background-color 1s ease-in;
+}
+
+code{
+	font-weight: bolder;
 }
