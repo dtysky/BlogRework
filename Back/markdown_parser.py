@@ -15,17 +15,17 @@ class MarkdownParser(object):
 
 
     def __init__(self):
-        self._extensions = {
-            'markdown.extensions.codehilite': {'css_class': 'highlight'}
-        }
+        self._extensions = [
+            'codehilite(css_class=highlight)',
+            'markdown.extensions.nl2br',
+            'markdown.extensions.tables'
+        ]
         self._parser = Markdown(
-            extensions=self._extensions.keys(),
-            extension_configs=self._extensions
+            extensions=self._extensions
         )
 
     def parse(self, content):
         """Parse content and metadata of markdown files"""
 
         self._content = content
-
         return self._parser.convert(self._content)

@@ -102,8 +102,10 @@ ol{
 }
 
 .home-article-middle p{
-	line-height: 20px;
-	margin-bottom: 5px;
+    font-size: 1em;
+	line-height: 1.3em;
+	margin-bottom: 1em;
+    margin-top: 1em;
 	color: black;
 	word-break: break-all;
 	text-align: left;
@@ -241,6 +243,12 @@ center {
 table{
 	border-color: black;
 	padding: 0;
+	border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-spacing: 0;
+    margin: 10px;
 }
 
 tr{
@@ -256,6 +264,11 @@ th{
 td{
 	padding: 10px;
 	text-align: center;
+}
+
+table, th, td {
+    border: 1px solid;
+    border-color: rgba(20, 20, 20,0.8);
 }
 
 blockquote{
